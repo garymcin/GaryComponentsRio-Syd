@@ -1,0 +1,15 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<BorlandProject>
+	<Transactions>
+    <Transaction>2020/02/12 10:00:35.000.103,=rtl.dcp</Transaction>
+    <Transaction>2020/02/12 10:03:38.000.380,=DesignIDE.dcp</Transaction>
+    <Transaction>2020/02/12 10:08:39.000.849,=GEMComponentsR.dcp</Transaction>
+    <Transaction>2020/02/12 10:11:11.000.315,U:\Delphi_Installs\GaryComponents-rio\DCLGEMComponentsR.dproj=C:\Users\Gary\Documents\Embarcadero\Studio\Projects\Package1.dproj</Transaction>
+    <Transaction>2020/02/12 10:19:18.000.345,=U:\Delphi_Installs\GaryComponents-rio\ComponentRegistration\GarysComponentsReg.pas</Transaction>
+    <Transaction>2020/02/12 11:30:21.000.302,=U:\Delphi_Installs\GaryComponents-rio\ComponentRegistration\AutoCompletEditReg.pas</Transaction>
+    <Transaction>2020/02/12 11:30:40.000.889,=U:\Delphi_Installs\GaryComponents-rio\ComponentRegistration\PJDropFilesDsgn.pas</Transaction>
+    <Transaction>2020/02/12 11:30:53.000.870,=U:\Delphi_Installs\GaryComponents-rio\ComponentRegistration\PSReg.pas</Transaction>
+    <Transaction>2020/02/13 06:02:52.000.142,U:\Delphi_Installs\GaryComponents-rio\ComponentRegistration\GarysComponentsReg.pas=</Transaction>
+    <Transaction>2020/02/13 06:03:17.000.042,=U:\Delphi_Installs\GaryComponents-rio\ComponentRegistration\GarysComponentsReg.pas</Transaction>
+  </Transactions>
+</BorlandProject>

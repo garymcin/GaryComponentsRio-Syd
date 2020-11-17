@@ -1,0 +1,83 @@
+package GEMComponentsR;
+
+{$R *.res}
+{$IFDEF IMPLICITBUILDING This IFDEF should not be used by users}
+{$ALIGN 8}
+{$ASSERTIONS ON}
+{$BOOLEVAL OFF}
+{$DEBUGINFO OFF}
+{$EXTENDEDSYNTAX ON}
+{$IMPORTEDDATA ON}
+{$IOCHECKS ON}
+{$LOCALSYMBOLS OFF}
+{$LONGSTRINGS ON}
+{$OPENSTRINGS ON}
+{$OPTIMIZATION ON}
+{$OVERFLOWCHECKS OFF}
+{$RANGECHECKS OFF}
+{$REFERENCEINFO OFF}
+{$SAFEDIVIDE OFF}
+{$STACKFRAMES OFF}
+{$TYPEDADDRESS OFF}
+{$VARSTRINGCHECKS ON}
+{$WRITEABLECONST OFF}
+{$MINENUMSIZE 1}
+{$IMAGEBASE $400000}
+{$DEFINE RELEASE}
+{$ENDIF IMPLICITBUILDING}
+{$DESCRIPTION 'Gary''s compnonets'}
+{$LIBSUFFIX '260'}
+{$RUNONLY}
+{$IMPLICITBUILD OFF}
+
+requires
+  rtl,
+  vclimg,
+  vcl,
+  IndySystem,
+  IndyProtocols,
+  IndyCore,
+  Jcl,
+  JvStdCtrls,
+  vcldb,
+  JvCore,
+  NexusDB450db270,
+  NexusDB450ll270,
+  NexusDB450sd270;
+
+contains
+  GEMUpdaterPanel in 'Source\GEMUpdaterPanel.pas',
+  SelColVisGrid in 'Source\SelColVisGrid.pas',
+  GemMruList in 'Source\GemMruList.pas',
+  gemArrow in 'Source\gemArrow.pas',
+  GEMProcessTimer in 'Source\GEMProcessTimer.pas',
+  ModListnxQuery in 'Source\ModListnxQuery.pas',
+  ModListnxTable in 'Source\ModListnxTable.pas',
+  gemResistor in 'Source\gemResistor.pas',
+  PicShow in 'Source\PicShow.pas',
+  Preview in 'Source\Preview.pas',
+  ColorPanelBtn in 'Source\ColorPanelBtn.pas',
+  gemCustomButton in 'Source\gemCustomButton.pas',
+  adpMRU in 'Source\adpMRU.pas',
+  ColorButton in 'Source\ColorButton.pas',
+  DBControlLists in 'Source\DBControlLists.pas',
+  GEMDBGridEdit in 'Source\GEMDBGridEdit.pas' {GEMDBGridEditForm},
+  GEMComponentsGlobal in 'Source\GEMComponentsGlobal.pas',
+  PSEffect in 'Source\PSEffect.pas',
+  GEMDBLabel in 'Source\GEMDBLabel.pas',
+  URLLabel in 'Source\URLLabel.pas',
+  FindFile in 'Source\FindFile.pas',
+  GEMDBGrid in 'Source\GEMDBGrid.pas',
+  gemDBComboBox in 'Source\gemDBComboBox.pas',
+  gemDBLookupComboBox in 'Source\gemDBLookupComboBox.pas',
+  PJVersionInfo in 'Source\PJVersionInfo.pas',
+  GEMColorButton in 'Source\GEMColorButton.pas',
+  GEMCalendar in 'Source\GEMCalendar.pas',
+  uAutoComplete in 'Source\uAutoComplete.pas',
+  PJDropFiles in 'Source\DropComponents\PJDropFiles.pas',
+  adpDBEdit in 'Source\adpDBEdit.pas',
+  adpEdit in 'Source\adpEdit.pas',
+  SBPro in 'Source\SBPro.pas',
+  CnColorGrid in 'Source\CnColorGrid.pas';
+
+end.
