@@ -78,6 +78,7 @@ contains
   adpDBEdit in 'Source\adpDBEdit.pas',
   adpEdit in 'Source\adpEdit.pas',
   SBPro in 'Source\SBPro.pas',
-  CnColorGrid in 'Source\CnColorGrid.pas';
+  CnColorGrid in 'Source\CnColorGrid.pas',
+  ImageBtn in 'Source\ImageBtn.pas';
 
 end.

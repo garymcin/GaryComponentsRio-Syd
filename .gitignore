@@ -62,3 +62,8 @@ __history/
 __recovery/
 *.~*
 
+*.local
+*.local
+*.local
+*.local
+GEMComponentsR.identcache
