@@ -8,16 +8,18 @@ uses
 
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.ActnList,
 
+  CodeSiteLogging,
+
   JvImage, JvExtComponent, JvCaptionPanel;
 
 type
   TgemCaptionBtnImagePanel = class;
 
-  TCapPnlEventMouseEnter = procedure(sender: TgemCaptionBtnImagePanel) of object;
-  TCapPnlEventMouseLeave = procedure(sender: TgemCaptionBtnImagePanel) of object;
+//  TCapPnlEventMouseEnter = procedure(sender: TgemCaptionBtnImagePanel) of object;
+//  TCapPnlEventMouseLeave = procedure(sender: TgemCaptionBtnImagePanel) of object;
 
   TgemImPnlBtnState = (gim_MouseOver, gim_Seletected, gim_Normal);
-  TJvDrawPosition   = (dpLeft, dpTop, dpRight, dpBottom);
+//  TJvDrawPosition   = (dpLeft, dpTop, dpRight, dpBottom);
 
 //
 //  TToggleButton = class(TButton)
@@ -42,11 +44,11 @@ type
 
 
 
-  TgemCaptionBtnImagePanel = class(TJvCustomPanel)
-    fImage           : TJvImage;
+  TgemCaptionBtnImagePanel = class(TJvCaptionPanel)
+//    fImage              : TJvImage;
   private
-    fOnPnlMouseEnter    : TCapPnlEventMouseEnter;
-    fOnPnlMouseLeave    : TCapPnlEventMouseLeave;
+//    fOnPnlMouseEnter    : TCapPnlEventMouseEnter;
+//    fOnPnlMouseLeave    : TCapPnlEventMouseLeave;
     fOnImage_MouseLeave : TNotifyEvent;
     fOnImage_MouseEnter : TNotifyEvent;
     FCaption            : string;
@@ -79,15 +81,15 @@ type
 
     procedure DrawRotatedText(Rotation: Integer);
     procedure Toggle;
-    procedure CNCommand(var Message: TWMCommand); message CN_COMMAND;
+//    procedure CNCommand(var Message: TWMCommand); message CN_COMMAND;
     procedure SetGroupIndex(const Value: Integer);
     procedure TurnSiblingsOff;
 
-    procedure CMPanelMouseEnter(var Msg: TMessage); message CM_MOUSEENTER;
-    procedure CMPanelMouseLeave(var Msg: TMessage); message CM_MOUSELEAVE;
+//    procedure CMPanelMouseEnter(var Msg: TMessage); message CM_MOUSEENTER;
+//    procedure CMPanelMouseLeave(var Msg: TMessage); message CM_MOUSELEAVE;
 
-    procedure Click_ImageMouseLeaveHandler(Sender: TObject); { TNotifyEvent }
-    procedure Click_ImageMouseEnterHandler(Sender: TObject); { TNotifyEvent }
+//    procedure Click_ImageMouseLeaveHandler(Sender: TObject); { TNotifyEvent }
+//    procedure Click_ImageMouseEnterHandler(Sender: TObject); { TNotifyEvent }
 
     function GetImage_Picture: TPicture;
     procedure SetImage_Picture(const Value: TPicture);
@@ -139,7 +141,7 @@ type
     property OnClick_ImageMouseEnter: TNotifyEvent read fOnImage_MouseEnter write fOnImage_MouseEnter;
     property OnClick_ImageMouseLeave: TNotifyEvent read fOnImage_MouseLeave write fOnImage_MouseLeave;
 
-    property Align;
+//    property Align;
     property GroupIndex: Integer read FGroupIndex write SetGroupIndex default 0;
     property Selected: Boolean read fSelected write fSelected default false;
     property ClicksDisabled: Boolean read FClicksDisabled write FClicksDisabled;
@@ -155,30 +157,79 @@ type
     property CaptionPosition: TJvDrawPosition read FCaptionPosition write SetCaptionPosition default dpBottom;
     property CaptionFont: TFont read FCaptionFont write SetCaptionFont;
     property CaptionHeight: Integer read FCaptionHeight write SetCaptionHeight default 0;
-    property FlatButtons: Boolean read FFlat write SetFlat default False;
-    property OnStartAutoDrag: TJvAutoDragStartEvent read FOnStartAutoDrag write FOnStartAutoDrag;
-    property OnEndAutoDrag: TNotifyEvent read FEndDrag write FEndDrag;
-    property OutlookLook: Boolean read FOutlookLook write FOutlookLook default False;// SetOutlookLook default false;
+//    property FlatButtons: Boolean read FFlat write SetFlat default False;
+//    property OnStartAutoDrag: TJvAutoDragStartEvent read FOnStartAutoDrag write FOnStartAutoDrag;
+//    property OnEndAutoDrag: TNotifyEvent read FEndDrag write FEndDrag;
+//    property OutlookLook: Boolean read FOutlookLook write FOutlookLook default False;// SetOutlookLook default false;
+//    property Color;
+//    property Cursor;
+//    property ShowHint;
+//    property TabOrder;
+//    property TabStop;
+//    property Visible;
+//    property ParentColor;
+//    property ParentFont;
+//    property ParentShowHint;
+//    property Font;
+//    property Hint;
+//    property Enabled;
+//    property PopupMenu;
+//    property Resizable:Boolean read FResizable write SetResizable default True;
+
+//    property OnClick;
+//    property OnDblClick;
+//    property OnDragDrop;
+//    property OnDragOver;
+//    property OnEndDrag;
+//    property OnEnter;
+//    property OnExit;
+//    property OnMouseDown;
+//    property OnMouseMove;
+//    property OnMouseUp;
+//    property OnStartDrag;
+//    property OnResize;
+//    property OnMouseEnter: TCapPnlEventMouseEnter read fOnPnlMouseEnter write fOnPnlMouseEnter;
+//    property OnMouseLeave: TCapPnlEventMouseLeave read fOnPnlMouseLeave write fOnPnlMouseLeave;
+
+
+    property Align;
+    property AutoDrag: Boolean read FAutoDrag write FAutoDrag default True;
+//    property Buttons: TJvCapBtnStyles read FButtons write SetButtons;
+//    property BorderStyle default bsSingle;
+//    property Caption: string read FCaption write SetCaption;
+//    property CaptionColor: TColor read FCaptionColor write SetCaptionColor default clActiveCaption;
+//    property CaptionPosition: TJvDrawPosition read FCaptionPosition write SetCaptionPosition default dpLeft;
+//    property CaptionFont: TFont read FCaptionFont write SetCaptionFont;
+//    property CaptionHeight: Integer read FCaptionHeight write SetCaptionHeight default 0;
     property Color;
     property Cursor;
+    property DragCursor;
+    property FullRepaint;
+    property Locked;
+    property DragMode;
+    property Enabled;
+//    property FlatButtons: Boolean read FFlat write SetFlat default False;
+    property Font;
+    property Hint;
+//    property Icon: TIcon read FIcon write SetIcon;
+//    property OutlookLook: Boolean read FOutlookLook write SetOutlookLook;
+    property ParentColor;
+    property ParentFont;
+    property ParentShowHint;
+    property PopupMenu;
+    property Resizable:Boolean read FResizable write SetResizable default True;
     property ShowHint;
     property TabOrder;
     property TabStop;
     property Visible;
-    property ParentColor;
-    property ParentFont;
-    property ParentShowHint;
-    property Font;
-    property Hint;
-    property Enabled;
-    property PopupMenu;
-    property Resizable:Boolean read FResizable write SetResizable default True;
-
+//    property OnButtonClick: TJvCapBtnEvent read FButtonClick write FButtonClick;
     property OnClick;
     property OnDblClick;
     property OnDragDrop;
     property OnDragOver;
     property OnEndDrag;
+//    property OnStartAutoDrag: TJvAutoDragStartEvent read FOnStartAutoDrag write FOnStartAutoDrag;
+//    property OnEndAutoDrag: TNotifyEvent read FEndDrag write FEndDrag;
     property OnEnter;
     property OnExit;
     property OnMouseDown;
@@ -186,8 +237,7 @@ type
     property OnMouseUp;
     property OnStartDrag;
     property OnResize;
-    property OnMouseEnter: TCapPnlEventMouseEnter read fOnPnlMouseEnter write fOnPnlMouseEnter;
-    property OnMouseLeave: TCapPnlEventMouseLeave read fOnPnlMouseLeave write fOnPnlMouseLeave;
+
   end;
 
 
@@ -195,65 +245,71 @@ implementation
 
 function DrawText(Canvas: TCanvas; const Text: string; Len: Integer; var R: TRect; WinFlags: Integer): Integer; overload;
 begin
+  {$IFDEF USE_CODESITE}CodeSite.EnterMethod( 'DrawText' );{$ENDIF}
   {$IFDEF UNICODE}
   Result := Winapi.Windows.DrawText(Canvas.Handle, PChar(Text), Len, R, WinFlags and not DT_MODIFYSTRING); // make sure the string cannot be modified
   {$ELSE}
   Result := DrawText(Canvas, PAnsiChar(Text), Len, R, WinFlags and not DT_MODIFYSTRING); // make sure the string cannot be modified
   {$ENDIF UNICODE}
+  {$IFDEF USE_CODESITE}CodeSite.ExitMethod( 'DrawText' );{$ENDIF}
 end;
 
 { TgemCaptionBtnImagePanel }
 
 function TgemCaptionBtnImagePanel.CanStartDrag: Boolean;
 begin
+  {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'CanStartDrag' );{$ENDIF}
   Result := Align = alNone;
   if Assigned(FOnStartAutoDrag) then
     FOnStartAutoDrag(Self, Result);
+  {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'CanStartDrag' );{$ENDIF}
 end;
 
-procedure TgemCaptionBtnImagePanel.Click_ImageMouseEnterHandler(
-  Sender: TObject);
-begin
-  if fSelectedColor <> color then
-    Color := fMouseOverColor;
-{ Place your event-handling code here. }
-end;
+//procedure TgemCaptionBtnImagePanel.Click_ImageMouseEnterHandler(
+//  Sender: TObject);
+//begin
+//  if fSelectedColor <> color then
+//    Color := fMouseOverColor;
+//{ Place your event-handling code here. }
+//end;
+//
+//procedure TgemCaptionBtnImagePanel.Click_ImageMouseLeaveHandler(
+//  Sender: TObject);
+//begin
+//  if fSelectedColor <> color then
+//    Color := fgemNoramlColor;
+//{ Place your event-handling code here. }
+//end;
+//
+//procedure TgemCaptionBtnImagePanel.CMPanelMouseEnter(var Msg: TMessage);
+//begin
+//  if fSelectedColor <> color then
+//    Color := fMouseOverColor;
+//
+//  DoMouseEnter;
+//  inherited;
+//end;
+//
+//procedure TgemCaptionBtnImagePanel.CMPanelMouseLeave(var Msg: TMessage);
+//begin
+//  if fSelectedColor <> color then
+//    Color := fgemNoramlColor;
+//  DoMouseLeave;
+//  inherited;
+//end;
 
-procedure TgemCaptionBtnImagePanel.Click_ImageMouseLeaveHandler(
-  Sender: TObject);
-begin
-  if fSelectedColor <> color then
-    Color := fgemNoramlColor;
-{ Place your event-handling code here. }
-end;
-
-procedure TgemCaptionBtnImagePanel.CMPanelMouseEnter(var Msg: TMessage);
-begin
-  if fSelectedColor <> color then
-    Color := fMouseOverColor;
-
-  DoMouseEnter;
-  inherited;
-end;
-
-procedure TgemCaptionBtnImagePanel.CMPanelMouseLeave(var Msg: TMessage);
-begin
-  if fSelectedColor <> color then
-    Color := fgemNoramlColor;
-  DoMouseLeave;
-  inherited;
-end;
-
-procedure TgemCaptionBtnImagePanel.CNCommand(var Message: TWMCommand);
-begin
-  if Message.NotifyCode = BN_CLICKED then
-    Toggle
-  else
-    inherited;
-end;
+//procedure TgemCaptionBtnImagePanel.CNCommand(var Message: TWMCommand);
+//begin
+//  if Message.NotifyCode = BN_CLICKED then
+//    Toggle
+//  else
+//    inherited;
+//end;
+//
 
 constructor TgemCaptionBtnImagePanel.Create(AOwner: TComponent);
 begin
+  {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'Create' );{$ENDIF}
   inherited Create(AOwner);
   FCaptionFont := TFont.Create;
 
@@ -263,41 +319,52 @@ begin
   TabOrder := 0;
   CaptionPosition := dpBottom;
 
-  fImage := TJvImage.Create(Self);
-  fImage.Parent := Self;
+//  fImage := TJvImage.Create(Self);
+//  fImage.Parent := Self;
+  {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'Create' );{$ENDIF}
 end;
 
 
 procedure TgemCaptionBtnImagePanel.CreateParams(var Params: TCreateParams);
 begin
+  {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'CreateParams' );{$ENDIF}
   inherited CreateParams(Params);
   Params.Style := Params.Style or BS_PUSHLIKE  or BS_CHECKBOX;
   Params.WindowClass.style := Params.WindowClass.style and not (CS_HREDRAW or CS_VREDRAW);
+  {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'CreateParams' );{$ENDIF}
 end;
 
 destructor TgemCaptionBtnImagePanel.Destory;
 begin
-  FCaptionFont.Free;
+  {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'Destory' );{$ENDIF}
+//  FCaptionFont.Free;
   inherited Destroy;
+  {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'Destory' );{$ENDIF}
 end;
 
 
 procedure TgemCaptionBtnImagePanel.DoLeaveDrag;
 begin
+  {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'DoLeaveDrag' );{$ENDIF}
   if Assigned(FEndDrag) then
     FEndDrag(Self);
+  {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'DoLeaveDrag' );{$ENDIF}
 end;
 
 procedure TgemCaptionBtnImagePanel.DoMouseEnter;
 begin
-  if Assigned(FOnPnlMouseEnter) then
-    FOnPnlMouseEnter(Self);
+  {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'DoMouseEnter' );{$ENDIF}
+//  if Assigned(FOnPnlMouseEnter) then
+//    FOnPnlMouseEnter(Self);
+  {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'DoMouseEnter' );{$ENDIF}
 end;
 
 procedure TgemCaptionBtnImagePanel.DoMouseLeave;
 begin
-  if Assigned(FOnPnlMouseLeave) then
-    FOnPnlMouseLeave(Self);
+  {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'DoMouseLeave' );{$ENDIF}
+//  if Assigned(FOnPnlMouseLeave) then
+//    FOnPnlMouseLeave(Self);
+  {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'DoMouseLeave' );{$ENDIF}
 end;
 
 procedure TgemCaptionBtnImagePanel.DrawRotatedText(Rotation: Integer);
@@ -309,6 +376,7 @@ var
   Flags: Integer;
   R: TRect;
 begin
+  {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'DrawRotatedText' );{$ENDIF}
   if FCaption = '' then
     Exit;
     SetBkMode(Canvas.Handle, TRANSPARENT);
@@ -363,95 +431,123 @@ begin
         Flags := Flags or DT_NOCLIP; { bug or feature? }
       DrawText(Canvas, Caption, -1, R, Flags);
     end;
+  {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'DrawRotatedText' );{$ENDIF}
 end;
 
 
 procedure TgemCaptionBtnImagePanel.CreateWindowHandle(const Params: TCreateParams);
 begin
+  {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'CreateWindowHandle' );{$ENDIF}
   inherited  CreateWindowHandle(Params);
-  with fImage do begin
-    Left := 1;
-    Top := 1;
-    Width := 169;
-    Height := 160;
-    Align := alClient;
-
-    OnMouseEnter := OnClick_ImageMouseEnter;
-    OnMouseLeave := OnClick_ImageMouseLeave;
-  end;
+//  with fImage do begin
+//    Left := 1;
+//    Top := 1;
+//    Width := 169;
+//    Height := 160;
+//    Align := alClient;
+//
+//    OnMouseEnter := OnClick_ImageMouseEnter;
+//    OnMouseLeave := OnClick_ImageMouseLeave;
+//  end;
+  {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'CreateWindowHandle' );{$ENDIF}
 end;
 
 
 procedure TgemCaptionBtnImagePanel.CreateWnd;
 begin
+  {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'CreateWnd' );{$ENDIF}
   inherited CreateWnd;
   SendMessage(Handle, BM_SETCHECK, Integer(fSelected), 0);
+  {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'CreateWnd' );{$ENDIF}
 end;
 
 procedure TgemCaptionBtnImagePanel.SetImage_Picture(const Value: TPicture);
 begin
-  fImage.Picture.Assign(Value);
+  {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'SetImage_Picture' );{$ENDIF}
+//  fImage.Picture.Assign(Value);
+  {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'SetImage_Picture' );{$ENDIF}
 end;
 
 
 procedure TgemCaptionBtnImagePanel.SetImage_AutoSize(const Value: Boolean);
 begin
-  fImage.AutoSize := Value;
+  {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'SetImage_AutoSize' );{$ENDIF}
+//  fImage.AutoSize := Value;
+  {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'SetImage_AutoSize' );{$ENDIF}
 end;
 
 procedure TgemCaptionBtnImagePanel.SetImage_Center(const Value: Boolean);
 begin
-  fImage.Center := Value;
+  {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'SetImage_Center' );{$ENDIF}
+//  fImage.Center := Value;
+  {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'SetImage_Center' );{$ENDIF}
 end;
 
 
 function TgemCaptionBtnImagePanel.GetChecked: Boolean;
 begin
+  {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'GetChecked' );{$ENDIF}
   Result := fSelected;
+  {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'GetChecked' );{$ENDIF}
 end;
 
 function TgemCaptionBtnImagePanel.GetEffectiveCaptionHeight: Integer;
 begin
+  {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'GetEffectiveCaptionHeight' );{$ENDIF}
   if FCaptionHeight = 0 then
     Result := GetSystemMetrics(SM_CYCAPTION)
   else
     Result := FCaptionHeight;
+  {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'GetEffectiveCaptionHeight' );{$ENDIF}
 end;
 
 function TgemCaptionBtnImagePanel.GetImage_AutoSize: Boolean;
 begin
-  result := fImage.AutoSize;
+  {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'GetImage_AutoSize' );{$ENDIF}
+//  result := fImage.AutoSize;
+  {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'GetImage_AutoSize' );{$ENDIF}
 end;
 
 function TgemCaptionBtnImagePanel.GetImage_Center: Boolean;
 begin
-  result := fImage.Center;
+  {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'GetImage_Center' );{$ENDIF}
+//  result := fImage.Center;
+  {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'GetImage_Center' );{$ENDIF}
 end;
 
 function TgemCaptionBtnImagePanel.GetImage_Picture: TPicture;
 begin
-  result := fImage.Picture;
+  {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'GetImage_Picture' );{$ENDIF}
+//  result := fImage.Picture;
+  {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'GetImage_Picture' );{$ENDIF}
 end;
 
 function TgemCaptionBtnImagePanel.GetImage_Proportional: Boolean;
 begin
-  Result := fImage.Proportional;
+  {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'GetImage_Proportional' );{$ENDIF}
+//  Result := fImage.Proportional;
+  {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'GetImage_Proportional' );{$ENDIF}
 end;
 
 function TgemCaptionBtnImagePanel.GetImage_Stretch: Boolean;
 begin
-  result := fImage.Stretch;
+  {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'GetImage_Stretch' );{$ENDIF}
+//  result := fImage.Stretch;
+  {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'GetImage_Stretch' );{$ENDIF}
 end;
 
 function TgemCaptionBtnImagePanel.GetImage_Visible: Boolean;
 begin
-  Result := fImage.Visible;
+  {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'GetImage_Visible' );{$ENDIF}
+//  Result := fImage.Visible;
+  {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'GetImage_Visible' );{$ENDIF}
 end;
 
 
 procedure TgemCaptionBtnImagePanel.MouseDown(Button: TMouseButton;
   Shift: TShiftState; X, Y: Integer);
 begin
+  {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'MouseDown' );{$ENDIF}
   inherited MouseDown(Button, Shift, X, Y);
 
   FMouseDown := True;
@@ -470,20 +566,24 @@ begin
 //    Perform(Winapi.Messages.WM_SYSCOMMAND, Winapi.Messages.SC_DRAGMOVE, 0);
     {.$ENDIF JVCAPTIONPANEL_STD_BEHAVE}
   end;
+  {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'MouseDown' );{$ENDIF}
 end;
 
 procedure TgemCaptionBtnImagePanel.MouseMove(Shift: TShiftState; X, Y: Integer);
 begin
+  {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'MouseMove' );{$ENDIF}
   inherited MouseMove(Shift, X, Y);
   {$IFDEF JVCAPTIONPANEL_STD_BEHAVE}
   if FDragging then
     SetBounds(Left + X - FAnchorPos.X, Top + Y - FAnchorPos.Y, Width, Height);
   {$ENDIF JVCAPTIONPANEL_STD_BEHAVE}
+  {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'MouseMove' );{$ENDIF}
 end;
 
 procedure TgemCaptionBtnImagePanel.MouseUp(Button: TMouseButton;
   Shift: TShiftState; X, Y: Integer);
 begin
+  {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'MouseUp' );{$ENDIF}
   inherited MouseUp(Button, Shift, X, Y);
   if FDragging then
   begin
@@ -493,6 +593,7 @@ begin
     DoLeaveDrag;
   end;
   FDragging := False;
+  {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'MouseUp' );{$ENDIF}
 end;
 
 procedure TgemCaptionBtnImagePanel.Paint;
@@ -502,6 +603,7 @@ var
   FlatOffset: Integer;
   AdjustedCaptionHeight: Integer;
 begin
+  {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'Paint' );{$ENDIF}
   R := ClientRect;
   Canvas.Brush.Color := Color;
   Canvas.FillRect(R);
@@ -553,41 +655,54 @@ begin
   end;
   DrawRotatedText(Rotation);
 //  DrawButtons;
+  {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'Paint' );{$ENDIF}
 end;
 
 procedure TgemCaptionBtnImagePanel.Resize;
 begin
+  {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'Resize' );{$ENDIF}
   inherited Resize;
   Repaint;
+  {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'Resize' );{$ENDIF}
 end;
 
 procedure TgemCaptionBtnImagePanel.SetImage_Proportional(const Value: Boolean);
 begin
-  fImage.Proportional := (Value);
+  {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'SetImage_Proportional' );{$ENDIF}
+//  fImage.Proportional := (Value);
+  {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'SetImage_Proportional' );{$ENDIF}
 end;
 
 procedure TgemCaptionBtnImagePanel.SetImage_Strech(const Value: Boolean);
 begin
-  fImage.Stretch := (Value);
+  {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'SetImage_Strech' );{$ENDIF}
+//  fImage.Stretch := (Value);
+  {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'SetImage_Strech' );{$ENDIF}
 end;
 
 procedure TgemCaptionBtnImagePanel.SetImage_Visible(const Value: Boolean);
 begin
-  fImage.Visible := (Value);
+  {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'SetImage_Visible' );{$ENDIF}
+//  fImage.Visible := (Value);
+  {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'SetImage_Visible' );{$ENDIF}
 end;
 
 procedure TgemCaptionBtnImagePanel.SetResizable(const Value: Boolean);
 begin
+  {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'SetResizable' );{$ENDIF}
   if FResizable <> Value then
   begin
     FResizable := Value;
     RecreateWnd;
   end;
+  {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'SetResizable' );{$ENDIF}
 end;
 
 procedure TgemCaptionBtnImagePanel.Toggle;
 begin
+  {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'Toggle' );{$ENDIF}
   Selected := not fSelected;
+  {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'Toggle' );{$ENDIF}
 end;
 
 procedure TgemCaptionBtnImagePanel.TurnSiblingsOff;
@@ -595,6 +710,7 @@ var
   I: Integer;
   Sibling: TControl;
 begin
+  {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'TurnSiblingsOff' );{$ENDIF}
   if (Parent <> nil) and (GroupIndex <> 0) then
     with Parent do
       for I := 0 to ControlCount - 1 do
@@ -611,62 +727,76 @@ begin
               SetChecked(False);
             end;
       end;
+  {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'TurnSiblingsOff' );{$ENDIF}
 end;
 
 procedure TgemCaptionBtnImagePanel.SetButtons(const Value: TJvCapBtnStyles);
 begin
+  {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'SetButtons' );{$ENDIF}
 //  FButtons := Value;
+  {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'SetButtons' );{$ENDIF}
 end;
 
 procedure TgemCaptionBtnImagePanel.SetCaption(const Value: string);
 begin
+  {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'SetCaption' );{$ENDIF}
   FCaption := Value;
   inherited Caption := '';
   Invalidate;
+  {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'SetCaption' );{$ENDIF}
 end;
 
 
 procedure TgemCaptionBtnImagePanel.SetCaptionColor(const Value: TColor);
 begin
+  {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'SetCaptionColor' );{$ENDIF}
   if FCaptionColor <> Value then
   begin
     FCaptionColor := Value;
     Invalidate;
   end;
+  {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'SetCaptionColor' );{$ENDIF}
 end;
 
 
 procedure TgemCaptionBtnImagePanel.SetCaptionFont(const Value: TFont);
 begin
+  {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'SetCaptionFont' );{$ENDIF}
   FCaptionFont.Assign(Value);
   Invalidate;
+  {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'SetCaptionFont' );{$ENDIF}
 end;
 
 
 procedure TgemCaptionBtnImagePanel.SetCaptionHeight(const Value: Integer);
 begin
+  {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'SetCaptionHeight' );{$ENDIF}
   if FCaptionHeight <> Value then
   begin
     FCaptionHeight := Value;
     Invalidate;
     ReAlign;
   end;
+  {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'SetCaptionHeight' );{$ENDIF}
 end;
 
 
 procedure TgemCaptionBtnImagePanel.SetCaptionPosition(
   const Value: TJvDrawPosition);
 begin
+  {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'SetCaptionPosition' );{$ENDIF}
   if FCaptionPosition <> Value then
   begin
     FCaptionPosition := Value;
     RecreateWnd;
   end;
+  {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'SetCaptionPosition' );{$ENDIF}
 end;
 
 
 procedure TgemCaptionBtnImagePanel.SetChecked(Value: Boolean);
 begin
+  {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'SetChecked' );{$ENDIF}
   if fSelected <> Value then
   begin
     fSelected := Value;
@@ -676,6 +806,7 @@ begin
       TurnSiblingsOff;
     if not ClicksDisabled then Click;
   end;
+  {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'SetChecked' );{$ENDIF}
 end;
 
 
@@ -683,19 +814,25 @@ procedure TgemCaptionBtnImagePanel.SetFlat(const Value: Boolean);
 var
   I: TJvCapBtnStyle;
 begin
+  {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'SetFlat' );{$ENDIF}
   if FFlat <> Value then
   begin
 //    FFlat := Value;
 //    for I := Low(FButtonArray) to High(FButtonArray) do
 //      FButtonArray[I].Flat := FFlat;
   end;
+  {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'SetFlat' );{$ENDIF}
 end;
 
 procedure TgemCaptionBtnImagePanel.SetGroupIndex(const Value: Integer);
 begin
+  {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'SetGroupIndex' );{$ENDIF}
   FGroupIndex := Value;
   if Selected then
     TurnSiblingsOff;
+  {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'SetGroupIndex' );{$ENDIF}
 end;
 
 end.
+
+

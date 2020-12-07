@@ -113,7 +113,7 @@
         <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
         <VerInfo_Keys>CompanyName=;FileDescription=$(MSBuildProjectName);FileVersion=1.0.0.0;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProgramID=com.embarcadero.$(MSBuildProjectName);ProductName=$(MSBuildProjectName);ProductVersion=1.0.0.0;Comments=</VerInfo_Keys>
         <VerInfo_Locale>1033</VerInfo_Locale>
-        <DCC_UsePackage>rtl;GEMComponentsR;$(DCC_UsePackage)</DCC_UsePackage>
+        <DCC_UsePackage>rtl;GEMComponentsR;CnPack_D103R;$(DCC_UsePackage)</DCC_UsePackage>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Base_Win64)'!=''">
         <DCC_UsePackage>rtl;GEMComponentsR;$(DCC_UsePackage)</DCC_UsePackage>
@@ -156,6 +156,7 @@
         <DCCReference Include="rtl.dcp"/>
         <DCCReference Include="DesignIDE.dcp"/>
         <DCCReference Include="GEMComponentsR.dcp"/>
+        <DCCReference Include="CnPack_D103R.dcp"/>
         <DCCReference Include="ComponentRegistration\AutoCompletEditReg.pas"/>
         <DCCReference Include="ComponentRegistration\PJDropFilesDsgn.pas">
             <Form>PJExtFileFilterExtPEDlg</Form>

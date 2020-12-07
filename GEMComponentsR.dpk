@@ -41,9 +41,12 @@ requires
   JvStdCtrls,
   vcldb,
   JvCore,
-  NexusDB450db270,
-  NexusDB450ll270,
-  NexusDB450sd270;
+  NexusDB450db260,
+  NexusDB450ll260,
+  NexusDB450sd260,
+  JvControls,
+  CnPack_D103R,
+  CodeSiteLoggingPkg;
 
 contains
   GEMUpdaterPanel in 'Source\GEMUpdaterPanel.pas',
@@ -78,6 +81,6 @@ contains
   adpDBEdit in 'Source\adpDBEdit.pas',
   adpEdit in 'Source\adpEdit.pas',
   SBPro in 'Source\SBPro.pas',
-  CnColorGrid in 'Source\CnColorGrid.pas';
+  gemPanelImageBtn in 'Source\gemPanelImageBtn.pas';
 
 end.
