@@ -67,3 +67,5 @@ __recovery/
 *.local
 *.local
 *.identcache
+*.local
+GEMComponentsR.identcache

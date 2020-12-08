@@ -81,6 +81,7 @@ contains
   adpDBEdit in 'Source\adpDBEdit.pas',
   adpEdit in 'Source\adpEdit.pas',
   SBPro in 'Source\SBPro.pas',
-  gemPanelImageBtn in 'Source\gemPanelImageBtn.pas';
+  gemPanelImageBtn in 'Source\gemPanelImageBtn.pas',
+  gemCapPanelBtn in 'Source\gemCapPanelBtn.pas';
 
 end.

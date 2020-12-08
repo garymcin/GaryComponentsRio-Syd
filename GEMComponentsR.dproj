@@ -222,6 +222,7 @@
         <DCCReference Include="Source\adpEdit.pas"/>
         <DCCReference Include="Source\SBPro.pas"/>
         <DCCReference Include="Source\gemPanelImageBtn.pas"/>
+        <DCCReference Include="Source\gemCapPanelBtn.pas"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>

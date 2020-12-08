@@ -13,7 +13,7 @@ uses
  GEMProcessTimer, gemArrow, SelColVisGrid, ColorPanelBtn, Preview, ColorButton,
  gemCustomButton, adpMRU, GEMDBLabel, URLLabel, FindFile, adpDBEdit, GemDBGrid,
  gemDBComboBox, gemDBLookupComboBox, PJVersionInfo, GEMColorButton, cnColorGrid,
- gemPanelImageBtn;
+ gemPanelImageBtn, gemCapPanelBtn;
 
 
 //  System.Classes, AboutFindFile, adpDBDateTimePicker,  adpEdit,
@@ -33,7 +33,8 @@ begin
                                      TPaperPreview, TgemShapeBtn, TadpMRU, TGEMDBLabel,
                                      TGEMUrlLabel, TFindFile, TGemDBGrid, TadpDBEdit,
                                      TgemDBComboBox, TgemDBLookupComboBox, TPJVersionInfo,
-                                     TGEMColorButton, TCnColorGrid, TgemCaptionBtnImagePanel]);
+                                     TGEMColorButton, TCnColorGrid, TgemCaptionBtnImagePanel,
+                                     TgemCapPanelBtn]);
 
 
 
