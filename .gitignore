@@ -69,3 +69,6 @@ __recovery/
 *.identcache
 *.local
 GEMComponentsR.identcache
+GEMComponentsR.identcache
+GEMComponentsR.dproj.local
+DCLGEMComponentsR.identcache

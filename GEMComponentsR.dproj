@@ -203,7 +203,6 @@
         <DCCReference Include="Source\DBControlLists.pas"/>
         <DCCReference Include="Source\GEMDBGridEdit.pas">
             <Form>GEMDBGridEditForm</Form>
-            <FormType>dfm</FormType>
         </DCCReference>
         <DCCReference Include="Source\GEMComponentsGlobal.pas"/>
         <DCCReference Include="Source\PSEffect.pas"/>

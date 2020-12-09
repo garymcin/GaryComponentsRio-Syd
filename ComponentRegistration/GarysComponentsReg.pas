@@ -12,17 +12,12 @@ uses
  GEMUpdaterPanel, GemMRUList, SBPro, gemResistor, ModListnxQuery, ModListnxTable,
  GEMProcessTimer, gemArrow, SelColVisGrid, ColorPanelBtn, Preview, ColorButton,
  gemCustomButton, adpMRU, GEMDBLabel, URLLabel, FindFile, adpDBEdit, GemDBGrid,
- gemDBComboBox, gemDBLookupComboBox, PJVersionInfo, GEMColorButton, cnColorGrid,
+ gemDBComboBox, gemDBLookupComboBox, PJVersionInfo, GEMColorButton,
+{$IFDEF VER340}
+  cnColorGrid,
+{$ENDIF}
  gemPanelImageBtn, gemCapPanelBtn;
 
-
-//  System.Classes, AboutFindFile, adpDBDateTimePicker,  adpEdit,
-//  adpInstanceControl, GEMCalendar, ColorButton, ColorButtonSpecial,
-//  ,  DBTabControl, ExtentedDBGrid,
-//  GEMadpDBCheckBox, GEMDBGridExtended, SelColVisGrid,
-//  GEMDBMaskEdit, GemInputLabel,
-//  ModListnxQuery, ModListnxTable, TGEMListBx, WindowMng, DateLabel,
-//  URLLabel, ;
 
 procedure Register;
 begin
@@ -33,23 +28,13 @@ begin
                                      TPaperPreview, TgemShapeBtn, TadpMRU, TGEMDBLabel,
                                      TGEMUrlLabel, TFindFile, TGemDBGrid, TadpDBEdit,
                                      TgemDBComboBox, TgemDBLookupComboBox, TPJVersionInfo,
-                                     TGEMColorButton, TCnColorGrid, TgemCaptionBtnImagePanel,
-                                     TgemCapPanelBtn]);
+                                     TGEMColorButton,
+                                   {$IFDEF VER340}
+                                     TCnColorGrid,
+                                   {$ENDIF}
+                                     TgemCaptionBtnImagePanel, TgemCapPanelBtn]);
 
 
-
-//  RegisterComponents('Garys Stuff', [TGEMFindFile, TadpDBDateTimePicker,
-//                                     TadpEdit, TadpInstanceControl,
-//                                     TColorButton, TColorButtonSpecial,
-//                                     TDBTabControl, TExtendedDBGrid, TGEMadpDBCheckBox,
-//
-//                                      TGEMDBGridExtended, TGEMInputLabel,
-//                                     TGEMInputButton,  ,
-//                                     TGEMDBMaskEdit
-//
-//                                     , TGEMListBox, TWindowManager,
-//                                     TGEMDateLabel, TGEMUrlLabel, {, TEnhDBGrid,
-//                                     TGEMDBGridExtendedNew}]);
 end;
 
 end.

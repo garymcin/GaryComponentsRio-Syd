@@ -227,18 +227,41 @@ begin
 //  CaptionPosition := dpBottom;
 
   fImage := TJvImage.Create(Self);
+
+
+{
+  FIcon := TIcon.Create;
+  // (rom) Warning! This seems no standard Windows font
+//  FCaptionFont.Name := 'MS Shell Dlg 2';
+  FCaptionFont.Size := 10;
+  FCaptionFont.Style := [fsBold];
+  FCaptionFont.Color := clWhite;
+  FCaptionFont.OnChange := DoCaptionFontChange;
+  FCaptionPosition := dpLeft;
+  FAutoDrag := True;
+  FOffset := 8;
+  FCaptionColor := clActiveCaption;
+  FFlat := False;
+  for I := Low(FButtonArray) to High(FButtonArray) do //Iterate
+  begin
+    FButtonArray[I] := TJvCapBtn.Create(Self);
+    FButtonArray[I].Parent := Self;
+    FButtonArray[I].Style := I;
+    FButtonArray[I].Flat := FFlat;
+  end;
+  FButtons := [];
+  BorderStyle := bsSingle;
+
+  FCaptionOffsetSmall := 2;
+  FCaptionOffsetLarge := 3;
+  FOutlookLook := False;
+  FResizable := True;
+
+}
+
   {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'Create' );{$ENDIF}
 end;
 
-
-procedure TgemCapPanelBtn.CreateParams(var Params: TCreateParams);
-begin
-  {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'CreateParams' );{$ENDIF}
-  inherited CreateParams(Params);
-  Params.Style := Params.Style or BS_PUSHLIKE  or BS_CHECKBOX;
-  Params.WindowClass.style := Params.WindowClass.style and not (CS_HREDRAW or CS_VREDRAW);
-  {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'CreateParams' );{$ENDIF}
-end;
 
 destructor TgemCapPanelBtn.Destory;
 begin
@@ -247,6 +270,28 @@ begin
   Fimage.Free;
   inherited Destroy;
   {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'Destory' );{$ENDIF}
+end;
+
+
+procedure TgemCapPanelBtn.CreateParams(var Params: TCreateParams);
+begin
+  {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'CreateParams' );{$ENDIF}
+  inherited CreateParams(Params);
+  // from Jedi Unit JcCaptionPanel
+  if BorderStyle = bsSingle then
+    with Params do
+    begin
+      if Resizable then
+        Style := Style or WS_THICKFRAME
+      else
+        Style := Style or WS_DLGFRAME;
+      ExStyle := ExStyle and not WS_EX_CLIENTEDGE;
+    end;
+
+//  old stuff
+//  Params.Style := Params.Style or BS_PUSHLIKE  or BS_CHECKBOX;
+//  Params.WindowClass.style := Params.WindowClass.style and not (CS_HREDRAW or CS_VREDRAW);
+  {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'CreateParams' );{$ENDIF}
 end;
 
 
@@ -264,7 +309,6 @@ begin
     OnMouseEnter := OnImageMouseEnter;
     OnMouseLeave := OnImageMouseLeave;
     fImage.Parent := Self;
-
   end;
   {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'CreateWindowHandle' );{$ENDIF}
 end;

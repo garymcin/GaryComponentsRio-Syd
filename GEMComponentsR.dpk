@@ -82,6 +82,9 @@ contains
   adpEdit in 'Source\adpEdit.pas',
   SBPro in 'Source\SBPro.pas',
   gemPanelImageBtn in 'Source\gemPanelImageBtn.pas',
+  {$IFDEF VER240}
+  CnColorGrid in 'Source\CnColorGrid.pas',
+  {$ENDIF}
   gemCapPanelBtn in 'Source\gemCapPanelBtn.pas';
 
 end.
