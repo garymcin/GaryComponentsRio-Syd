@@ -20,7 +20,11 @@ type
 
   TgemImPnlBtnState = (gim_MouseOver, gim_Seletected, gim_Normal);
   TJvDrawPosition   = (dpLeft, dpTop, dpRight, dpBottom);
+  TJvAutoDragStartEvent = procedure(Sender: TObject; var AllowDrag: Boolean) of object;
 
+  {$IFDEF RTL230_UP}
+  [ComponentPlatformsAttribute(pidWin32 or pidWin64)]
+  {$ENDIF RTL230_UP}
 
   TgemCapPanelBtn = class(TJvCustomPanel)
     fImage              : TJvImage;
@@ -29,10 +33,6 @@ type
     fOnPnlMouseLeave    : TCapPnlEventMouseLeave;
     fOnImage_MouseLeave : TNotifyEvent;
     fOnImage_MouseEnter : TNotifyEvent;
-    fImage_Align        : TAlign;
-    fImage_Width        : Integer;
-    fImage_Height       : Integer;
-    fImage_AutoSize     : Boolean;
 
     FCaption            : string;
     FCaptionFont        : TFont;
@@ -44,7 +44,7 @@ type
     fSelectedColor      : TColor;
     fMouseOverColor     : TColor;
     fBtnImPnlGroupIndex : Integer;
-    fgemNoramlColor     : TColor;
+    fgemNormalColor     : TColor;
     FGroupIndex         : Integer;
     fSelected           : Boolean;
     FClicksDisabled     : Boolean;
@@ -80,7 +80,6 @@ type
     procedure SetImage_Proportional(const Value: Boolean);
     procedure SetImage_Strech(const Value: Boolean);
     procedure SetImage_Visible(const Value: Boolean);
-//    function GetImage_AutoSize: Boolean;
     function GetImage_Center: Boolean;
     procedure SetImage_AutoSize(const Value: Boolean);
     procedure SetImage_Center(const Value: Boolean);
@@ -94,6 +93,12 @@ type
     procedure setImageAlign(const Value: TAlign);
     procedure SetImageHeight(const Value: Integer);
     procedure SetImageWidth(const Value: Integer);
+
+    procedure DrawRotatedText(Rotation: Integer);
+    function getImageAlign: TAlign;
+    function GetImage_Height: Integer;
+    function GetImage_Width: Integer;
+    function GetImage_AutoSize: Boolean;
   protected
     function GetEffectiveCaptionHeight: Integer;
     function CanStartDrag: Boolean; virtual;
@@ -107,28 +112,28 @@ type
     procedure MouseDown(Button: TMouseButton; Shift: TShiftState; X, Y: Integer); override;
     procedure MouseUp(Button: TMouseButton; Shift: TShiftState; X, Y: Integer); override;
     procedure MouseMove(Shift: TShiftState; X, Y: Integer); override;
-    procedure DrawRotatedText(Rotation: Integer);
+//    procedure DrawRotatedText(Rotation: Integer);
     procedure Paint; override;
     procedure Resize; override;
     procedure DoLeaveDrag; virtual;
-    procedure AlignControls(AControl: TControl; var R: TRect);
+    procedure AlignControls(AControl: TControl; var R: TRect); override;
   public
     constructor Create(AOwner: TComponent); override;
     destructor Destory;
   published
     property BtnImPnlGroupIndex: Integer read fBtnImPnlGroupIndex write fBtnImPnlGroupIndex default 0;
     property ClicksDisabled: Boolean read FClicksDisabled write FClicksDisabled;
-    property gemNoramlStateColor: TColor read fgemNoramlColor write fgemNoramlColor default clBtnFace;
+    property gemNormalStateColor: TColor read fgemNormalColor write fgemNormalColor default clBtnFace;
     property GroupIndex: Integer read FGroupIndex write SetGroupIndex default 0;
-    property Image_Align: TAlign read fImage_Align write setImageAlign;
-    property Image_AutoSize: Boolean read fImage_AutoSize write  SetImage_AutoSize;
+    property Image_Align: TAlign read getImageAlign write setImageAlign default alClient;
+    property Image_AutoSize: Boolean read GetImage_AutoSize write  SetImage_AutoSize;
     property Image_Center: Boolean read GetImage_Center write  SetImage_Center;
     property Image_Picture: TPicture read GetImage_Picture write SetImage_Picture;
     property Image_Proportional: Boolean read GetImage_Proportional write SetImage_Proportional;
     property Image_Stretch: Boolean read GetImage_Stretch write SetImage_Strech;
     property Image_Visible: Boolean read GetImage_Visible write SetImage_Visible;
-    property Image_Width: Integer read fImage_Width write SetImageWidth;
-    property Image_Height: Integer read fImage_Height write SetImageHeight;
+    property Image_Width: Integer read GetImage_Width write SetImageWidth default 50;
+    property Image_Height: Integer read GetImage_Height write SetImageHeight default 50;
 
     property MouseOverColor: TColor read FMouseOverColor write FMouseOverColor default clGray;
     property Selected: Boolean read fSelected write fSelected default false;
@@ -144,7 +149,7 @@ type
     property CaptionColor: TColor read FCaptionColor write SetCaptionColor default clActiveCaption;
     property CaptionPosition: TJvDrawPosition read FCaptionPosition write SetCaptionPosition default dpLeft;
     property CaptionFont: TFont read FCaptionFont write SetCaptionFont;
-    property CaptionHeight: Integer read FCaptionHeight write SetCaptionHeight default 0;
+    property CaptionHeight: Integer read FCaptionHeight write SetCaptionHeight default 15;
     property Color;
     property Cursor;
     property DragCursor;
@@ -177,7 +182,6 @@ type
     property OnMouseUp;
     property OnStartDrag;
     property OnResize;
-
   end;
 
 
@@ -224,40 +228,11 @@ begin
   Height := 95;
   BevelOuter := bvNone;
   TabOrder := 0;
-//  CaptionPosition := dpBottom;
+  CaptionPosition := dpBottom;
 
   fImage := TJvImage.Create(Self);
 
-
-{
-  FIcon := TIcon.Create;
-  // (rom) Warning! This seems no standard Windows font
-//  FCaptionFont.Name := 'MS Shell Dlg 2';
-  FCaptionFont.Size := 10;
-  FCaptionFont.Style := [fsBold];
-  FCaptionFont.Color := clWhite;
-  FCaptionFont.OnChange := DoCaptionFontChange;
-  FCaptionPosition := dpLeft;
-  FAutoDrag := True;
-  FOffset := 8;
-  FCaptionColor := clActiveCaption;
-  FFlat := False;
-  for I := Low(FButtonArray) to High(FButtonArray) do //Iterate
-  begin
-    FButtonArray[I] := TJvCapBtn.Create(Self);
-    FButtonArray[I].Parent := Self;
-    FButtonArray[I].Style := I;
-    FButtonArray[I].Flat := FFlat;
-  end;
-  FButtons := [];
-  BorderStyle := bsSingle;
-
-  FCaptionOffsetSmall := 2;
-  FCaptionOffsetLarge := 3;
-  FOutlookLook := False;
-  FResizable := True;
-
-}
+  Color := gemNormalStateColor;
 
   {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'Create' );{$ENDIF}
 end;
@@ -290,7 +265,7 @@ begin
 
 //  old stuff
 //  Params.Style := Params.Style or BS_PUSHLIKE  or BS_CHECKBOX;
-//  Params.WindowClass.style := Params.WindowClass.style and not (CS_HREDRAW or CS_VREDRAW);
+  Params.WindowClass.style := Params.WindowClass.style and not (CS_HREDRAW or CS_VREDRAW);
   {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'CreateParams' );{$ENDIF}
 end;
 
@@ -300,12 +275,6 @@ begin
   {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'CreateWindowHandle' );{$ENDIF}
   inherited  CreateWindowHandle(Params);
   with fImage do begin
-    Left := 1;
-    Top := 1;
-    Width := 169;
-    Height := 160;
-    Align := alNone;
-
     OnMouseEnter := OnImageMouseEnter;
     OnMouseLeave := OnImageMouseLeave;
     fImage.Parent := Self;
@@ -325,26 +294,18 @@ end;
 
 procedure TgemCapPanelBtn.setImageAlign(const Value: TAlign);
 begin
-  fImage_Align := Value;
   fImage.Align := value;
 end;
 
 
 procedure TgemCapPanelBtn.SetImageHeight(const Value: Integer);
 begin
-  fImage.AutoSize := False;
-  fImage_AutoSize := False;
-
-  fImage_Height := Value;
   fImage.Height := Value;
 end;
 
+
 procedure TgemCapPanelBtn.SetImageWidth(const Value: Integer);
 begin
-  fImage.AutoSize := False;
-  fImage_AutoSize := False;
-
-  fImage_Width := Value;
   fImage.Width := Value;
 end;
 
@@ -386,10 +347,6 @@ begin
 
     dpBottom: begin
       FCaptionRect := Rect(FBevel, ClientHeight - AdjustedCaptionHeight - FBevel, ClientWidth - FBevel, ClientHeight - FBevel);
-//      fImage.Top := fBevel;
-//      fImage.Left := FBevel;
-//      fImage.Width := Self.ClientWidth - FBevel;
-//      fImage.Height := ClientHeight - AdjustedCaptionHeight - FBevel;
     end;
   end; //case
 
@@ -430,38 +387,43 @@ begin
   {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'CanStartDrag' );{$ENDIF}
 end;
 
+
 procedure TgemCapPanelBtn.OnImageMouseEnterHandler(
   Sender: TObject);
 begin
-  if fSelectedColor <> color then
-    Color := fMouseOverColor;
+//  if fSelectedColor <> Self.color then
+    fImage.Color := fMouseOverColor;
 { Place your event-handling code here. }
 end;
+
 
 procedure TgemCapPanelBtn.OnImageMouseLeaveHandler(
   Sender: TObject);
 begin
   if fSelectedColor <> color then
-    Color := fgemNoramlColor;
+    fImage.Color := fgemNormalColor;
 { Place your event-handling code here. }
 end;
+
 
 procedure TgemCapPanelBtn.CMPanelMouseEnter(var Msg: TMessage);
 begin
   if fSelectedColor <> color then
-    Color := fMouseOverColor;
+    fImage.Color := fMouseOverColor;
 
   DoMouseEnter;
   inherited;
 end;
 
+
 procedure TgemCapPanelBtn.CMPanelMouseLeave(var Msg: TMessage);
 begin
   if fSelectedColor <> color then
-    Color := fgemNoramlColor;
+    fImage.Color := fgemNormalColor;
   DoMouseLeave;
   inherited;
 end;
+
 
 procedure TgemCapPanelBtn.CNCommand(var Message: TWMCommand);
 begin
@@ -480,6 +442,7 @@ begin
   {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'DoLeaveDrag' );{$ENDIF}
 end;
 
+
 procedure TgemCapPanelBtn.DoMouseEnter;
 begin
   {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'DoMouseEnter' );{$ENDIF}
@@ -487,6 +450,7 @@ begin
     FOnPnlMouseEnter(Self);
   {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'DoMouseEnter' );{$ENDIF}
 end;
+
 
 procedure TgemCapPanelBtn.DoMouseLeave;
 begin
@@ -570,7 +534,7 @@ end;
 procedure TgemCapPanelBtn.SetImage_AutoSize(const Value: Boolean);
 begin
   {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'SetImage_AutoSize' );{$ENDIF}
-  fImage_AutoSize := value;
+//  fImage_AutoSize := value;
   fImage.AutoSize := Value;
   {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'SetImage_AutoSize' );{$ENDIF}
 end;
@@ -603,19 +567,39 @@ begin
 end;
 
 
-//function TgemCapPanelBtn.GetImage_AutoSize: Boolean;
-//begin
-//  {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'GetImage_AutoSize' );{$ENDIF}
-//  result := fImage_AutoSize;
-//  {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'GetImage_AutoSize' );{$ENDIF}
-//end;
-//
+
+function TgemCapPanelBtn.getImageAlign: TAlign;
+begin
+  Result := fImage.Align;
+end;
+
+
+
+function TgemCapPanelBtn.GetImage_AutoSize: Boolean;
+begin
+  result := fImage.AutoSize;
+end;
+
+
 function TgemCapPanelBtn.GetImage_Center: Boolean;
 begin
   {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'GetImage_Center' );{$ENDIF}
   result := fImage.Center;
   {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'GetImage_Center' );{$ENDIF}
 end;
+
+
+function TgemCapPanelBtn.GetImage_Height: Integer;
+begin
+  result := fImage.Height;
+end;
+
+
+function TgemCapPanelBtn.GetImage_Width: Integer;
+begin
+  result := fImage.Width;
+end;
+
 
 function TgemCapPanelBtn.GetImage_Picture: TPicture;
 begin
@@ -624,12 +608,14 @@ begin
   {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'GetImage_Picture' );{$ENDIF}
 end;
 
+
 function TgemCapPanelBtn.GetImage_Proportional: Boolean;
 begin
   {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'GetImage_Proportional' );{$ENDIF}
   Result := fImage.Proportional;
   {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'GetImage_Proportional' );{$ENDIF}
 end;
+
 
 function TgemCapPanelBtn.GetImage_Stretch: Boolean;
 begin
@@ -642,6 +628,29 @@ end;
 function TgemCapPanelBtn.GetImage_Visible: Boolean;
 begin
   Result := fImage.Visible;
+end;
+
+procedure TgemCapPanelBtn.SetImage_Proportional(const Value: Boolean);
+begin
+  {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'SetImage_Proportional' );{$ENDIF}
+  fImage.Proportional := (Value);
+  {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'SetImage_Proportional' );{$ENDIF}
+end;
+
+
+procedure TgemCapPanelBtn.SetImage_Strech(const Value: Boolean);
+begin
+  {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'SetImage_Strech' );{$ENDIF}
+  fImage.Stretch := (Value);
+  {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'SetImage_Strech' );{$ENDIF}
+end;
+
+
+procedure TgemCapPanelBtn.SetImage_Visible(const Value: Boolean);
+begin
+  {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'SetImage_Visible' );{$ENDIF}
+  fImage.Visible := (Value);
+  {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'SetImage_Visible' );{$ENDIF}
 end;
 
 
@@ -670,6 +679,7 @@ begin
   {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'MouseDown' );{$ENDIF}
 end;
 
+
 procedure TgemCapPanelBtn.MouseMove(Shift: TShiftState; X, Y: Integer);
 begin
   {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'MouseMove' );{$ENDIF}
@@ -680,6 +690,7 @@ begin
   {$ENDIF JVCAPTIONPANEL_STD_BEHAVE}
   {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'MouseMove' );{$ENDIF}
 end;
+
 
 procedure TgemCapPanelBtn.MouseUp(Button: TMouseButton;
   Shift: TShiftState; X, Y: Integer);
@@ -697,33 +708,13 @@ begin
   {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'MouseUp' );{$ENDIF}
 end;
 
+
 procedure TgemCapPanelBtn.Resize;
 begin
   {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'Resize' );{$ENDIF}
   inherited Resize;
   Repaint;
   {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'Resize' );{$ENDIF}
-end;
-
-procedure TgemCapPanelBtn.SetImage_Proportional(const Value: Boolean);
-begin
-  {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'SetImage_Proportional' );{$ENDIF}
-  fImage.Proportional := (Value);
-  {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'SetImage_Proportional' );{$ENDIF}
-end;
-
-procedure TgemCapPanelBtn.SetImage_Strech(const Value: Boolean);
-begin
-  {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'SetImage_Strech' );{$ENDIF}
-  fImage.Stretch := (Value);
-  {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'SetImage_Strech' );{$ENDIF}
-end;
-
-procedure TgemCapPanelBtn.SetImage_Visible(const Value: Boolean);
-begin
-  {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'SetImage_Visible' );{$ENDIF}
-  fImage.Visible := (Value);
-  {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'SetImage_Visible' );{$ENDIF}
 end;
 
 
@@ -738,12 +729,14 @@ begin
   {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'SetResizable' );{$ENDIF}
 end;
 
+
 procedure TgemCapPanelBtn.Toggle;
 begin
   {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'Toggle' );{$ENDIF}
   Selected := not fSelected;
   {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'Toggle' );{$ENDIF}
 end;
+
 
 procedure TgemCapPanelBtn.TurnSiblingsOff;
 var
@@ -852,6 +845,7 @@ begin
     TurnSiblingsOff;
   {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'SetGroupIndex' );{$ENDIF}
 end;
+
 
 
 end.
