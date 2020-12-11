@@ -6,7 +6,7 @@ uses
 
   System.Classes, System.SysUtils,
 
-  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.ActnList,
+  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.ActnList,  Vcl.Dialogs, Vcl.Buttons,
 
   CodeSiteLogging,
 
@@ -19,21 +19,20 @@ type
   TCapPnlEventMouseLeave = procedure(sender: TgemCapPanelBtn) of object;
 
   TgemImPnlBtnState = (gim_MouseOver, gim_Seletected, gim_Normal);
+  TButtonState = (bsUp, bsDisabled, bsDown, bsExclusive);
   TJvDrawPosition   = (dpLeft, dpTop, dpRight, dpBottom);
   TJvAutoDragStartEvent = procedure(Sender: TObject; var AllowDrag: Boolean) of object;
 
-  {$IFDEF RTL230_UP}
-  [ComponentPlatformsAttribute(pidWin32 or pidWin64)]
-  {$ENDIF RTL230_UP}
+//  {$IFDEF RTL230_UP}
+//  [ComponentPlatformsAttribute(pidWin32 or pidWin64)]
+//  {$ENDIF RTL230_UP}
+
 
   TgemCapPanelBtn = class(TJvCustomPanel)
     fImage              : TJvImage;
   private
     fOnPnlMouseEnter    : TCapPnlEventMouseEnter;
     fOnPnlMouseLeave    : TCapPnlEventMouseLeave;
-    fOnImage_MouseLeave : TNotifyEvent;
-    fOnImage_MouseEnter : TNotifyEvent;
-
     FCaption            : string;
     FCaptionFont        : TFont;
     fCaptionHeight      : integer;
@@ -44,9 +43,9 @@ type
     fSelectedColor      : TColor;
     fMouseOverColor     : TColor;
     fBtnImPnlGroupIndex : Integer;
-    fgemNormalColor     : TColor;
+    fgemNormalStateColor: TColor;
     FGroupIndex         : Integer;
-    fSelected           : Boolean;
+    FDown               : Boolean;
     FClicksDisabled     : Boolean;
     FAutoDrag           : Boolean;
     FFlat               : Boolean;
@@ -60,17 +59,13 @@ type
     FAnchorPos          : TPoint;
     FCaptionOffsetSmall : Integer;
     FCaptionOffsetLarge : Integer;
+    FAllowAllUp         : Boolean;
 
-    procedure Toggle;
-    procedure CNCommand(var Message: TWMCommand); message CN_COMMAND;
     procedure SetGroupIndex(const Value: Integer);
-    procedure TurnSiblingsOff;
 
     procedure CMPanelMouseEnter(var Msg: TMessage); message CM_MOUSEENTER;
     procedure CMPanelMouseLeave(var Msg: TMessage); message CM_MOUSELEAVE;
-
-    procedure OnImageMouseLeaveHandler(Sender: TObject); { TNotifyEvent }
-    procedure OnImageMouseEnterHandler(Sender: TObject); { TNotifyEvent }
+    procedure CMButtonPressed(var Message: TMessage); message CM_BUTTONPRESSED;
 
     function GetImage_Picture: TPicture;
     procedure SetImage_Picture(const Value: TPicture);
@@ -99,31 +94,36 @@ type
     function GetImage_Height: Integer;
     function GetImage_Width: Integer;
     function GetImage_AutoSize: Boolean;
+
+    procedure SetDown(Value: Boolean);
+    procedure SetAllowAllUp(const Value: Boolean);
+    procedure UpdateExclusive;
   protected
+    FState: TButtonState;
+
     function GetEffectiveCaptionHeight: Integer;
     function CanStartDrag: Boolean; virtual;
     procedure DoMouseEnter; virtual;
     procedure DoMouseLeave; virtual;
     procedure CreateWindowHandle(const Params: TCreateParams); override;
     procedure CreateParams(var Params: TCreateParams); override;
-    procedure CreateWnd; override;
-    function GetChecked: Boolean; //override;
-    procedure SetChecked(Value: Boolean); //override;
+//    procedure CreateWnd; override;
     procedure MouseDown(Button: TMouseButton; Shift: TShiftState; X, Y: Integer); override;
     procedure MouseUp(Button: TMouseButton; Shift: TShiftState; X, Y: Integer); override;
     procedure MouseMove(Shift: TShiftState; X, Y: Integer); override;
-//    procedure DrawRotatedText(Rotation: Integer);
     procedure Paint; override;
     procedure Resize; override;
     procedure DoLeaveDrag; virtual;
     procedure AlignControls(AControl: TControl; var R: TRect); override;
+//    procedure WndProc(var message: TMessage); override;
   public
     constructor Create(AOwner: TComponent); override;
     destructor Destory;
+    procedure Click; override;
   published
+    property AllowAllUp: Boolean read FAllowAllUp write SetAllowAllUp default False;
     property BtnImPnlGroupIndex: Integer read fBtnImPnlGroupIndex write fBtnImPnlGroupIndex default 0;
     property ClicksDisabled: Boolean read FClicksDisabled write FClicksDisabled;
-    property gemNormalStateColor: TColor read fgemNormalColor write fgemNormalColor default clBtnFace;
     property GroupIndex: Integer read FGroupIndex write SetGroupIndex default 0;
     property Image_Align: TAlign read getImageAlign write setImageAlign default alClient;
     property Image_AutoSize: Boolean read GetImage_AutoSize write  SetImage_AutoSize;
@@ -136,10 +136,9 @@ type
     property Image_Height: Integer read GetImage_Height write SetImageHeight default 50;
 
     property MouseOverColor: TColor read FMouseOverColor write FMouseOverColor default clGray;
-    property Selected: Boolean read fSelected write fSelected default false;
     property SelectedColor : TColor read FSelectedColor write FSelectedColor default clBlack;
-    property OnImageMouseEnter: TNotifyEvent read fOnImage_MouseEnter write fOnImage_MouseEnter;
-    property OnImageMouseLeave: TNotifyEvent read fOnImage_MouseLeave write fOnImage_MouseLeave;
+    property Down: Boolean read FDown write SetDown default False;
+
     property OnMouseEnter: TCapPnlEventMouseEnter read fOnPnlMouseEnter write fOnPnlMouseEnter;
     property OnMouseLeave: TCapPnlEventMouseLeave read fOnPnlMouseLeave write fOnPnlMouseLeave;
 
@@ -232,7 +231,7 @@ begin
 
   fImage := TJvImage.Create(Self);
 
-  Color := gemNormalStateColor;
+//  Color := gemNormalStateColor;
 
   {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'Create' );{$ENDIF}
 end;
@@ -275,21 +274,23 @@ begin
   {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'CreateWindowHandle' );{$ENDIF}
   inherited  CreateWindowHandle(Params);
   with fImage do begin
-    OnMouseEnter := OnImageMouseEnter;
-    OnMouseLeave := OnImageMouseLeave;
+//    OnMouseEnter := OnImageMouseEnter;
+//    OnMouseLeave := OnImageMouseLeave;
     fImage.Parent := Self;
   end;
   {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'CreateWindowHandle' );{$ENDIF}
 end;
 
 
-procedure TgemCapPanelBtn.CreateWnd;
-begin
-  {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'CreateWnd' );{$ENDIF}
-  inherited CreateWnd;
-  SendMessage(Handle, BM_SETCHECK, Integer(fSelected), 0);
-  {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'CreateWnd' );{$ENDIF}
-end;
+//[UIPermission(SecurityAction.LinkDemand, Window=UIPermissionWindow.AllWindows)]
+//procedure TgemCapPanelBtn.CreateWnd;
+//begin
+//  {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'CreateWnd' );{$ENDIF}
+//  inherited CreateWnd;
+//  showmessage('CreateWnd;');
+//  SendMessage(Handle, BM_SETCHECK, Integer(fChecked), 0);
+//  {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'CreateWnd' );{$ENDIF}
+//end;
 
 
 procedure TgemCapPanelBtn.setImageAlign(const Value: TAlign);
@@ -388,29 +389,58 @@ begin
 end;
 
 
-procedure TgemCapPanelBtn.OnImageMouseEnterHandler(
-  Sender: TObject);
-begin
-//  if fSelectedColor <> Self.color then
-    fImage.Color := fMouseOverColor;
-{ Place your event-handling code here. }
-end;
+//procedure TgemCapPanelBtn.OnImageMouseEnterHandler(Sender: TObject);
+//begin
+//  if fSelectedColor <> color then
+//    Color := fMouseOverColor;
+//{ Place your event-handling code here. }
+//end;
+//
+//
+//procedure TgemCapPanelBtn.OnImageMouseLeaveHandler(
+//  Sender: TObject);
+//begin
+//  if fSelectedColor <> color then
+//    Color := fgemNormalColor;
+//{ Place your event-handling code here. }
+//end;
 
 
-procedure TgemCapPanelBtn.OnImageMouseLeaveHandler(
-  Sender: TObject);
+procedure TgemCapPanelBtn.CMButtonPressed(var Message: TMessage);
+var
+  Sender: TgemCapPanelBtn;
 begin
-  if fSelectedColor <> color then
-    fImage.Color := fgemNormalColor;
-{ Place your event-handling code here. }
+  if Message.WParam = WPARAM(FGroupIndex) then
+  begin
+    Sender := TgemCapPanelBtn(Message.LParam);
+    if Sender <> Self then
+    begin
+      if Sender.Down and FDown then
+      begin
+        FDown := False;
+        Color := fgemNormalStateColor;
+        FState := bsUp;
+//        if (Action is TCustomAction) then
+//          TCustomAction(Action).Checked := False;
+        Invalidate;
+      end
+      else begin
+        fgemNormalStateColor := Color;
+        Color := fSelectedColor;
+      end;
+
+      FAllowAllUp := Sender.AllowAllUp;
+    end;
+  end;
 end;
 
 
 procedure TgemCapPanelBtn.CMPanelMouseEnter(var Msg: TMessage);
 begin
-  if fSelectedColor <> color then
-    fImage.Color := fMouseOverColor;
-
+  if fSelectedColor <> color then  begin
+    fgemNormalStateColor := Color;
+    Color := MouseOverColor;
+  end;
   DoMouseEnter;
   inherited;
 end;
@@ -419,20 +449,63 @@ end;
 procedure TgemCapPanelBtn.CMPanelMouseLeave(var Msg: TMessage);
 begin
   if fSelectedColor <> color then
-    fImage.Color := fgemNormalColor;
+    Color := fgemNormalStateColor;
   DoMouseLeave;
   inherited;
 end;
 
 
-procedure TgemCapPanelBtn.CNCommand(var Message: TWMCommand);
+procedure TgemCapPanelBtn.Click;
 begin
-  if Message.NotifyCode = BN_CLICKED then
-    Toggle
-  else
-    inherited;
+   inherited Click;
+//  showmessage('Click;');
+//
+//  if fSelectedColor <> color then  begin
+//    fgemNormalStateColor := Color;
+//    Color := fSelectedColor;
+//  end;
 end;
 
+//procedure TgemCapPanelBtn.WndProc;
+//begin
+//  inherited;
+//  case message.Msg of
+//    WM_LBUTTONDOWN, WM_LBUTTONDBLCLK: begin
+//       showmessage('In WndProc');
+//       SetChecked(True);
+//       fgemNormalStateColor := Color;
+//       Color := fSelectedColor;
+//     end;
+//   end;
+//end;
+//
+
+//procedure TgemCapPanelBtn.CNCommand(var Message: TWMCommand);
+//begin
+//  showmessage('CNCommand');
+//
+//  case Message.NotifyCode of
+//    BN_CLICKED: SetChecked(True);
+//
+//    WM_LBUTTONDOWN: begin
+//      fgemNormalStateColor := Color;
+//      Color := fSelectedColor;
+//      Toggle;
+//    end;
+//
+//    else inherited;
+//  end;
+//end;
+//
+
+//procedure TgemCapPanelBtn.Toggle;
+//begin
+//  {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'Toggle' );{$ENDIF}
+//  showmessage('Toggle');
+//  Selected := not fChecked;
+//  {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'Toggle' );{$ENDIF}
+//end;
+//
 
 procedure TgemCapPanelBtn.DoLeaveDrag;
 begin
@@ -548,14 +621,6 @@ begin
 end;
 
 
-function TgemCapPanelBtn.GetChecked: Boolean;
-begin
-  {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'GetChecked' );{$ENDIF}
-  Result := fSelected;
-  {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'GetChecked' );{$ENDIF}
-end;
-
-
 function TgemCapPanelBtn.GetEffectiveCaptionHeight: Integer;
 begin
   {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'GetEffectiveCaptionHeight' );{$ENDIF}
@@ -629,6 +694,7 @@ function TgemCapPanelBtn.GetImage_Visible: Boolean;
 begin
   Result := fImage.Visible;
 end;
+
 
 procedure TgemCapPanelBtn.SetImage_Proportional(const Value: Boolean);
 begin
@@ -730,39 +796,56 @@ begin
 end;
 
 
-procedure TgemCapPanelBtn.Toggle;
-begin
-  {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'Toggle' );{$ENDIF}
-  Selected := not fSelected;
-  {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'Toggle' );{$ENDIF}
-end;
+//procedure TgemCapPanelBtn.TurnSiblingsOff;
+//var
+//  I: Integer;
+//  Sibling: TControl;
+//begin
+//  {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'TurnSiblingsOff' );{$ENDIF}
+//  if (Parent <> nil) and (GroupIndex <> 0) then
+//    with Parent do
+//      for I := 0 to ControlCount - 1 do
+//      begin
+//        Sibling := Controls[I];
+//        if (Sibling <> Self) and (Sibling is TgemCapPanelBtn) then
+//          with TgemCapPanelBtn(Sibling) do
+//            if GroupIndex = Self.GroupIndex then
+//            begin
+//              if Assigned(Action) and
+//                 (Action is TCustomAction) and
+//                 TCustomAction(Action).AutoCheck then
+//                TCustomAction(Action).Checked := False;
+//              SetChecked(False);
+//            end;
+//      end;
+//  {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'TurnSiblingsOff' );{$ENDIF}
+//end;
+//
+//
 
-
-procedure TgemCapPanelBtn.TurnSiblingsOff;
+procedure TgemCapPanelBtn.UpdateExclusive;
 var
-  I: Integer;
-  Sibling: TControl;
+  Msg: TMessage;
 begin
-  {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'TurnSiblingsOff' );{$ENDIF}
-  if (Parent <> nil) and (GroupIndex <> 0) then
-    with Parent do
-      for I := 0 to ControlCount - 1 do
-      begin
-        Sibling := Controls[I];
-        if (Sibling <> Self) and (Sibling is TgemCapPanelBtn) then
-          with TgemCapPanelBtn(Sibling) do
-            if GroupIndex = Self.GroupIndex then
-            begin
-              if Assigned(Action) and
-                 (Action is TCustomAction) and
-                 TCustomAction(Action).AutoCheck then
-                TCustomAction(Action).Checked := False;
-              SetChecked(False);
-            end;
-      end;
-  {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'TurnSiblingsOff' );{$ENDIF}
+  if (FGroupIndex <> 0) and (Parent <> nil) then
+  begin
+    Msg.Msg    := CM_BUTTONPRESSED;
+    Msg.WParam := FGroupIndex;
+    Msg.LParam := LPARAM(Self);
+    Msg.Result := 0;
+    Parent.Broadcast(Msg);
+  end;
 end;
 
+
+procedure TgemCapPanelBtn.SetAllowAllUp(const Value: Boolean);
+begin
+  if FAllowAllUp <> Value then
+  begin
+    FAllowAllUp := Value;
+    UpdateExclusive;
+  end;
+end;
 
 procedure TgemCapPanelBtn.SetCaption(const Value: string);
 begin
@@ -821,30 +904,89 @@ begin
 end;
 
 
-procedure TgemCapPanelBtn.SetChecked(Value: Boolean);
+procedure TgemCapPanelBtn.SetDown(Value: Boolean);
 begin
-  {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'SetChecked' );{$ENDIF}
-  if fSelected <> Value then
+  if FGroupIndex = 0 then
+    Value := False;
+  if Value <> FDown then
   begin
-    fSelected := Value;
-    if HandleAllocated then
-      SendMessage(Handle, BM_SETCHECK, Integer(Selected), 0);
+    if FDown and (not FAllowAllUp) then
+      Exit;
+    FDown := Value;
     if Value then
-      TurnSiblingsOff;
-    if not ClicksDisabled then Click;
+    begin
+      if FState = bsUp then Invalidate;
+      FState := bsExclusive
+    end
+    else
+    begin
+      FState := bsUp;
+      Repaint;
+    end;
+    if Value then UpdateExclusive;
   end;
-  {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'SetChecked' );{$ENDIF}
 end;
+{
+  if FGroupIndex = 0 then Value := False;
+  if Value <> FDown then
+  begin
+    if FDown and (not FAllowAllUp) then Exit;
+    FDown := Value;
+    if Value then
+    begin
+      if FState = bsUp then Invalidate;
+      FState := bsExclusive
+    end
+    else
+    begin
+      FState := bsUp;
+      Repaint;
+    end;
+    if Value then UpdateExclusive;
+  end;
 
+}
 
 procedure TgemCapPanelBtn.SetGroupIndex(const Value: Integer);
 begin
-  {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'SetGroupIndex' );{$ENDIF}
-  FGroupIndex := Value;
-  if Selected then
-    TurnSiblingsOff;
-  {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'SetGroupIndex' );{$ENDIF}
+
 end;
+
+{
+procedure TSpeedButton.CMButtonPressed(var Message: TMessage);
+var
+  Sender: TSpeedButton;
+begin
+  if Message.WParam = WPARAM(FGroupIndex) then
+  begin
+    Sender := TSpeedButton(Message.LParam);
+    if Sender <> Self then
+    begin
+      if Sender.Down and FDown then
+      begin
+        FDown := False;
+        FState := bsUp;
+        if (Action is TCustomAction) then
+          TCustomAction(Action).Checked := False;
+        Invalidate;
+      end;
+      FAllowAllUp := Sender.AllowAllUp;
+    end;
+  end;
+end;
+
+}
+
+
+
+//procedure TgemCapPanelBtn.SetGroupIndex(const Value: Integer);
+//begin
+//  {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'SetGroupIndex' );{$ENDIF}
+//  FGroupIndex := Value;
+//  if Selected then
+//    TurnSiblingsOff;
+//  {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'SetGroupIndex' );{$ENDIF}
+//end;
 
 
 
