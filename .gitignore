@@ -78,3 +78,4 @@ GEMComponents.groupproj.local
 GEMComponentsR.dproj.local
 GEMComponentsR.identcache
 *.local
+*.identcache
