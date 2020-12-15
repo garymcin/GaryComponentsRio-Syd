@@ -31,8 +31,13 @@ type
   TgemCapPanelBtn = class(TJvCustomPanel)
     fImage              : TJvImage;
   private
-    fOnImage_MouseLeave : TNotifyEvent;
-    fOnImage_MouseEnter : TNotifyEvent;
+//    fOnImageMouseLeave  : TNotifyEvent;
+//    fOnImageMouseEnter  : TNotifyEvent;
+//
+    fOnImage_MouseUp    : TMouseEvent;
+    fOnImage_MouseDown  : TMouseEvent;
+    fOnImage_MouseMove  : TMouseMoveEvent;
+
     fOnPnlMouseEnter    : TCapPnlEventMouseEnter;
     fOnPnlMouseLeave    : TCapPnlEventMouseLeave;
     FCaption            : string;
@@ -70,8 +75,15 @@ type
     procedure CMPanelMouseEnter(var Msg: TMessage); message CM_MOUSEENTER;
     procedure CMPanelMouseLeave(var Msg: TMessage); message CM_MOUSELEAVE;
     procedure CMButtonPressed(var Message: TMessage); message CM_BUTTONPRESSED;
-    procedure OnImageMouseLeaveHandler(Sender: TObject); { TNotifyEvent }
-    procedure OnImageMouseEnterHandler(Sender: TObject); { TNotifyEvent }
+//    procedure CMButtonDown(var Message: TMessage); message CM_BUTTONPRESSED;
+//    procedure CMButtonUp(var Message: TMessage); message CM_BUTTONPRESSED;
+//    procedure CMButtonMove(var Message: TMessage); message CM_BUTTONPRESSED;
+    procedure ImageMouseLeaveHandler(Sender: TObject); { TNotifyEvent }
+    procedure ImageMouseEnterHandler(Sender: TObject); { TNotifyEvent }
+
+    procedure ImageMouseUpHandler(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer); { TNotifyEvent }
+    procedure ImageMouseDownHandler(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer); { TNotifyEvent }
+    procedure ImageMouseMoveHandler(Sender: TObject; Shift: TShiftState; X, Y: Integer); { TNotifyEvent }
 
     function GetImage_Picture: TPicture;
     procedure SetImage_Picture(const Value: TPicture);
@@ -109,6 +121,7 @@ type
     procedure SetButtonUpColor(const Value: tcolor);
     procedure SetButtonDownColor(const Value: TColor);
     procedure SetMouseOverColor(const Value: TColor);
+    procedure SetFlat(const Value: Boolean);
   protected
     FState: TButtonState;
 
@@ -120,7 +133,7 @@ type
     procedure DoMouseLeave; virtual;
     procedure CreateWindowHandle(const Params: TCreateParams); override;
     procedure CreateParams(var Params: TCreateParams); override;
-//    procedure CreateWnd; override;
+    procedure CreateWnd; override;
     procedure MouseDown(Button: TMouseButton; Shift: TShiftState; X, Y: Integer); override;
     procedure MouseUp(Button: TMouseButton; Shift: TShiftState; X, Y: Integer); override;
     procedure MouseMove(Shift: TShiftState; X, Y: Integer); override;
@@ -128,6 +141,13 @@ type
     procedure Resize; override;
     procedure DoLeaveDrag; virtual;
     procedure AlignControls(AControl: TControl; var R: TRect); override;
+
+    // Combine mouse stuff for panel and image
+    procedure theMouseDown(Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
+    procedure theMouseUp(Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
+    procedure theMouseMove(Shift: TShiftState; X, Y: Integer);
+    procedure theMouseEnter;
+    procedure theMouseLeave;
 //    procedure WndProc(var message: TMessage); override;
   public
     constructor Create(AOwner: TComponent); override;
@@ -157,8 +177,12 @@ type
     property Down: Boolean read FDown write SetDown default False;
     property Flat: Boolean read FFlat write SetFlat default False;
 
-    property OnImageMouseEnter: TNotifyEvent read fOnImage_MouseEnter write fOnImage_MouseEnter;
-    property OnImageMouseLeave: TNotifyEvent read fOnImage_MouseLeave write fOnImage_MouseLeave;
+//    property OnImageMouseEnter: TNotifyEvent read fOnImageMouseEnter write fOnImageMouseEnter;
+//    property OnImageMouseLeave: TNotifyEvent read fOnImageMouseLeave write fOnImageMouseLeave;
+    property OnImageMouseUp: TMouseEvent read fOnImage_MouseUp write fOnImage_MouseUp;
+    property OnImageMouseDown: TMouseEvent read fOnImage_MouseDown write fOnImage_MouseDown;
+    property OnImageMouseMove: TMouseMoveEvent read fOnImage_MouseMove write fOnImage_MouseMove;
+
     property OnMouseEnter: TCapPnlEventMouseEnter read fOnPnlMouseEnter write fOnPnlMouseEnter;
     property OnMouseLeave: TCapPnlEventMouseLeave read fOnPnlMouseLeave write fOnPnlMouseLeave;
 
@@ -293,14 +317,16 @@ end;
 
 procedure TgemCapPanelBtn.CreateWindowHandle(const Params: TCreateParams);
 begin
-  {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'CreateWindowHandle' );{$ENDIF}
   inherited  CreateWindowHandle(Params);
   with fImage do begin
-//    OnMouseEnter := OnImageMouseEnter;
-//    OnMouseLeave := OnImageMouseLeave;
+    OnMouseEnter  := ImageMouseEnterHandler;
+    OnMouseLeave  := ImageMouseLeaveHandler;
+
+    OnMouseMove   := ImageMouseMoveHandler;
+    OnMouseUp     := ImageMouseUpHandler;
+    OnMouseDown   := ImageMouseDownHandler;
     fImage.Parent := Self;
   end;
-  {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'CreateWindowHandle' );{$ENDIF}
 end;
 
 
@@ -430,7 +456,7 @@ var
   Sender: TgemCapPanelBtn;
 begin
   if Message.WParam = WPARAM(FGroupIndex) then begin
-    showmessage('CMButtonPressed');
+//    showmessage('CMButtonPressed');
     Sender := TgemCapPanelBtn(Message.LParam);
     if Sender <> Self then begin
       if Sender.Down and FDown then begin
@@ -491,40 +517,150 @@ begin
 end;
 
 
-procedure TgemCapPanelBtn.OnImageMouseEnterHandler(Sender: TObject);
+procedure TgemCapPanelBtn.theMouseEnter;
 begin
-//  if ButtonDownColor <> color then begin
-////    showmessage('OnImageMouseEnterHandler');
-//    Color := MouseOverColor;
-//  end;
+  if fButtonDownColor <> color then  begin
+//    showmessage('CMPanelMouseEnter');
+    Color := fMouseOverColor;
+  end;
+  DoMouseEnter;
+end;
+
+
+procedure TgemCapPanelBtn.theMouseLeave;
+begin
+//  fButtonUpColor := fForceUpColor;
+  if fButtonDownColor <> color then begin
+//    showmessage('CMPanelMouseLeave');
+//    if ButtonUpColor = clBlack then
+//      showmessage('Panel: ButtonUpColor is black');
+//    Color := fForceUpColor;
+    Color := fButtonsUpColor;
+  end;
+  DoMouseLeave;
+end;
+
+
+
+procedure TgemCapPanelBtn.theMouseDown(Button: TMouseButton; Shift: TShiftState;
+  X, Y: Integer);
+begin
+  ShowMessage('ThemouseDown');
+  if (Button = mbLeft) and Enabled then begin
+    if not FDown then
+    begin
+      FState := bsDown;
+      Invalidate;
+    end;
+    FDragging := True;
+  end;
+end;
+
+
+procedure TgemCapPanelBtn.theMouseMove(Shift: TShiftState; X, Y: Integer);
+var
+  NewState: TButtonState;
+begin
+//  ShowMessage('ThemouseMove');
+  if FDragging then
+  begin
+    if not FDown then
+      NewState := bsUp
+    else
+      NewState := bsExclusive;
+    if (X >= 0) and (X < ClientWidth) and (Y >= 0) and (Y <= ClientHeight) then
+      if FDown then
+        NewState := bsExclusive else NewState := bsDown;
+    if NewState <> FState then
+    begin
+      FState := NewState;
+      Invalidate;
+    end;
+  end
+  else
+    if not FMouseInControl then
+      UpdateTracking;
+end;
+
+
+procedure TgemCapPanelBtn.theMouseUp(Button: TMouseButton; Shift: TShiftState;
+  X, Y: Integer);
+var
+  DoClick: Boolean;
+begin
+  ShowMessage('ThemouseUp');
+  if FDragging then
+  begin
+    FDragging := False;
+    DoClick := (X >= 0) and (X < ClientWidth) and (Y >= 0) and (Y <= ClientHeight);
+    if FGroupIndex = 0 then begin
+      { Redraw face in-case mouse is captured }
+      FState := bsUp;
+      FMouseInControl := False;
+      if DoClick and not (FState in [bsExclusive, bsDown]) then
+        Invalidate;
+    end
+    else
+      if DoClick then begin
+        SetDown(not FDown);
+        if FDown then Repaint;
+      end
+      else  begin
+        if FDown then
+          FState := bsExclusive;
+        Repaint;
+       end;
+    if DoClick then
+      Click;
+    UpdateTracking;
+  end;
+end;
+
+
+procedure TgemCapPanelBtn.ImageMouseEnterHandler(Sender: TObject);
+begin
+  theMouseEnter;
 { Place your event-handling code here. }
 end;
 
 
-procedure TgemCapPanelBtn.OnImageMouseLeaveHandler(
-  Sender: TObject);
+procedure TgemCapPanelBtn.ImageMouseLeaveHandler(Sender: TObject);
 begin
-//  fButtonUpColor := fForceUpColor;
-//  if fButtonDownColor <> color then begin
-//    if ButtonUpColor = clBlack then
-//      showmessage('Image ButtonUpColor is black');
-//    Color := ButtonUpColor;
-//  end;
+  theMouseLeave;
 { Place your event-handling code here. }
+end;
+
+
+
+procedure TgemCapPanelBtn.ImageMouseMoveHandler(Sender: TObject;
+  Shift: TShiftState; X, Y: Integer);
+begin
+//    showmessage('OnImageMouseEnterHandler');
+  theMouseMove(Shift, X, Y);
+end;
+
+
+procedure TgemCapPanelBtn.ImageMouseUpHandler(Sender: TObject;
+  Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
+begin
+  showmessage('OnImageMouseUpHandler');
+  theMouseUp(Button, Shift, X, Y);
+end;
+
+
+procedure TgemCapPanelBtn.ImageMouseDownHandler(Sender: TObject;
+  Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
+begin
+  showmessage('OnImageMouseDownHandler');
+  theMouseDown(Button, Shift, X, Y);
 end;
 
 
 procedure TgemCapPanelBtn.CMPanelMouseEnter(var Msg: TMessage);
 begin
   inherited;
-  if fButtonDownColor <> color then  begin
-//    showmessage('CMPanelMouseEnter');
-    Color := fMouseOverColor;
-  end;
-  DoMouseEnter;
-
-
-
+//  ShowMessage('CMPanelMouseEnter');
+  theMouseEnter;
 //var
 //  NeedRepaint: Boolean;
 //begin
@@ -541,24 +677,61 @@ begin
 //      Repaint;
 //  end;
 //
-
-
 end;
 
 
 procedure TgemCapPanelBtn.CMPanelMouseLeave(var Msg: TMessage);
 begin
-//  fButtonUpColor := fForceUpColor;
-  if fButtonDownColor <> color then begin
-//    showmessage('CMPanelMouseLeave');
-//    if ButtonUpColor = clBlack then
-//      showmessage('Panel: ButtonUpColor is black');
-//    Color := fForceUpColor;
-    Color := fButtonsUpColor;
-  end;
-  DoMouseLeave;
+  theMouseLeave;
   inherited;
 end;
+
+
+procedure TgemCapPanelBtn.MouseDown(Button: TMouseButton;
+  Shift: TShiftState; X, Y: Integer);
+begin
+  inherited MouseDown(Button, Shift, X, Y);
+  ShowMessage('CMPanel Mouse Down');
+  theMouseDown(Button, Shift, X, Y);
+//  FMouseDown := True;
+//  if not PtInRect(FCaptionRect, Point(X, Y)) then
+//    Exit;
+
+//  if FAutoDrag and CanStartDrag then
+//  begin
+//    SetZOrder(True);
+//    FDragging := True;
+//    ReleaseCapture;
+//    SetCapture(Handle);
+//    FAnchorPos := Point(X, Y);
+//  end;
+
+end;
+
+
+procedure TgemCapPanelBtn.MouseMove(Shift: TShiftState; X, Y: Integer);
+begin
+  inherited MouseMove(Shift, X, Y);
+  theMouseMove(Shift, X, Y);
+
+//  {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'MouseMove' );{$ENDIF}
+//  inherited MouseMove(Shift, X, Y);
+//  {$IFDEF JVCAPTIONPANEL_STD_BEHAVE}
+//  if FDragging then
+//    SetBounds(Left + X - FAnchorPos.X, Top + Y - FAnchorPos.Y, Width, Height);
+//  {$ENDIF JVCAPTIONPANEL_STD_BEHAVE}
+//  {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'MouseMove' );{$ENDIF}
+end;
+
+
+procedure TgemCapPanelBtn.MouseUp(Button: TMouseButton;
+  Shift: TShiftState; X, Y: Integer);
+begin
+  inherited MouseUp(Button, Shift, X, Y);
+  ShowMessage('CMPanel Mouse up');
+  theMouseUp(Button, Shift, X, Y);
+end;
+
 
 
 procedure TgemCapPanelBtn.Click;
@@ -827,104 +1000,6 @@ begin
 end;
 
 
-procedure TgemCapPanelBtn.MouseDown(Button: TMouseButton;
-  Shift: TShiftState; X, Y: Integer);
-begin
-  inherited MouseDown(Button, Shift, X, Y);
-
-//  FMouseDown := True;
-//  if not PtInRect(FCaptionRect, Point(X, Y)) then
-//    Exit;
-
-//  if FAutoDrag and CanStartDrag then
-//  begin
-//    SetZOrder(True);
-//    FDragging := True;
-//    ReleaseCapture;
-//    SetCapture(Handle);
-//    FAnchorPos := Point(X, Y);
-//  end;
-
-  ShowMessage('mouseDown');
-  if (Button = mbLeft) and Enabled then
-  begin
-    if not FDown then
-    begin
-      FState := bsDown;
-      Invalidate;
-    end;
-    FDragging := True;
-  end;
-end;
-
-
-procedure TgemCapPanelBtn.MouseMove(Shift: TShiftState; X, Y: Integer);
-var
-  NewState: TButtonState;
-begin
-  inherited MouseMove(Shift, X, Y);
-  if FDragging then
-  begin
-    if not FDown then
-      NewState := bsUp
-    else
-      NewState := bsExclusive;
-    if (X >= 0) and (X < ClientWidth) and (Y >= 0) and (Y <= ClientHeight) then
-      if FDown then
-        NewState := bsExclusive else NewState := bsDown;
-    if NewState <> FState then
-    begin
-      FState := NewState;
-      Invalidate;
-    end;
-  end
-  else if not FMouseInControl then
-    UpdateTracking;
-//  {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'MouseMove' );{$ENDIF}
-//  inherited MouseMove(Shift, X, Y);
-//  {$IFDEF JVCAPTIONPANEL_STD_BEHAVE}
-//  if FDragging then
-//    SetBounds(Left + X - FAnchorPos.X, Top + Y - FAnchorPos.Y, Width, Height);
-//  {$ENDIF JVCAPTIONPANEL_STD_BEHAVE}
-//  {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'MouseMove' );{$ENDIF}
-end;
-
-
-procedure TgemCapPanelBtn.MouseUp(Button: TMouseButton;
-  Shift: TShiftState; X, Y: Integer);
-var
-  DoClick: Boolean;
-begin
-  inherited MouseUp(Button, Shift, X, Y);
-  ShowMessage('MouseUp');
-  if FDragging then
-  begin
-    FDragging := False;
-    DoClick := (X >= 0) and (X < ClientWidth) and (Y >= 0) and (Y <= ClientHeight);
-    if FGroupIndex = 0 then begin
-      { Redraw face in-case mouse is captured }
-      FState := bsUp;
-      FMouseInControl := False;
-      if DoClick and not (FState in [bsExclusive, bsDown]) then
-        Invalidate;
-    end
-    else
-      if DoClick then begin
-        SetDown(not FDown);
-        if FDown then Repaint;
-      end
-      else  begin
-        if FDown then
-          FState := bsExclusive;
-        Repaint;
-       end;
-    if DoClick then
-      Click;
-    UpdateTracking;
-  end;
-end;
-
-
 procedure TgemCapPanelBtn.Resize;
 begin
   {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'Resize' );{$ENDIF}
@@ -1059,6 +1134,11 @@ begin
   end;
 end;
 
+
+procedure TgemCapPanelBtn.SetFlat(const Value: Boolean);
+begin
+  FFlat := Value;
+end;
 
 procedure TgemCapPanelBtn.SetGroupIndex(const Value: Integer);
 begin
