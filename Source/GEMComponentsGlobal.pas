@@ -3,16 +3,25 @@ unit GEMComponentsGlobal;
 interface
 
 type
-//  TGEMComponentsVersion = record
-//    VersionNum: string;
-//    FileName: string;
-//    ComponentName: string;
-//  end;
 
   tGEMComponents = (gemGEMDBGrid, gemGEMDBGridEdit, gemSelColVisGrid,
                     gemColorButtonSpecial, gemColorPanelBtnSpecial, gemGEMColorBtnSpecial,
                     gemGEMnxTable, gemGEMnxQuery, gemAdpMRU, gemGEMProcessTimer,
-                    gemGEMArrow, gemUpdater);
+                    gemGEMArrow, gemUpdater, gemCapPanelBtn);
+
+  TGEMComponentsVersion = record
+//    fGEMComponent: tGEMComponents;
+    fVersionNum: string;
+    FileName: string;
+    ComponentName: string;
+//    function GetVersion(aComponent: TGEMComponents): string;
+  private
+    procedure SetVersionNum(const Value: string; aGEMComponent: tGEMComponents);
+  public
+    property VersionNum: string read fVersionNum write SetVersionNum;
+//    property GEMComponent: tGEMComponents read fGEMComponent write fGEMComponent;
+  end;
+
 
 //  TComponentVersioning = class
 //  private
@@ -35,6 +44,7 @@ const
   VersionGEMProcessTimer = Company + '1.0';
   VersionGEMArrow = Company + '1.1';
   VersionUpdater = 'Updater Ver: 1.0.1';
+  VersionCapPanelBtn = '1.0.0';
 
 //  var
 //    fComponents: array[gemGEMDBGrid..gemUpdater] of TGEMComponentsVersion;
@@ -96,6 +106,10 @@ begin
     gemUpdater: begin
       Result:= VersionUpdater;
     end;
+
+    gemCapPanelBtn: begin
+      Result:= VersionCapPanelBtn;
+    end;
   end;
 end;
 
@@ -138,5 +152,12 @@ end;
 //  WindowMng in 'Source\WindowMng.pas' {/u_TEnhDBGrid in 'Source\u_TEnhDBGrid.pas';},
 //  GEMComponentsGlobal in 'GEMComponentsGlobal.pas';
 
+
+{ TGEMComponentsVersion }
+
+procedure TGEMComponentsVersion.SetVersionNum(const Value: string);
+begin
+  fVersionNum := Value;
+end;
 
 end.
