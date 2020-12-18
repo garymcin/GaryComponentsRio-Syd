@@ -6,7 +6,7 @@ uses
 
   System.Classes, System.SysUtils,
 
-  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.ActnList,  Vcl.Dialogs, Vcl.Buttons,
+  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.ActnList, Vcl.ExtCtrls,//  Vcl.Dialogs, Vcl.Buttons,
 
   CodeSiteLogging, GEMUseFullRoutines, GEMComponentsGlobal,
 
@@ -18,20 +18,19 @@ type
   TCapPnlEventMouseEnter = procedure(sender: TgemCapPanelBtn) of object;
   TCapPnlEventMouseLeave = procedure(sender: TgemCapPanelBtn) of object;
 
-  TgemImPnlBtnState = (gim_MouseOver, gim_Seletected, gim_Normal);
-  TButtonState = (bsUp, bsDisabled, bsDown, bsExclusive);
-  TJvDrawPosition   = (dpLeft, dpTop, dpRight, dpBottom);
-  TJvAutoDragStartEvent = procedure(Sender: TObject; var AllowDrag: Boolean) of object;
+//  TgemImPnlBtnState = (gim_MouseOver, gim_Seletected, gim_Normal);
+  TgemButtonState      = (bsUp, bsDisabled, bsDown, bsExclusive);
+  TgemJvDrawPosition   = (dpLeft, dpTop, dpRight, dpBottom);
+//  TgemJvAutoDragStartEvent = procedure(Sender: TObject; var AllowDrag: Boolean) of object;
 
-//  {$IFDEF RTL230_UP}
-//  [ComponentPlatformsAttribute(pidWin32 or pidWin64)]
-//  {$ENDIF RTL230_UP}
-
+  {$IFDEF RTL230_UP}
+  [ComponentPlatformsAttribute(pidWin32 or pidWin64)]
+  {$ENDIF RTL230_UP}
 
-  TgemCapPanelBtn = class(TJvCustomPanel)
-    fImage              : TJvImage;
+  TgemCapPanelBtn = class(TCustomPanel)//(TJvCustomPanel)
+    fImage              : TImage;
   private
-    fComponentVersion    : tGEMComponents;
+    fComponentVersion   : tGEMComponents;
 
     fOnImage_MouseUp    : TMouseEvent;
     fOnImage_MouseDown  : TMouseEvent;
@@ -43,13 +42,13 @@ type
     FCaption            : string;
     FCaptionFont        : TFont;
     fCaptionHeight      : integer;
-    fCaptionPosition    : TJvDrawPosition;
+    fCaptionPosition    : TgemJvDrawPosition;
     FCaptionRect        : TRect;
     FResizable          : Boolean;
     fCaptionColor       : TColor;
     fButtonDownColor    : TColor;
     fButtonOverColor    : TColor;
-    fButtonsUpColor     : TColor;
+    fButtonUpColor     : TColor;
     FGroupIndex         : Integer;
     FDown               : Boolean;
     FClicksDisabled     : Boolean;
@@ -66,6 +65,7 @@ type
     FCaptionOffsetLarge : Integer;
     FAllowAllUp         : Boolean;
     FMouseInControl     : Boolean;
+    FState              : TgemButtonState;
 
     procedure CMPanelMouseEnter(var Msg: TMessage); message CM_MOUSEENTER;
     procedure CMPanelMouseLeave(var Msg: TMessage); message CM_MOUSELEAVE;
@@ -93,7 +93,7 @@ type
     procedure SetCaptionColor(const Value: TColor);
     procedure SetCaptionFont(const Value: TFont);
     procedure SetCaptionHeight(const Value: Integer);
-    procedure SetCaptionPosition(const Value: TJvDrawPosition);
+    procedure SetCaptionPosition(const Value: TgemJvDrawPosition);
     procedure SetResizable(const Value: Boolean);
     procedure setImageAlign(const Value: TAlign);
     procedure SetImageHeight(const Value: Integer);
@@ -116,7 +116,6 @@ type
 
     procedure DoCaptionFontChange(Sender: TObject);
   protected
-    FState: TButtonState;
 
     property MouseInControl: Boolean read FMouseInControl;
 
@@ -163,7 +162,7 @@ type
 
     property ButtonOverColor: TColor read fButtonOverColor write SetMouseOverColor default clSilver;
     property ButtonDownColor : TColor read FButtonDownColor write SetButtonDownColor default clGray;
-    property ButtonsUpColor: tcolor read fButtonsUpColor write SetButtonUpColor default clBtnFace;
+    property ButtonUpColor: tcolor read fButtonUpColor write SetButtonUpColor default clBtnFace;
 //    property ForceUpColor: TColor read fForceUpColor write SetForceUpColor default clBtnFace;
 
     property Down: Boolean read FDown write SetDown default False;
@@ -182,7 +181,7 @@ type
     property BorderStyle default bsSingle;
     property Caption: string read FCaption write SetCaption;
     property CaptionColor: TColor read FCaptionColor write SetCaptionColor default clActiveCaption;
-    property CaptionPosition: TJvDrawPosition read FCaptionPosition write SetCaptionPosition default dpLeft;
+    property CaptionPosition: TgemJvDrawPosition read FCaptionPosition write SetCaptionPosition default dpLeft;
     property CaptionFont: TFont read FCaptionFont write SetCaptionFont;
     property CaptionHeight: Integer read FCaptionHeight write SetCaptionHeight default 15;
     property Cursor;
@@ -242,7 +241,6 @@ begin
   {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'Create' );{$ENDIF}
   inherited Create(AOwner);
 
-//  fForceUpColor := clGreen;
   DoubleBuffered := True;
   FCaptionFont := TFont.Create;
   FCaptionFont.Size := 10;
@@ -268,8 +266,6 @@ begin
   CaptionPosition := dpBottom;
 
   fImage := TJvImage.Create(Self);
-
-//  Color := fButtonUpColor;
 
   {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'Create' );{$ENDIF}
 end;
@@ -358,16 +354,15 @@ var
   FlatOffset: Integer;
   AdjustedCaptionHeight: Integer;
 begin
-  if not Enabled then
-  begin
+  if not Enabled then begin
     FState := bsDisabled;
-//    FDragging := False;
   end
-  else if FState = bsDisabled then
-    if FDown and (GroupIndex <> 0) then
-      FState := bsExclusive
-    else
-      FState := bsUp;
+  else
+    if FState = bsDisabled then
+      if FDown and (GroupIndex <> 0) then
+        FState := bsExclusive
+      else
+        FState := bsUp;
 
   R := ClientRect;
 
@@ -377,10 +372,7 @@ begin
     if FMouseInControl then
       Canvas.Brush.Color := fButtonOverColor
     else
-      Canvas.Brush.Color := fButtonsUpColor;
-
-//  Canvas.Brush.Color := Color;
-
+      Canvas.Brush.Color := fButtonUpColor;
 
   Canvas.FillRect(R);
   Canvas.Brush.Color := FCaptionColor;
@@ -459,7 +451,7 @@ begin
     if Sender <> Self then begin
       if Sender.Down and FDown then begin
         FDown := False;
-        Color := fButtonsUpColor;
+        Color := fButtonUpColor;
         FState := bsUp;
 //        if (Action is TCustomAction) then
 //          TCustomAction(Action).Checked := False;
@@ -505,7 +497,7 @@ procedure TgemCapPanelBtn.theMouseLeave;
 begin
   FMouseInControl := False;
   if fButtonDownColor <> Color then
-    Color := fButtonsUpColor;
+    Color := fButtonUpColor;
   Invalidate;
   DoMouseLeave;
 end;
@@ -529,7 +521,7 @@ end;
 
 procedure TgemCapPanelBtn.theMouseMove(Shift: TShiftState; X, Y: Integer);
 var
-  NewState: TButtonState;
+  NewState: TgemButtonState;
 begin
   FMouseInControl := True;
 //
@@ -588,7 +580,6 @@ end;
 procedure TgemCapPanelBtn.ImageMouseMoveHandler(Sender: TObject;
   Shift: TShiftState; X, Y: Integer);
 begin
-//    showmessage('OnImageMouseEnterHandler');
   theMouseMove(Shift, X, Y);
 end;
 
@@ -596,7 +587,6 @@ end;
 procedure TgemCapPanelBtn.ImageMouseUpHandler(Sender: TObject;
   Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
 begin
-//  showmessage('OnImageMouseUpHandler');
   theMouseUp(Button, Shift, X, Y);
 end;
 
@@ -604,7 +594,6 @@ end;
 procedure TgemCapPanelBtn.ImageMouseDownHandler(Sender: TObject;
   Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
 begin
-//  showmessage('OnImageMouseDownHandler');
   theMouseDown(Button, Shift, X, Y);
 end;
 
@@ -612,7 +601,6 @@ end;
 procedure TgemCapPanelBtn.CMPanelMouseEnter(var Msg: TMessage);
 begin
   inherited;
-//  ShowMessage('CMPanelMouseEnter');
   theMouseEnter;
 end;
 
@@ -627,7 +615,6 @@ end;
 procedure TgemCapPanelBtn.MouseDown(Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
 begin
   inherited MouseDown(Button, Shift, X, Y);
-//  ShowMessage('CMPanel Mouse Down');
   theMouseUp(Button, Shift, X, Y);
 end;
 
@@ -680,7 +667,7 @@ procedure TgemCapPanelBtn.DoMouseLeave;
 begin
   {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'DoMouseLeave' );{$ENDIF}
   if fButtonDownColor <> color then
-    Color := fButtonsUpColor;
+    Color := fButtonUpColor;
 //    Color := ForceUpColor;
 
   if Assigned(FOnPnlMouseLeave) then
@@ -881,7 +868,7 @@ begin
     FButtonDownColor := Value;
     if fDown then begin
       Color := Value;
-//      Invalidate;
+      Invalidate;
     end;
   end;
 end;
@@ -898,12 +885,12 @@ end;
 
 procedure TgemCapPanelBtn.SetButtonUpColor(const Value: tcolor);
 begin
-{  fButtonsUpColor := clBtnFace;}
-  if fButtonsUpColor <> value then begin
-    fButtonsUpColor := Value;
+{  fButtonUpColor := clBtnFace;}
+  if fButtonUpColor <> value then begin
+    fButtonUpColor := Value;
     if not fDown then begin
       Color := Value;
-//      Invalidate;
+      Invalidate;
     end;
   end;
 end;
@@ -1003,7 +990,7 @@ end;
 
 
 procedure TgemCapPanelBtn.SetCaptionPosition(
-  const Value: TJvDrawPosition);
+  const Value: TgemJvDrawPosition);
 begin
   {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'SetCaptionPosition' );{$ENDIF}
   if FCaptionPosition <> Value then
@@ -1032,8 +1019,7 @@ begin
     end
     else begin
       FState := bsUp;
-      Color := fButtonsUpColor;
-//      Color := fForceUpColor;
+      Color := fButtonUpColor;
       Repaint;
     end;
     if Value then
@@ -1058,59 +1044,5 @@ begin
     UpdateExclusive;
   end;
 end;
-
-
-//procedure TgemCapPanelBtn.SetForceUpColor(const Value: TColor);
-//begin
-//  if Value <> fForceUpColor then  begin
-//    if Color <> ButtonDownColor then
-//      Color := Value;
-//    fForceUpColor := Value;
-//  end;
-//end;
-
-
-
-//procedure TgemCapPanelBtn.WndProc;
-//begin
-//  inherited;
-//  case message.Msg of
-//    WM_LBUTTONDOWN, WM_LBUTTONDBLCLK: begin
-//       showmessage('In WndProc');
-//       SetChecked(True);
-//       fgemNormalStateColor := Color;
-//       Color := fSelectedColor;
-//     end;
-//   end;
-//end;
-//
-
-//procedure TgemCapPanelBtn.CNCommand(var Message: TWMCommand);
-//begin
-//  showmessage('CNCommand');
-//
-//  case Message.NotifyCode of
-//    BN_CLICKED: SetChecked(True);
-//
-//    WM_LBUTTONDOWN: begin
-//      fgemNormalStateColor := Color;
-//      Color := fSelectedColor;
-//      Toggle;
-//    end;
-//
-//    else inherited;
-//  end;
-//end;
-//
-
-//procedure TgemCapPanelBtn.Toggle;
-//begin
-//  {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'Toggle' );{$ENDIF}
-//  showmessage('Toggle');
-//  Selected := not fChecked;
-//  {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'Toggle' );{$ENDIF}
-//end;
-//
-
 
 end.

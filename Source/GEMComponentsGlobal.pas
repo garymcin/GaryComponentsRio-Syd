@@ -16,7 +16,7 @@ type
     ComponentName: string;
 //    function GetVersion(aComponent: TGEMComponents): string;
   private
-    procedure SetVersionNum(const Value: string; aGEMComponent: tGEMComponents);
+    procedure SetVersionNum(const Value: string);// aGEMComponent: tGEMComponents);
   public
     property VersionNum: string read fVersionNum write SetVersionNum;
 //    property GEMComponent: tGEMComponents read fGEMComponent write fGEMComponent;
