@@ -6,7 +6,7 @@ uses
 
   System.Classes, System.SysUtils,
 
-  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.ActnList, Vcl.ExtCtrls,//  Vcl.Dialogs, Vcl.Buttons,
+  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.ActnList, Vcl.ExtCtrls,  Vcl.Dialogs, Vcl.Buttons,
 
   CodeSiteLogging, GEMUseFullRoutines, GEMComponentsGlobal,
 
@@ -31,7 +31,7 @@ type
     fImage              : TImage;
   private
     fComponentVersion   : tGEMComponents;
-
+    fImageAlign         : TAlign;
     fOnImage_MouseUp    : TMouseEvent;
     fOnImage_MouseDown  : TMouseEvent;
     fOnImage_MouseMove  : TMouseMoveEvent;
@@ -48,7 +48,7 @@ type
     fCaptionColor       : TColor;
     fButtonDownColor    : TColor;
     fButtonOverColor    : TColor;
-    fButtonUpColor     : TColor;
+    fButtonUpColor      : TColor;
     FGroupIndex         : Integer;
     FDown               : Boolean;
     FClicksDisabled     : Boolean;
@@ -56,7 +56,7 @@ type
     FFlat               : Boolean;
     FBevel              : Integer;
     FEndDrag            : TNotifyEvent;
-    FOnStartAutoDrag    : TJvAutoDragStartEvent;
+//    FOnStartAutoDrag    : TJvAutoDragStartEvent;
     FOutlookLook        : Boolean;
     FOffset             : Integer;
     FMouseDown          : Boolean;
@@ -66,6 +66,9 @@ type
     FAllowAllUp         : Boolean;
     FMouseInControl     : Boolean;
     FState              : TgemButtonState;
+    fBorderWidth        : TBorderWidth;
+    fButtonUseOverDarken: Boolean;
+    FButtonOverDarken   : Integer;
 
     procedure CMPanelMouseEnter(var Msg: TMessage); message CM_MOUSEENTER;
     procedure CMPanelMouseLeave(var Msg: TMessage); message CM_MOUSELEAVE;
@@ -79,7 +82,6 @@ type
 
     function GetImage_Picture: TPicture;
     procedure SetImage_Picture(const Value: TPicture);
-
     function GetImage_Proportional: Boolean;
     procedure SetImage_Proportional(const Value: Boolean);
     function GetImage_Stretch: Boolean;
@@ -99,8 +101,9 @@ type
     procedure SetImageHeight(const Value: Integer);
     procedure SetImageWidth(const Value: Integer);
     procedure SetGroupIndex(const Value: Integer);
+    procedure setButtonOverDarken(const Value: Integer);
+    procedure setButtonUseOverDarken(const Value: Boolean);
 
-    procedure DrawRotatedText(Rotation: Integer);
     function getImageAlign: TAlign;
     function GetImage_Height: Integer;
     function GetImage_Width: Integer;
@@ -115,8 +118,10 @@ type
     procedure SetFlat(const Value: Boolean);
 
     procedure DoCaptionFontChange(Sender: TObject);
+    procedure DrawRotatedText(Rotation: Integer);
+    function ChangeColor(InputColor: TColor; Lighten: Boolean; n: Extended): TColor;
+    Function InRange (Lo,Hi,Val : Integer) : Boolean;
   protected
-
     property MouseInControl: Boolean read FMouseInControl;
 
     function GetEffectiveCaptionHeight: Integer;
@@ -144,13 +149,13 @@ type
     constructor Create(AOwner: TComponent); override;
     destructor Destory;
     procedure Click; override;
+    property Color;
   published
-//    property Color;
-
+    property ImageAlign: TAlign read fImageAlign write SetImageAlign default alClient;
     property AllowAllUp: Boolean read FAllowAllUp write SetAllowAllUp default False;
     property ClicksDisabled: Boolean read FClicksDisabled write FClicksDisabled;
     property GroupIndex: Integer read FGroupIndex write SetGroupIndex default 0;
-    property Image_Align: TAlign read getImageAlign write setImageAlign default alClient;
+//    property Image_Align: TAlign read getImageAlign write setImageAlign default alClient;
     property Image_AutoSize: Boolean read GetImage_AutoSize write  SetImage_AutoSize;
     property Image_Center: Boolean read GetImage_Center write  SetImage_Center;
     property Image_Picture: TPicture read GetImage_Picture write SetImage_Picture;
@@ -163,10 +168,12 @@ type
     property ButtonOverColor: TColor read fButtonOverColor write SetMouseOverColor default clSilver;
     property ButtonDownColor : TColor read FButtonDownColor write SetButtonDownColor default clGray;
     property ButtonUpColor: tcolor read fButtonUpColor write SetButtonUpColor default clBtnFace;
-//    property ForceUpColor: TColor read fForceUpColor write SetForceUpColor default clBtnFace;
 
+//    property ClickedBorderBtnWidth: Integer read FBorderBtnWidth write SetBorderBtnWidth default 2;
     property Down: Boolean read FDown write SetDown default False;
     property Flat: Boolean read FFlat write SetFlat default False;
+    property ButtonUseOverDarken: Boolean read fButtonUseOverDarken write setButtonUseOverDarken default false;
+    property ButtonOverDarken: Integer read fButtonOverDarken write setButtonOverDarken default 5;
 
 //    property OnImageMouseEnter: TNotifyEvent read fOnImageMouseEnter write fOnImageMouseEnter;
 //    property OnImageMouseLeave: TNotifyEvent read fOnImageMouseLeave write fOnImageMouseLeave;
@@ -178,6 +185,7 @@ type
     property OnMouseLeave: TCapPnlEventMouseLeave read fOnPnlMouseLeave write fOnPnlMouseLeave;
 
     property Align;
+    property Action;
     property BorderStyle default bsSingle;
     property Caption: string read FCaption write SetCaption;
     property CaptionColor: TColor read FCaptionColor write SetCaptionColor default clActiveCaption;
@@ -206,7 +214,7 @@ type
     property OnDragDrop;
     property OnDragOver;
     property OnEndDrag;
-    property OnStartAutoDrag: TJvAutoDragStartEvent read FOnStartAutoDrag write FOnStartAutoDrag;
+//    property OnStartAutoDrag: TJvAutoDragStartEvent read FOnStartAutoDrag write FOnStartAutoDrag;
     property OnEndAutoDrag: TNotifyEvent read FEndDrag write FEndDrag;
     property OnEnter;
     property OnExit;
@@ -217,28 +225,31 @@ type
     property OnResize;
   end;
 
+{
+    property BevelInner: TPanelBevel read FBevelInner write SetBevelInner default bvNone;
+    property BevelOuter: TPanelBevel read FBevelOuter write SetBevelOuter default bvRaised;
+    property BevelWidth: TBevelWidth read FBevelWidth write SetBevelWidth default 1;
+    property BorderWidth: TBorderWidth read FBorderWidth write SetBorderWidth default 0;
+    property BorderStyle: TBorderStyle read FBorderStyle write SetBorderStyle default bsNone;
+
+}
 
 implementation
 
 function DrawText(Canvas: TCanvas; const Text: string; Len: Integer; var R: TRect; WinFlags: Integer): Integer; overload;
 begin
-  {$IFDEF USE_CODESITE}CodeSite.EnterMethod( 'DrawText' );{$ENDIF}
   {$IFDEF UNICODE}
   Result := Winapi.Windows.DrawText(Canvas.Handle, PChar(Text), Len, R, WinFlags and not DT_MODIFYSTRING); // make sure the string cannot be modified
   {$ELSE}
   Result := DrawText(Canvas, PAnsiChar(Text), Len, R, WinFlags and not DT_MODIFYSTRING); // make sure the string cannot be modified
   {$ENDIF UNICODE}
-  {$IFDEF USE_CODESITE}CodeSite.ExitMethod( 'DrawText' );{$ENDIF}
 end;
-
 
 
 { TgemCapPanelBtn }
 
-
 constructor TgemCapPanelBtn.Create(AOwner: TComponent);
 begin
-  {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'Create' );{$ENDIF}
   inherited Create(AOwner);
 
   DoubleBuffered := True;
@@ -259,31 +270,30 @@ begin
   FCaptionOffsetLarge := 3;
   FResizable := True;
 
-  Width := 75;
-  Height := 95;
+
+  Width := 75;
+
+  Height := 95;
   BevelOuter := bvNone;
   TabOrder := 0;
   CaptionPosition := dpBottom;
 
-  fImage := TJvImage.Create(Self);
-
-  {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'Create' );{$ENDIF}
+  fImage := TImage.Create(Self);
+  fImage.Parent := Self;
+  fImage.Align  := fImageAlign;
 end;
 
 
 destructor TgemCapPanelBtn.Destory;
 begin
-  {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'Destory' );{$ENDIF}
   FCaptionFont.free;
   Fimage.Free;
   inherited Destroy;
-  {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'Destory' );{$ENDIF}
 end;
 
 
 procedure TgemCapPanelBtn.CreateParams(var Params: TCreateParams);
 begin
-  {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'CreateParams' );{$ENDIF}
   inherited CreateParams(Params);
   // from Jedi Unit JcCaptionPanel
   if BorderStyle = bsSingle then
@@ -296,10 +306,11 @@ begin
       ExStyle := ExStyle and not WS_EX_CLIENTEDGE;
     end;
 
-//  old stuff
-//  Params.Style := Params.Style or BS_PUSHLIKE  or BS_CHECKBOX;
+
+//  old stuff
+
+//  Params.Style := Params.Style or BS_PUSHLIKE  or BS_CHECKBOX;
   Params.WindowClass.style := Params.WindowClass.style and not (CS_HREDRAW or CS_VREDRAW);
-  {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'CreateParams' );{$ENDIF}
 end;
 
 
@@ -313,25 +324,14 @@ begin
     OnMouseMove   := ImageMouseMoveHandler;
     OnMouseUp     := ImageMouseUpHandler;
     OnMouseDown   := ImageMouseDownHandler;
-    fImage.Parent := Self;
   end;
 end;
-
-
-//[UIPermission(SecurityAction.LinkDemand, Window=UIPermissionWindow.AllWindows)]
-//procedure TgemCapPanelBtn.CreateWnd;
-//begin
-//  {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'CreateWnd' );{$ENDIF}
-//  inherited CreateWnd;
-//  showmessage('CreateWnd;');
-//  SendMessage(Handle, BM_SETCHECK, Integer(fChecked), 0);
-//  {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'CreateWnd' );{$ENDIF}
-//end;
 
 
 procedure TgemCapPanelBtn.setImageAlign(const Value: TAlign);
 begin
   fImage.Align := value;
+  fImageAlign := Value;
 end;
 
 
@@ -347,11 +347,43 @@ begin
 end;
 
 
+function TgemCapPanelBtn.ChangeColor(InputColor: TColor; Lighten: Boolean; n: Extended): TColor;
+var
+  r,g,b: extended;
+begin
+  // Grab RGB values
+  r := GetRValue(InputColor);
+  g := GetGValue(InputColor);
+  b := GetBValue(InputColor);
+  // Do the operation
+  if Lighten = True then
+  begin
+    r := r+((r/255)*100);
+    g := g+((g/255)*100);
+    b := b+((b/255)*100);
+  end else
+  begin
+    r := r-((r/255)*100);
+    g := g-((g/255)*100);
+    b := b-((b/255)*100);
+  end;
+  // Check whether result is in range
+  if r > 255 then r := 255;
+  if r < 0 then r := 0;
+  if g > 255 then g := 255;
+  if g < 0 then g := 0;
+  if b > 255 then b := 255;
+  if b < 0 then b := 0;
+  // Send it out
+  Result := RGB(byte(Round(r)),byte(Round(g)),byte(Round(b)));
+end;
+
+
 procedure TgemCapPanelBtn.Paint;
 var
   Rotation: Integer;
   R: TRect;
-  FlatOffset: Integer;
+//  FlatOffset: Integer;
   AdjustedCaptionHeight: Integer;
 begin
   if not Enabled then begin
@@ -367,19 +399,26 @@ begin
   R := ClientRect;
 
   if fDown then
-    Canvas.Brush.Color := fButtonDownColor
+    if (FMouseInControl) and (fButtonUseOverDarken) then
+      Canvas.Brush.Color := ChangeColor(fButtonDownColor, False, FButtonOverDarken)//DarkerColor(fButtonDownColor, 2)
+    else
+      Canvas.Brush.Color := fButtonDownColor
   else
     if FMouseInControl then
-      Canvas.Brush.Color := fButtonOverColor
+      if fButtonUseOverDarken then
+        ChangeColor(fButtonOverColor, False, FButtonOverDarken)
+      else
+        Canvas.Brush.Color := fButtonOverColor
     else
       Canvas.Brush.Color := fButtonUpColor;
 
   Canvas.FillRect(R);
+
   Canvas.Brush.Color := FCaptionColor;
   FBevel := FCaptionOffsetSmall;
   Rotation := 0;
 
-  FlatOffset := 0;//Ord(FlatButtons);
+//  FlatOffset := 0;//Ord(FlatButtons);
 
   AdjustedCaptionHeight := GetEffectiveCaptionHeight;
 
@@ -406,7 +445,6 @@ begin
 
   Canvas.FillRect(FCaptionRect);
   DrawRotatedText(Rotation);
-
 end;
 
 
@@ -416,7 +454,7 @@ begin
 end;
 
 
-procedure TgemCapPanelBtn.AlignControls(AControl: TControl; var R: TRect);
+procedure TgemCapPanelBtn.AlignControls(AControl: TControl; var R: TRect);
 begin
   case FCaptionPosition of
     dpLeft:
@@ -434,11 +472,9 @@ end;
 
 function TgemCapPanelBtn.CanStartDrag: Boolean;
 begin
-  {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'CanStartDrag' );{$ENDIF}
   Result := Align = alNone;
-  if Assigned(FOnStartAutoDrag) then
-    FOnStartAutoDrag(Self, Result);
-  {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'CanStartDrag' );{$ENDIF}
+//  if Assigned(FOnStartAutoDrag) then
+//    FOnStartAutoDrag(Self, Result);
 end;
 
 
@@ -451,7 +487,7 @@ begin
     if Sender <> Self then begin
       if Sender.Down and FDown then begin
         FDown := False;
-        Color := fButtonUpColor;
+//        Color := fButtonUpColor;
         FState := bsUp;
 //        if (Action is TCustomAction) then
 //          TCustomAction(Action).Checked := False;
@@ -486,18 +522,15 @@ end;
 procedure TgemCapPanelBtn.theMouseEnter;
 begin
   FMouseInControl := True;
-  if fButtonDownColor <> Color then
-    Color := fButtonOverColor;
   Invalidate;
   DoMouseEnter;
+
 end;
 
 
 procedure TgemCapPanelBtn.theMouseLeave;
 begin
   FMouseInControl := False;
-  if fButtonDownColor <> Color then
-    Color := fButtonUpColor;
   Invalidate;
   DoMouseLeave;
 end;
@@ -514,17 +547,13 @@ begin
       FState := bsDown;
       Invalidate;
     end;
-//    FDragging := True;
   end;
 end;
 
 
 procedure TgemCapPanelBtn.theMouseMove(Shift: TShiftState; X, Y: Integer);
-var
-  NewState: TgemButtonState;
 begin
   FMouseInControl := True;
-//
 end;
 
 
@@ -538,7 +567,7 @@ begin
 
   FMouseInControl := True;
 
-  DoClick := True; //(X >= 0) and (X < ClientWidth) and (Y >= 0) and (Y <= ClientHeight);
+  DoClick := (X >= 0) and (X < ClientWidth) and (Y >= 0) and (Y <= ClientHeight);
   if FGroupIndex = 0 then begin
     { Redraw face in-case mouse is captured }
     FState := bsUp;
@@ -643,36 +672,22 @@ end;
 
 procedure TgemCapPanelBtn.DoLeaveDrag;
 begin
-  {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'DoLeaveDrag' );{$ENDIF}
   if Assigned(FEndDrag) then
     FEndDrag(Self);
-  {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'DoLeaveDrag' );{$ENDIF}
 end;
 
 
 procedure TgemCapPanelBtn.DoMouseEnter;
 begin
-  {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'DoMouseEnter' );{$ENDIF}
-  if fButtonDownColor <> color then  begin
-    Color := fButtonOverColor;
-  end;
-
   if Assigned(FOnPnlMouseEnter) then
     FOnPnlMouseEnter(Self);
-  {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'DoMouseEnter' );{$ENDIF}
 end;
 
 
 procedure TgemCapPanelBtn.DoMouseLeave;
 begin
-  {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'DoMouseLeave' );{$ENDIF}
-  if fButtonDownColor <> color then
-    Color := fButtonUpColor;
-//    Color := ForceUpColor;
-
   if Assigned(FOnPnlMouseLeave) then
     FOnPnlMouseLeave(Self);
-  {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'DoMouseLeave' );{$ENDIF}
 end;
 
 
@@ -685,7 +700,6 @@ var
   Flags: Integer;
   R: TRect;
 begin
-  {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'DrawRotatedText' );{$ENDIF}
   if FCaption = '' then
     Exit;
     SetBkMode(Canvas.Handle, TRANSPARENT);
@@ -734,52 +748,40 @@ begin
         Flags := Flags or DT_NOCLIP; { bug or feature? }
       DrawText(Canvas, Caption, -1, R, Flags);
     end;
-  {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'DrawRotatedText' );{$ENDIF}
 end;
 
 
 procedure TgemCapPanelBtn.SetImage_Picture(const Value: TPicture);
 begin
-  {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'SetImage_Picture' );{$ENDIF}
   fImage.Picture.Assign(Value);
-  {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'SetImage_Picture' );{$ENDIF}
 end;
 
 
 procedure TgemCapPanelBtn.SetImage_AutoSize(const Value: Boolean);
 begin
-  {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'SetImage_AutoSize' );{$ENDIF}
-//  fImage_AutoSize := value;
   fImage.AutoSize := Value;
-  {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'SetImage_AutoSize' );{$ENDIF}
 end;
 
 
 procedure TgemCapPanelBtn.SetImage_Center(const Value: Boolean);
 begin
-  {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'SetImage_Center' );{$ENDIF}
   fImage.Center := Value;
-  {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'SetImage_Center' );{$ENDIF}
 end;
 
 
 function TgemCapPanelBtn.GetEffectiveCaptionHeight: Integer;
 begin
-  {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'GetEffectiveCaptionHeight' );{$ENDIF}
   if FCaptionHeight = 0 then
     Result := GetSystemMetrics(SM_CYCAPTION)
   else
     Result := FCaptionHeight;
-  {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'GetEffectiveCaptionHeight' );{$ENDIF}
 end;
-
 
 
 function TgemCapPanelBtn.getImageAlign: TAlign;
 begin
   Result := fImage.Align;
 end;
-
 
 
 function TgemCapPanelBtn.GetImage_AutoSize: Boolean;
@@ -790,9 +792,7 @@ end;
 
 function TgemCapPanelBtn.GetImage_Center: Boolean;
 begin
-  {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'GetImage_Center' );{$ENDIF}
   result := fImage.Center;
-  {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'GetImage_Center' );{$ENDIF}
 end;
 
 
@@ -810,25 +810,19 @@ end;
 
 function TgemCapPanelBtn.GetImage_Picture: TPicture;
 begin
-  {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'GetImage_Picture' );{$ENDIF}
   result := fImage.Picture;
-  {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'GetImage_Picture' );{$ENDIF}
 end;
 
 
 function TgemCapPanelBtn.GetImage_Proportional: Boolean;
 begin
-  {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'GetImage_Proportional' );{$ENDIF}
   Result := fImage.Proportional;
-  {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'GetImage_Proportional' );{$ENDIF}
 end;
 
 
 function TgemCapPanelBtn.GetImage_Stretch: Boolean;
 begin
-  {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'GetImage_Stretch' );{$ENDIF}
   result := fImage.Stretch;
-  {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'GetImage_Stretch' );{$ENDIF}
 end;
 
 
@@ -840,25 +834,19 @@ end;
 
 procedure TgemCapPanelBtn.SetImage_Proportional(const Value: Boolean);
 begin
-  {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'SetImage_Proportional' );{$ENDIF}
   fImage.Proportional := (Value);
-  {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'SetImage_Proportional' );{$ENDIF}
 end;
 
 
 procedure TgemCapPanelBtn.SetImage_Strech(const Value: Boolean);
 begin
-  {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'SetImage_Strech' );{$ENDIF}
   fImage.Stretch := (Value);
-  {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'SetImage_Strech' );{$ENDIF}
 end;
 
 
 procedure TgemCapPanelBtn.SetImage_Visible(const Value: Boolean);
 begin
-  {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'SetImage_Visible' );{$ENDIF}
   fImage.Visible := (Value);
-  {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'SetImage_Visible' );{$ENDIF}
 end;
 
 
@@ -874,6 +862,22 @@ begin
 end;
 
 
+Function TgemCapPanelBtn.InRange (Lo,Hi,Val : Integer) : Boolean;
+Begin
+  Result := (Val>=Lo)And(Val<=Hi);
+End;
+
+
+procedure TgemCapPanelBtn.setButtonOverDarken(const Value: Integer);
+begin
+  if fButtonOverDarken <> value then
+    if InRange(0, 25, Value) then
+      fButtonOverDarken := Value
+    else
+      fButtonOverDarken := 0;
+end;
+
+
 procedure TgemCapPanelBtn.SetMouseOverColor(const Value: TColor);
 begin
   if fButtonOverColor <> Value then begin
@@ -885,35 +889,36 @@ end;
 
 procedure TgemCapPanelBtn.SetButtonUpColor(const Value: tcolor);
 begin
-{  fButtonUpColor := clBtnFace;}
   if fButtonUpColor <> value then begin
     fButtonUpColor := Value;
     if not fDown then begin
       Color := Value;
-      Invalidate;
     end;
+    Invalidate;
   end;
+end;
+
+
+procedure TgemCapPanelBtn.setButtonUseOverDarken(const Value: Boolean);
+begin
+  if fButtonUseOverDarken <> value then
+    fButtonUseOverDarken := Value;
 end;
 
 
 procedure TgemCapPanelBtn.Resize;
 begin
-  {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'Resize' );{$ENDIF}
   inherited Resize;
   Repaint;
-  {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'Resize' );{$ENDIF}
 end;
 
 
 procedure TgemCapPanelBtn.SetResizable(const Value: Boolean);
 begin
-  {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'SetResizable' );{$ENDIF}
-  if FResizable <> Value then
-  begin
+  if FResizable <> Value then begin
     FResizable := Value;
     RecreateWnd;
   end;
-  {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'SetResizable' );{$ENDIF}
 end;
 
 
@@ -944,61 +949,50 @@ begin
 end;
 
 
-
 procedure TgemCapPanelBtn.SetCaption(const Value: string);
 begin
-  {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'SetCaption' );{$ENDIF}
   FCaption := Value;
   inherited Caption := '';
   Invalidate;
-  {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'SetCaption' );{$ENDIF}
 end;
 
 
 procedure TgemCapPanelBtn.SetCaptionColor(const Value: TColor);
 begin
-  {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'SetCaptionColor' );{$ENDIF}
   if FCaptionColor <> Value then
   begin
     FCaptionColor := Value;
     Invalidate;
   end;
-  {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'SetCaptionColor' );{$ENDIF}
 end;
 
 
 procedure TgemCapPanelBtn.SetCaptionFont(const Value: TFont);
 begin
-  {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'SetCaptionFont' );{$ENDIF}
   FCaptionFont.Assign(Value);
   Invalidate;
-  {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'SetCaptionFont' );{$ENDIF}
 end;
 
 
 procedure TgemCapPanelBtn.SetCaptionHeight(const Value: Integer);
 begin
-  {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'SetCaptionHeight' );{$ENDIF}
   if FCaptionHeight <> Value then
   begin
     FCaptionHeight := Value;
     Invalidate;
     ReAlign;
   end;
-  {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'SetCaptionHeight' );{$ENDIF}
 end;
 
 
 procedure TgemCapPanelBtn.SetCaptionPosition(
   const Value: TgemJvDrawPosition);
 begin
-  {$IFDEF USE_CODESITE}CodeSite.EnterMethod( Self, 'SetCaptionPosition' );{$ENDIF}
   if FCaptionPosition <> Value then
   begin
     FCaptionPosition := Value;
     RecreateWnd;
   end;
-  {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'SetCaptionPosition' );{$ENDIF}
 end;
 
 
@@ -1046,3 +1040,4 @@ begin
 end;
 
 end.
+
