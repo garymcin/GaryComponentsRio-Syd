@@ -16,7 +16,7 @@ uses
 {$IFDEF VER340}
   cnColorGrid,
 {$ENDIF}
- gemPanelImageBtn, gemCapPanelBtn;
+ gemCapPanelBtn;
 
 
 procedure Register;
@@ -32,7 +32,7 @@ begin
                                    {$IFDEF VER340}
                                      TCnColorGrid,
                                    {$ENDIF}
-                                     TgemCaptionBtnImagePanel, TgemCapPanelBtn]);
+                                     TgemCapPanelBtn]);
 
 
 end;

@@ -220,7 +220,6 @@
         <DCCReference Include="Source\adpDBEdit.pas"/>
         <DCCReference Include="Source\adpEdit.pas"/>
         <DCCReference Include="Source\SBPro.pas"/>
-        <DCCReference Include="Source\gemPanelImageBtn.pas"/>
         <DCCReference Include="Source\gemCapPanelBtn.pas"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
@@ -263,7 +262,7 @@
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
-                <DeployFile LocalName="C:\Users\Public\Documents\Embarcadero\Studio\20.0\Bpl\GEMComponentsGEMComponentsR260.2.0.0.bpl" Configuration="Debug" Class="ProjectOutput">
+                <DeployFile LocalName="C:\Users\Public\Documents\Embarcadero\Studio\20.0\Bpl\GEMComponentsR260.bpl" Configuration="Debug" Class="ProjectOutput">
                     <Platform Name="Win32">
                         <RemoteName>GEMComponentsR.bpl</RemoteName>
                         <Overwrite>true</Overwrite>

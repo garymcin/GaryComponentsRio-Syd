@@ -6,11 +6,9 @@ uses
 
   System.Classes, System.SysUtils,
 
-  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.ActnList, Vcl.ExtCtrls,  Vcl.Dialogs, Vcl.Buttons,
+  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.ActnList, Vcl.ExtCtrls,
 
-  CodeSiteLogging, GEMUseFullRoutines, GEMComponentsGlobal,
-
-  JvImage, JvExtComponent, JvCaptionPanel;
+  GEMComponentsGlobal;
 
 type
   TgemCapPanelBtn = class;
@@ -18,20 +16,17 @@ type
   TCapPnlEventMouseEnter = procedure(sender: TgemCapPanelBtn) of object;
   TCapPnlEventMouseLeave = procedure(sender: TgemCapPanelBtn) of object;
 
-//  TgemImPnlBtnState = (gim_MouseOver, gim_Seletected, gim_Normal);
   TgemButtonState      = (bsUp, bsDisabled, bsDown, bsExclusive);
   TgemJvDrawPosition   = (dpLeft, dpTop, dpRight, dpBottom);
-//  TgemJvAutoDragStartEvent = procedure(Sender: TObject; var AllowDrag: Boolean) of object;
 
   {$IFDEF RTL230_UP}
   [ComponentPlatformsAttribute(pidWin32 or pidWin64)]
   {$ENDIF RTL230_UP}
 
-  TgemCapPanelBtn = class(TCustomPanel)//(TJvCustomPanel)
+  TgemCapPanelBtn = class(TCustomPanel)
     fImage              : TImage;
   private
     fComponentVersion   : tGEMComponents;
-    fImageAlign         : TAlign;
     fOnImage_MouseUp    : TMouseEvent;
     fOnImage_MouseDown  : TMouseEvent;
     fOnImage_MouseMove  : TMouseMoveEvent;
@@ -56,7 +51,6 @@ type
     FFlat               : Boolean;
     FBevel              : Integer;
     FEndDrag            : TNotifyEvent;
-//    FOnStartAutoDrag    : TJvAutoDragStartEvent;
     FOutlookLook        : Boolean;
     FOffset             : Integer;
     FMouseDown          : Boolean;
@@ -97,14 +91,14 @@ type
     procedure SetCaptionHeight(const Value: Integer);
     procedure SetCaptionPosition(const Value: TgemJvDrawPosition);
     procedure SetResizable(const Value: Boolean);
-    procedure setImageAlign(const Value: TAlign);
+    procedure SetImage_Align(const Value: TAlign);
     procedure SetImageHeight(const Value: Integer);
     procedure SetImageWidth(const Value: Integer);
     procedure SetGroupIndex(const Value: Integer);
     procedure setButtonOverDarken(const Value: Integer);
     procedure setButtonUseOverDarken(const Value: Boolean);
 
-    function getImageAlign: TAlign;
+    function GetImage_Align: TAlign;
     function GetImage_Height: Integer;
     function GetImage_Width: Integer;
     function GetImage_AutoSize: Boolean;
@@ -121,6 +115,7 @@ type
     procedure DrawRotatedText(Rotation: Integer);
     function ChangeColor(InputColor: TColor; Lighten: Boolean; n: Extended): TColor;
     Function InRange (Lo,Hi,Val : Integer) : Boolean;
+    function getImageAlign: TAlign;
   protected
     property MouseInControl: Boolean read FMouseInControl;
 
@@ -151,11 +146,12 @@ type
     procedure Click; override;
     property Color;
   published
-    property ImageAlign: TAlign read fImageAlign write SetImageAlign default alClient;
     property AllowAllUp: Boolean read FAllowAllUp write SetAllowAllUp default False;
     property ClicksDisabled: Boolean read FClicksDisabled write FClicksDisabled;
     property GroupIndex: Integer read FGroupIndex write SetGroupIndex default 0;
-//    property Image_Align: TAlign read getImageAlign write setImageAlign default alClient;
+
+//    property Image_AlignA: TAlign read fImage_Align default alClient;
+    property Image_Align: TAlign read GetImage_Align write SetImage_Align default alClient;
     property Image_AutoSize: Boolean read GetImage_AutoSize write  SetImage_AutoSize;
     property Image_Center: Boolean read GetImage_Center write  SetImage_Center;
     property Image_Picture: TPicture read GetImage_Picture write SetImage_Picture;
@@ -169,7 +165,6 @@ type
     property ButtonDownColor : TColor read FButtonDownColor write SetButtonDownColor default clGray;
     property ButtonUpColor: tcolor read fButtonUpColor write SetButtonUpColor default clBtnFace;
 
-//    property ClickedBorderBtnWidth: Integer read FBorderBtnWidth write SetBorderBtnWidth default 2;
     property Down: Boolean read FDown write SetDown default False;
     property Flat: Boolean read FFlat write SetFlat default False;
     property ButtonUseOverDarken: Boolean read fButtonUseOverDarken write setButtonUseOverDarken default false;
@@ -225,14 +220,6 @@ type
     property OnResize;
   end;
 
-{
-    property BevelInner: TPanelBevel read FBevelInner write SetBevelInner default bvNone;
-    property BevelOuter: TPanelBevel read FBevelOuter write SetBevelOuter default bvRaised;
-    property BevelWidth: TBevelWidth read FBevelWidth write SetBevelWidth default 1;
-    property BorderWidth: TBorderWidth read FBorderWidth write SetBorderWidth default 0;
-    property BorderStyle: TBorderStyle read FBorderStyle write SetBorderStyle default bsNone;
-
-}
 
 implementation
 
@@ -277,10 +264,8 @@ begin
   BevelOuter := bvNone;
   TabOrder := 0;
   CaptionPosition := dpBottom;
-
   fImage := TImage.Create(Self);
-  fImage.Parent := Self;
-  fImage.Align  := fImageAlign;
+//  fImage.Align := alClient;
 end;
 
 
@@ -318,20 +303,23 @@ procedure TgemCapPanelBtn.CreateWindowHandle(const Params: TCreateParams);
 begin
   inherited  CreateWindowHandle(Params);
   with fImage do begin
-    OnMouseEnter  := ImageMouseEnterHandler;
-    OnMouseLeave  := ImageMouseLeaveHandler;
+    OnMouseEnter := ImageMouseEnterHandler;
+    OnMouseLeave := ImageMouseLeaveHandler;
 
-    OnMouseMove   := ImageMouseMoveHandler;
-    OnMouseUp     := ImageMouseUpHandler;
-    OnMouseDown   := ImageMouseDownHandler;
+    OnMouseMove  := ImageMouseMoveHandler;
+    OnMouseUp    := ImageMouseUpHandler;
+    OnMouseDown  := ImageMouseDownHandler;
+
+    Parent       := Self;
+//    Align        := alClient;//fImage_Align;
   end;
 end;
 
 
-procedure TgemCapPanelBtn.setImageAlign(const Value: TAlign);
+procedure TgemCapPanelBtn.SetImage_Align(const Value: TAlign);
 begin
   fImage.Align := value;
-  fImageAlign := Value;
+//  fImage_Align := Value;
 end;
 
 
@@ -418,8 +406,6 @@ begin
   FBevel := FCaptionOffsetSmall;
   Rotation := 0;
 
-//  FlatOffset := 0;//Ord(FlatButtons);
-
   AdjustedCaptionHeight := GetEffectiveCaptionHeight;
 
   case FCaptionPosition of
@@ -445,6 +431,8 @@ begin
 
   Canvas.FillRect(FCaptionRect);
   DrawRotatedText(Rotation);
+  if fImage.Align = alNone then
+    fImage.Align := alClient;
 end;
 
 
@@ -473,8 +461,6 @@ end;
 function TgemCapPanelBtn.CanStartDrag: Boolean;
 begin
   Result := Align = alNone;
-//  if Assigned(FOnStartAutoDrag) then
-//    FOnStartAutoDrag(Self, Result);
 end;
 
 
@@ -487,15 +473,8 @@ begin
     if Sender <> Self then begin
       if Sender.Down and FDown then begin
         FDown := False;
-//        Color := fButtonUpColor;
         FState := bsUp;
-//        if (Action is TCustomAction) then
-//          TCustomAction(Action).Checked := False;
         Invalidate;
-//      end
-//      else  if fDown then begin
-//        fgemNormalStateColor := Color;
-//        Color := fSelectedColor;
       end;
 
       FAllowAllUp := Sender.AllowAllUp;
@@ -784,6 +763,12 @@ begin
 end;
 
 
+function TgemCapPanelBtn.GetImage_Align: TAlign;
+begin
+  Result := fImage.Align;
+end;
+
+
 function TgemCapPanelBtn.GetImage_AutoSize: Boolean;
 begin
   result := fImage.AutoSize;
@@ -882,7 +867,6 @@ procedure TgemCapPanelBtn.SetMouseOverColor(const Value: TColor);
 begin
   if fButtonOverColor <> Value then begin
     fButtonOverColor := Value;
-//    Invalidate;
   end;
 end;
 
@@ -921,24 +905,6 @@ begin
   end;
 end;
 
-
-//procedure TgemCapPanelBtn.UpdateTracking;
-//var
-//  P: TPoint;
-//begin
-//  if FFlat then
-//  begin
-//    if Enabled then
-//    begin
-//      GetCursorPos(P);
-//      FMouseInControl := not (FindDragTarget(P, True) = Self);
-//      if FMouseInControl then
-//        Perform(CM_MOUSELEAVE, 0, 0)
-//      else
-//        Perform(CM_MOUSEENTER, 0, 0);
-//    end;
-//  end;
-//end;
 
 procedure TgemCapPanelBtn.SetAllowAllUp(const Value: Boolean);
 begin
@@ -1029,6 +995,7 @@ begin
     Invalidate;
   end;
 end;
+
 
 procedure TgemCapPanelBtn.SetGroupIndex(const Value: Integer);
 begin

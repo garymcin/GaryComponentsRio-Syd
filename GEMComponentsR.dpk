@@ -9,23 +9,23 @@ package GEMComponentsR;
 {$EXTENDEDSYNTAX ON}
 {$IMPORTEDDATA ON}
 {$IOCHECKS ON}
-{$LOCALSYMBOLS OFF}
+{$LOCALSYMBOLS ON}
 {$LONGSTRINGS ON}
 {$OPENSTRINGS ON}
-{$OPTIMIZATION ON}
+{$OPTIMIZATION OFF}
 {$OVERFLOWCHECKS OFF}
 {$RANGECHECKS OFF}
-{$REFERENCEINFO OFF}
+{$REFERENCEINFO ON}
 {$SAFEDIVIDE OFF}
-{$STACKFRAMES OFF}
+{$STACKFRAMES ON}
 {$TYPEDADDRESS OFF}
 {$VARSTRINGCHECKS ON}
 {$WRITEABLECONST OFF}
 {$MINENUMSIZE 1}
 {$IMAGEBASE $400000}
-{$DEFINE RELEASE}
+{$DEFINE DEBUG}
 {$ENDIF IMPLICITBUILDING}
-{$DESCRIPTION 'Gary''s compnonets'}
+{$DESCRIPTION 'Gary''s Components Runtime'}
 {$LIBSUFFIX '260'}
 {$RUNONLY}
 {$IMPLICITBUILD OFF}
@@ -81,10 +81,6 @@ contains
   adpDBEdit in 'Source\adpDBEdit.pas',
   adpEdit in 'Source\adpEdit.pas',
   SBPro in 'Source\SBPro.pas',
-  gemPanelImageBtn in 'Source\gemPanelImageBtn.pas',
-  {$IFDEF VER240}
-  CnColorGrid in 'Source\CnColorGrid.pas',
-  {$ENDIF}
   gemCapPanelBtn in 'Source\gemCapPanelBtn.pas';
 
 end.
