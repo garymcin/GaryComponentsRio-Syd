@@ -4,9 +4,10 @@ interface
 uses
   Winapi.Windows, Winapi.Messages,
 
-  System.Classes, System.SysUtils,
+  System.Classes, System.SysUtils, System.Math,
 
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.ActnList, Vcl.ExtCtrls,
+  Vcl.Themes, Vcl.Buttons,
 
   GEMComponentsGlobal;
 
@@ -62,7 +63,8 @@ type
     FState              : TgemButtonState;
     fBorderWidth        : TBorderWidth;
     fButtonUseOverDarken: Boolean;
-    FButtonOverDarken   : Integer;
+    FButtonDarkenAmount: Integer;
+//    FTransparent        : Boolean;
 
     procedure CMPanelMouseEnter(var Msg: TMessage); message CM_MOUSEENTER;
     procedure CMPanelMouseLeave(var Msg: TMessage); message CM_MOUSELEAVE;
@@ -113,9 +115,10 @@ type
 
     procedure DoCaptionFontChange(Sender: TObject);
     procedure DrawRotatedText(Rotation: Integer);
-    function ChangeColor(InputColor: TColor; Lighten: Boolean; n: Extended): TColor;
+    function ChangeColor(thisColor: TColor; thePercent: Extended): TColor;
     Function InRange (Lo,Hi,Val : Integer) : Boolean;
     function getImageAlign: TAlign;
+    procedure SetTransparent(const Value: Boolean);
   protected
     property MouseInControl: Boolean read FMouseInControl;
 
@@ -140,6 +143,7 @@ type
     procedure theMouseMove(Shift: TShiftState; X, Y: Integer);
     procedure theMouseEnter;
     procedure theMouseLeave;
+    function GetHighlightColor(BaseColor: TColor): TColor;
   public
     constructor Create(AOwner: TComponent); override;
     destructor Destory;
@@ -168,7 +172,7 @@ type
     property Down: Boolean read FDown write SetDown default False;
     property Flat: Boolean read FFlat write SetFlat default False;
     property ButtonUseOverDarken: Boolean read fButtonUseOverDarken write setButtonUseOverDarken default false;
-    property ButtonOverDarken: Integer read fButtonOverDarken write setButtonOverDarken default 5;
+    property ButtonDarkenAmount: Integer read FButtonDarkenAmount write setButtonOverDarken default 5;
 
 //    property OnImageMouseEnter: TNotifyEvent read fOnImageMouseEnter write fOnImageMouseEnter;
 //    property OnImageMouseLeave: TNotifyEvent read fOnImageMouseLeave write fOnImageMouseLeave;
@@ -179,6 +183,7 @@ type
     property OnMouseEnter: TCapPnlEventMouseEnter read fOnPnlMouseEnter write fOnPnlMouseEnter;
     property OnMouseLeave: TCapPnlEventMouseLeave read fOnPnlMouseLeave write fOnPnlMouseLeave;
 
+//    property Transparent: Boolean read FTransparent write SetTransparent default True;
     property Align;
     property Action;
     property BorderStyle default bsSingle;
@@ -201,6 +206,7 @@ type
     property PopupMenu;
     property Resizable:Boolean read FResizable write SetResizable default True;
     property ShowHint;
+    property StyleElements;
     property TabOrder;
     property TabStop;
     property Visible;
@@ -209,7 +215,6 @@ type
     property OnDragDrop;
     property OnDragOver;
     property OnEndDrag;
-//    property OnStartAutoDrag: TJvAutoDragStartEvent read FOnStartAutoDrag write FOnStartAutoDrag;
     property OnEndAutoDrag: TNotifyEvent read FEndDrag write FEndDrag;
     property OnEnter;
     property OnExit;
@@ -335,44 +340,52 @@ begin
 end;
 
 
-function TgemCapPanelBtn.ChangeColor(InputColor: TColor; Lighten: Boolean; n: Extended): TColor;
+function TgemCapPanelBtn.ChangeColor(thisColor: TColor; thePercent: Extended): TColor;
 var
-  r,g,b: extended;
+  (* a TColor is made out of Red, Green and blue *)
+  cRed,
+  cGreen,
+  cBlue: Byte;
 begin
-  // Grab RGB values
-  r := GetRValue(InputColor);
-  g := GetGValue(InputColor);
-  b := GetBValue(InputColor);
-  // Do the operation
-  if Lighten = True then
-  begin
-    r := r+((r/255)*100);
-    g := g+((g/255)*100);
-    b := b+((b/255)*100);
-  end else
-  begin
-    r := r-((r/255)*100);
-    g := g-((g/255)*100);
-    b := b-((b/255)*100);
-  end;
-  // Check whether result is in range
-  if r > 255 then r := 255;
-  if r < 0 then r := 0;
-  if g > 255 then g := 255;
-  if g < 0 then g := 0;
-  if b > 255 then b := 255;
-  if b < 0 then b := 0;
-  // Send it out
-  Result := RGB(byte(Round(r)),byte(Round(g)),byte(Round(b)));
+  (* get them individually *)
+  cRed := GetRValue(thisColor);
+  cGreen := GetGValue(thisColor);
+  cBlue := GetBValue(thisColor);
+  (* make them darker thePercent *)
+  (* we need a byte value but the "/" operator
+     returns a float value so we use Round function
+     because type mismatch *)
+  cRed := Round(cRed * thePercent / 100);
+  cGreen := Round(cGreen * thePercent / 100);
+  cBlue := Round(cBlue * thePercent / 100);
+  (* return them as TColor *)
+  Result := RGB(cRed, cGreen, cBlue);
 end;
 
+
+function TgemCapPanelBtn.GetHighlightColor(BaseColor: TColor): TColor;
+begin
+  Result := RGB(Min(Round(GetRValue(ColorToRGB(BaseColor)) * 1.1), 255),
+    Min(Round(GetGValue(ColorToRGB(BaseColor)) * 1.1), 255),
+    Min(Round(GetBValue(ColorToRGB(BaseColor)) * 1.1), 255));
+//  Result := RGB(Min(GetRValue(ColorToRGB(BaseColor)) + 64, 255),
+//    Min(GetGValue(ColorToRGB(BaseColor)) + 64, 255),
+//    Min(GetBValue(ColorToRGB(BaseColor)) + 64, 255));
+end;
+
+
+//const
+//  DownStyles: array[Boolean] of Integer = (BDR_RAISEDINNER, BDR_SUNKENOUTER);
+//  FillStyles: array[Boolean] of Integer = (BF_MIDDLE, 0);
 
 procedure TgemCapPanelBtn.Paint;
 var
   Rotation: Integer;
   R: TRect;
-//  FlatOffset: Integer;
+//  Button: TThemedButton;
   AdjustedCaptionHeight: Integer;
+//  DrawFlags: Integer;
+//  PaintRect: TRect;
 begin
   if not Enabled then begin
     FState := bsDisabled;
@@ -386,21 +399,153 @@ begin
 
   R := ClientRect;
 
-  if fDown then
-    if (FMouseInControl) and (fButtonUseOverDarken) then
-      Canvas.Brush.Color := ChangeColor(fButtonDownColor, False, FButtonOverDarken)//DarkerColor(fButtonDownColor, 2)
+  if fDown then begin
+    if FMouseInControl then  begin
+      if fButtonUseOverDarken then begin
+        Canvas.Brush.Color := ChangeColor(fButtonDownColor, FButtonDarkenAmount);
+      end
+      else
+        Canvas.Brush.Color := fButtonOverColor;
+    end
     else
-      Canvas.Brush.Color := fButtonDownColor
+      Canvas.Brush.Color := fButtonDownColor;
+  end
   else
     if FMouseInControl then
       if fButtonUseOverDarken then
-        ChangeColor(fButtonOverColor, False, FButtonOverDarken)
+        Canvas.Brush.Color := ChangeColor(fButtonUpColor,  FButtonDarkenAmount)
       else
         Canvas.Brush.Color := fButtonOverColor
     else
       Canvas.Brush.Color := fButtonUpColor;
 
   Canvas.FillRect(R);
+
+
+//      if fDown then
+//        if (FMouseInControl) and (fButtonUseOverDarken) then
+//          Canvas.Brush.Color := ChangeColor(fButtonDownColor, FButtonOverDarken)
+//        else
+//          Canvas.Brush.Color := fButtonDownColor
+//      else
+//        if FMouseInControl then
+//          if fButtonUseOverDarken then
+//             Canvas.Brush.Color := ChangeColor(fButtonUpColor, FButtonOverDarken)
+//          else
+//            Canvas.Brush.Color := fButtonOverColor
+//        else
+//          Canvas.Brush.Color := fButtonUpColor;
+//
+//      Canvas.FillRect(R);
+//    end;
+
+//=====================
+//
+//    PaintRect := Rect(0, 0, Width, Height);
+//    DrawFlags := DFCS_BUTTONPUSH or DFCS_ADJUSTRECT;
+//
+//
+//    if FState in [bsDown, bsExclusive] then
+//      DrawFlags := DrawFlags or DFCS_PUSHED;
+//
+//    R := ClientRect;
+//    if (FMouseInControl) and (fButtonUseOverDarken) then
+//      Canvas.Brush.Color := ChangeColor(fButtonDownColor, False, FButtonOverDarken)//DarkerColor(fButtonDownColor, 2)
+//    else
+//      Canvas.Brush.Color := fButtonDownColor;
+//    Canvas.FillRect(R);
+//
+//
+//    DrawFrameControl(Canvas.Handle, PaintRect, DFC_BUTTON, DrawFlags);
+//
+//    if (FState in [bsDown, bsExclusive]) or (FMouseInControl and (FState <> bsDisabled)) or
+//       (csDesigning in ComponentState) then
+//      DrawEdge(Canvas.Handle, PaintRect, DownStyles[FState in [bsDown, bsExclusive]],
+//            FillStyles[false] or BF_RECT)
+//  //          FillStyles[Transparent] or BF_RECT)
+//    else begin
+//      if FMouseInControl then
+//        if fButtonUseOverDarken then
+//          Canvas.Brush.Color := ChangeColor(fButtonOverColor, False, FButtonOverDarken)
+//        else
+//          Canvas.Brush.Color := fButtonOverColor
+//      else
+//        Canvas.Brush.Color := fButtonUpColor;
+////      Canvas.Brush.Color := Color;
+//      Canvas.FillRect(PaintRect);
+//    end;
+//
+  //===========================
+//    if FState in [bsDown, bsExclusive] then begin
+//      DrawFlags := DrawFlags or DFCS_PUSHED;
+//      DrawFrameControl(Canvas.Handle, PaintRect, DFC_BUTTON, DrawFlags);
+//      if (FState in [bsDown, bsExclusive]) or (FMouseInControl and (FState <> bsDisabled)) or
+//         (csDesigning in ComponentState) then
+//        DrawEdge(Canvas.Handle, PaintRect, DownStyles[FState in [bsDown, bsExclusive]],
+//              FillStyles[false] or BF_RECT);
+//
+//      R := ClientRect;
+//      if fDown then
+//        if (FMouseInControl) and (fButtonUseOverDarken) then
+//          Canvas.Brush.Color := ChangeColor(fButtonDownColor, FButtonOverDarken)  //ChangeColor(fButtonDownColor, False, FButtonOverDarken)//DarkerColor(fButtonDownColor, 2)
+//        else begin
+//          Canvas.Brush.Color := fButtonDownColor;
+//        end
+//      else
+//        if FMouseInControl then
+//          if fButtonUseOverDarken then
+//            ChangeColor(fButtonUpColor, FButtonOverDarken) //ChangeColor(fButtonOverColor, False, FButtonOverDarken)
+//          else
+//            Canvas.Brush.Color := fButtonOverColor
+//        else
+//          Canvas.Brush.Color := fButtonUpColor;
+//
+//      Canvas.FillRect(R);
+//
+//    end
+//    else begin
+//      R := ClientRect;
+//
+//      if fDown then
+//        if (FMouseInControl) and (fButtonUseOverDarken) then
+//          Canvas.Brush.Color := ChangeColor(fButtonDownColor, FButtonOverDarken)//DarkerColor(fButtonDownColor, 2)
+//        else
+//          Canvas.Brush.Color := fButtonDownColor
+//      else
+//        if FMouseInControl then
+//          if fButtonUseOverDarken then
+//             Canvas.Brush.Color := ChangeColor(fButtonUpColor, FButtonOverDarken)
+//          else
+//            Canvas.Brush.Color := fButtonOverColor
+//        else
+//          Canvas.Brush.Color := fButtonUpColor;
+//
+//      Canvas.FillRect(R);
+//    end;
+//
+//    //============================
+//
+//    InflateRect(PaintRect, -1, -1);
+//
+//    if FState in [bsDown, bsExclusive] then
+//    begin
+//      if (FState = bsExclusive) and (not FFlat or not FMouseInControl) then
+//      begin
+//        Canvas.Brush.Bitmap := AllocPatternBitmap(clBtnFace, clBtnHighlight);
+//        Canvas.FillRect(PaintRect);
+//      end;
+//  //    Offset.X := 1;
+//  //    Offset.Y := 1;
+//    end
+//    else
+//    begin
+//  //    Offset.X := 0;
+//  //    Offset.Y := 0;
+//    end;
+//
+////======================
+//  end;
+
 
   Canvas.Brush.Color := FCaptionColor;
   FBevel := FCaptionOffsetSmall;
@@ -855,11 +1000,11 @@ End;
 
 procedure TgemCapPanelBtn.setButtonOverDarken(const Value: Integer);
 begin
-  if fButtonOverDarken <> value then
-    if InRange(0, 25, Value) then
-      fButtonOverDarken := Value
+  if FButtonDarkenAmount <> value then
+    if InRange(0, 100, Value) then
+      FButtonDarkenAmount := Value
     else
-      fButtonOverDarken := 0;
+      FButtonDarkenAmount := 0;
 end;
 
 
@@ -903,6 +1048,19 @@ begin
     FResizable := Value;
     RecreateWnd;
   end;
+end;
+
+
+procedure TgemCapPanelBtn.SetTransparent(const Value: Boolean);
+begin
+//  if Value <> FTransparent then
+//  begin
+//    FTransparent := Value;
+//    if Value then
+//      ControlStyle := ControlStyle - [csOpaque] else
+//      ControlStyle := ControlStyle + [csOpaque];
+//    Invalidate;
+//  end;
 end;
 
 
