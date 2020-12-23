@@ -28,9 +28,9 @@ type
     fImage              : TImage;
   private
     fComponentVersion   : tGEMComponents;
-    fOnImage_MouseUp    : TMouseEvent;
-    fOnImage_MouseDown  : TMouseEvent;
-    fOnImage_MouseMove  : TMouseMoveEvent;
+//    fOnImage_MouseUp    : TMouseEvent;
+//    fOnImage_MouseDown  : TMouseEvent;
+//    fOnImage_MouseMove  : TMouseMoveEvent;
 
     fOnPnlMouseEnter    : TCapPnlEventMouseEnter;
     fOnPnlMouseLeave    : TCapPnlEventMouseLeave;
@@ -54,17 +54,16 @@ type
     FEndDrag            : TNotifyEvent;
     FOutlookLook        : Boolean;
     FOffset             : Integer;
-    FMouseDown          : Boolean;
-    FAnchorPos          : TPoint;
+//    FMouseDown          : Boolean;
+//    FAnchorPos          : TPoint;
     FCaptionOffsetSmall : Integer;
     FCaptionOffsetLarge : Integer;
     FAllowAllUp         : Boolean;
     FMouseInControl     : Boolean;
     FState              : TgemButtonState;
-    fBorderWidth        : TBorderWidth;
+//    fBorderWidth        : TBorderWidth;
     fButtonUseOverDarken: Boolean;
     FButtonDarkenAmount: Integer;
-//    FTransparent        : Boolean;
 
     procedure CMPanelMouseEnter(var Msg: TMessage); message CM_MOUSEENTER;
     procedure CMPanelMouseLeave(var Msg: TMessage); message CM_MOUSELEAVE;
@@ -115,10 +114,11 @@ type
 
     procedure DoCaptionFontChange(Sender: TObject);
     procedure DrawRotatedText(Rotation: Integer);
-    function ChangeColor(thisColor: TColor; thePercent: Extended): TColor;
+    function DarkerColor(thisColor: TColor; thePercent: Byte): TColor;
+    function LighterColor(thisColor: TColor; thePercent: Byte): TColor;
     Function InRange (Lo,Hi,Val : Integer) : Boolean;
     function getImageAlign: TAlign;
-    procedure SetTransparent(const Value: Boolean);
+//    procedure SetTransparent(const Value: Boolean);
   protected
     property MouseInControl: Boolean read FMouseInControl;
 
@@ -143,7 +143,6 @@ type
     procedure theMouseMove(Shift: TShiftState; X, Y: Integer);
     procedure theMouseEnter;
     procedure theMouseLeave;
-    function GetHighlightColor(BaseColor: TColor): TColor;
   public
     constructor Create(AOwner: TComponent); override;
     destructor Destory;
@@ -154,7 +153,6 @@ type
     property ClicksDisabled: Boolean read FClicksDisabled write FClicksDisabled;
     property GroupIndex: Integer read FGroupIndex write SetGroupIndex default 0;
 
-//    property Image_AlignA: TAlign read fImage_Align default alClient;
     property Image_Align: TAlign read GetImage_Align write SetImage_Align default alClient;
     property Image_AutoSize: Boolean read GetImage_AutoSize write  SetImage_AutoSize;
     property Image_Center: Boolean read GetImage_Center write  SetImage_Center;
@@ -259,7 +257,7 @@ begin
   BorderStyle := bsSingle;
 
   FCaptionOffsetSmall := 2;
-  FCaptionOffsetLarge := 3;
+  FCaptionOffsetLarge := 4;
   FResizable := True;
 
 
@@ -340,7 +338,7 @@ begin
 end;
 
 
-function TgemCapPanelBtn.ChangeColor(thisColor: TColor; thePercent: Extended): TColor;
+function TgemCapPanelBtn.DarkerColor(thisColor: TColor; thePercent: Byte): TColor;
 var
   (* a TColor is made out of Red, Green and blue *)
   cRed,
@@ -363,29 +361,77 @@ begin
 end;
 
 
-function TgemCapPanelBtn.GetHighlightColor(BaseColor: TColor): TColor;
+(* lighter color of thisColor by thePercent value *)
+function TgemCapPanelBtn.LighterColor(thisColor: TColor; thePercent: Byte): TColor;
+var
+  cRed,
+  cGreen,
+  cBlue: Byte;
 begin
-  Result := RGB(Min(Round(GetRValue(ColorToRGB(BaseColor)) * 1.1), 255),
-    Min(Round(GetGValue(ColorToRGB(BaseColor)) * 1.1), 255),
-    Min(Round(GetBValue(ColorToRGB(BaseColor)) * 1.1), 255));
-//  Result := RGB(Min(GetRValue(ColorToRGB(BaseColor)) + 64, 255),
-//    Min(GetGValue(ColorToRGB(BaseColor)) + 64, 255),
-//    Min(GetBValue(ColorToRGB(BaseColor)) + 64, 255));
+  cRed := GetRValue(thisColor);
+  cGreen := GetGValue(thisColor);
+  cBlue := GetBValue(thisColor);
+  (* a byte's range is from 0 to 255
+     so Red, Green and Blue can have
+     a value between 0 and 255 *)
+  cRed :=
+    Round(cRed * thePercent / 100) +
+    Round(255 - thePercent / 100 * 255);
+  cGreen :=
+    Round(cGreen * thePercent / 100) +
+    Round(255 - thePercent / 100 * 255);
+  cBlue :=
+    Round(cBlue * thePercent / 100) +
+    Round(255 - thePercent / 100 * 255);
+  Result := RGB(cRed, cGreen, cBlue);
 end;
 
 
-//const
-//  DownStyles: array[Boolean] of Integer = (BDR_RAISEDINNER, BDR_SUNKENOUTER);
-//  FillStyles: array[Boolean] of Integer = (BF_MIDDLE, 0);
-
 procedure TgemCapPanelBtn.Paint;
+const
+  FirstLineDarken    = 95;
+  SecondLineDarken   = 65;
+  FirstLineLighten   = 95;
+  SecondLineLighten  = 55;
+  DarkLineOffset     = 3;
+  LightLineOffset    = 1;
+  theShadingPenWidth = 2;
+
 var
   Rotation: Integer;
   R: TRect;
-//  Button: TThemedButton;
   AdjustedCaptionHeight: Integer;
-//  DrawFlags: Integer;
-//  PaintRect: TRect;
+  //=======================
+
+  procedure DrawButtonDownEdge(rect: TRect; aColor: TColor);
+  begin
+    Canvas.Pen.Width := theShadingPenWidth;
+
+    Canvas.pen.color := DarkerColor(aColor, FirstLineDarken);
+    Canvas.MoveTo(rect.Width - LightLineOffset, rect.TopLeft.Y + LightLineOffset);
+    Canvas.LineTo(rect.TopLeft.X + LightLineOffset, rect.TopLeft.Y + LightLineOffset);
+    Canvas.LineTo(rect.TopLeft.X + LightLineOffset, rect.Height - LightLineOffset);
+
+    Canvas.pen.color :=  DarkerColor(aColor, SecondLineDarken);
+    Canvas.MoveTo(rect.Width - DarkLineOffset, rect.TopLeft.Y + DarkLineOffset);
+    Canvas.LineTo(rect.TopLeft.X + DarkLineOffset, rect.TopLeft.Y + DarkLineOffset);
+    Canvas.LineTo(rect.TopLeft.X + DarkLineOffset, rect.Height - DarkLineOffset);
+
+    //=============================
+
+    Canvas.pen.color := LighterColor(aColor, FirstLineLighten);
+    Canvas.MoveTo(rect.Width - LightLineOffset, rect.TopLeft.Y + LightLineOffset);
+    Canvas.LineTo(rect.Width - LightLineOffset, rect.BottomRight.Y - LightLineOffset);
+    Canvas.LineTo(rect.TopLeft.X + LightLineOffset, rect.Height - LightLineOffset);
+
+    Canvas.pen.color :=  LighterColor(aColor, SecondLineLighten);
+    Canvas.MoveTo(rect.Width - DarkLineOffset, rect.TopLeft.Y + DarkLineOffset);
+    Canvas.LineTo(rect.Width - DarkLineOffset, rect.BottomRight.Y - DarkLineOffset);
+    Canvas.LineTo(rect.TopLeft.X + DarkLineOffset, rect.Height - DarkLineOffset);
+  end;
+
+  //======================
+
 begin
   if not Enabled then begin
     FState := bsDisabled;
@@ -402,7 +448,7 @@ begin
   if fDown then begin
     if FMouseInControl then  begin
       if fButtonUseOverDarken then begin
-        Canvas.Brush.Color := ChangeColor(fButtonDownColor, FButtonDarkenAmount);
+        Canvas.Brush.Color := DarkerColor(fButtonDownColor, FButtonDarkenAmount);
       end
       else
         Canvas.Brush.Color := fButtonOverColor;
@@ -413,142 +459,21 @@ begin
   else
     if FMouseInControl then
       if fButtonUseOverDarken then
-        Canvas.Brush.Color := ChangeColor(fButtonUpColor,  FButtonDarkenAmount)
+        Canvas.Brush.Color := DarkerColor(fButtonUpColor,  FButtonDarkenAmount)
       else
         Canvas.Brush.Color := fButtonOverColor
     else
       Canvas.Brush.Color := fButtonUpColor;
 
   Canvas.FillRect(R);
-
-
-//      if fDown then
-//        if (FMouseInControl) and (fButtonUseOverDarken) then
-//          Canvas.Brush.Color := ChangeColor(fButtonDownColor, FButtonOverDarken)
-//        else
-//          Canvas.Brush.Color := fButtonDownColor
-//      else
-//        if FMouseInControl then
-//          if fButtonUseOverDarken then
-//             Canvas.Brush.Color := ChangeColor(fButtonUpColor, FButtonOverDarken)
-//          else
-//            Canvas.Brush.Color := fButtonOverColor
-//        else
-//          Canvas.Brush.Color := fButtonUpColor;
-//
-//      Canvas.FillRect(R);
-//    end;
-
-//=====================
-//
-//    PaintRect := Rect(0, 0, Width, Height);
-//    DrawFlags := DFCS_BUTTONPUSH or DFCS_ADJUSTRECT;
-//
-//
-//    if FState in [bsDown, bsExclusive] then
-//      DrawFlags := DrawFlags or DFCS_PUSHED;
-//
-//    R := ClientRect;
-//    if (FMouseInControl) and (fButtonUseOverDarken) then
-//      Canvas.Brush.Color := ChangeColor(fButtonDownColor, False, FButtonOverDarken)//DarkerColor(fButtonDownColor, 2)
-//    else
-//      Canvas.Brush.Color := fButtonDownColor;
-//    Canvas.FillRect(R);
-//
-//
-//    DrawFrameControl(Canvas.Handle, PaintRect, DFC_BUTTON, DrawFlags);
-//
-//    if (FState in [bsDown, bsExclusive]) or (FMouseInControl and (FState <> bsDisabled)) or
-//       (csDesigning in ComponentState) then
-//      DrawEdge(Canvas.Handle, PaintRect, DownStyles[FState in [bsDown, bsExclusive]],
-//            FillStyles[false] or BF_RECT)
-//  //          FillStyles[Transparent] or BF_RECT)
-//    else begin
-//      if FMouseInControl then
-//        if fButtonUseOverDarken then
-//          Canvas.Brush.Color := ChangeColor(fButtonOverColor, False, FButtonOverDarken)
-//        else
-//          Canvas.Brush.Color := fButtonOverColor
-//      else
-//        Canvas.Brush.Color := fButtonUpColor;
-////      Canvas.Brush.Color := Color;
-//      Canvas.FillRect(PaintRect);
-//    end;
-//
-  //===========================
-//    if FState in [bsDown, bsExclusive] then begin
-//      DrawFlags := DrawFlags or DFCS_PUSHED;
-//      DrawFrameControl(Canvas.Handle, PaintRect, DFC_BUTTON, DrawFlags);
-//      if (FState in [bsDown, bsExclusive]) or (FMouseInControl and (FState <> bsDisabled)) or
-//         (csDesigning in ComponentState) then
-//        DrawEdge(Canvas.Handle, PaintRect, DownStyles[FState in [bsDown, bsExclusive]],
-//              FillStyles[false] or BF_RECT);
-//
-//      R := ClientRect;
-//      if fDown then
-//        if (FMouseInControl) and (fButtonUseOverDarken) then
-//          Canvas.Brush.Color := ChangeColor(fButtonDownColor, FButtonOverDarken)  //ChangeColor(fButtonDownColor, False, FButtonOverDarken)//DarkerColor(fButtonDownColor, 2)
-//        else begin
-//          Canvas.Brush.Color := fButtonDownColor;
-//        end
-//      else
-//        if FMouseInControl then
-//          if fButtonUseOverDarken then
-//            ChangeColor(fButtonUpColor, FButtonOverDarken) //ChangeColor(fButtonOverColor, False, FButtonOverDarken)
-//          else
-//            Canvas.Brush.Color := fButtonOverColor
-//        else
-//          Canvas.Brush.Color := fButtonUpColor;
-//
-//      Canvas.FillRect(R);
-//
-//    end
-//    else begin
-//      R := ClientRect;
-//
-//      if fDown then
-//        if (FMouseInControl) and (fButtonUseOverDarken) then
-//          Canvas.Brush.Color := ChangeColor(fButtonDownColor, FButtonOverDarken)//DarkerColor(fButtonDownColor, 2)
-//        else
-//          Canvas.Brush.Color := fButtonDownColor
-//      else
-//        if FMouseInControl then
-//          if fButtonUseOverDarken then
-//             Canvas.Brush.Color := ChangeColor(fButtonUpColor, FButtonOverDarken)
-//          else
-//            Canvas.Brush.Color := fButtonOverColor
-//        else
-//          Canvas.Brush.Color := fButtonUpColor;
-//
-//      Canvas.FillRect(R);
-//    end;
-//
-//    //============================
-//
-//    InflateRect(PaintRect, -1, -1);
-//
-//    if FState in [bsDown, bsExclusive] then
-//    begin
-//      if (FState = bsExclusive) and (not FFlat or not FMouseInControl) then
-//      begin
-//        Canvas.Brush.Bitmap := AllocPatternBitmap(clBtnFace, clBtnHighlight);
-//        Canvas.FillRect(PaintRect);
-//      end;
-//  //    Offset.X := 1;
-//  //    Offset.Y := 1;
-//    end
-//    else
-//    begin
-//  //    Offset.X := 0;
-//  //    Offset.Y := 0;
-//    end;
-//
-////======================
-//  end;
-
+  if fDown then begin
+    FBevel := FCaptionOffsetLarge;
+    DrawButtonDownEdge(R, Color);
+  end
+  else
+    FBevel :=FCaptionOffsetSmall;
 
   Canvas.Brush.Color := FCaptionColor;
-  FBevel := FCaptionOffsetSmall;
   Rotation := 0;
 
   AdjustedCaptionHeight := GetEffectiveCaptionHeight;
@@ -1048,19 +973,6 @@ begin
     FResizable := Value;
     RecreateWnd;
   end;
-end;
-
-
-procedure TgemCapPanelBtn.SetTransparent(const Value: Boolean);
-begin
-//  if Value <> FTransparent then
-//  begin
-//    FTransparent := Value;
-//    if Value then
-//      ControlStyle := ControlStyle - [csOpaque] else
-//      ControlStyle := ControlStyle + [csOpaque];
-//    Invalidate;
-//  end;
 end;
 
 
