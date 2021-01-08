@@ -142,8 +142,8 @@
         <DCC_DebugInformation>0</DCC_DebugInformation>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_2_Win32)'!=''">
-        <VerInfo_Build>20</VerInfo_Build>
-        <VerInfo_Keys>CompanyName=;FileDescription=$(MSBuildProjectName);FileVersion=1.0.0.20;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProgramID=com.embarcadero.$(MSBuildProjectName);ProductName=$(MSBuildProjectName);ProductVersion=1.0.0.0;Comments=</VerInfo_Keys>
+        <VerInfo_Build>22</VerInfo_Build>
+        <VerInfo_Keys>CompanyName=;FileDescription=$(MSBuildProjectName);FileVersion=1.0.0.22;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProgramID=com.embarcadero.$(MSBuildProjectName);ProductName=$(MSBuildProjectName);ProductVersion=1.0.0.0;Comments=;LastCompiledTime=2021/01/08 10:20:56</VerInfo_Keys>
         <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
         <VerInfo_Locale>1033</VerInfo_Locale>
         <DllSuffix>260</DllSuffix>
@@ -156,7 +156,6 @@
         <DCCReference Include="rtl.dcp"/>
         <DCCReference Include="DesignIDE.dcp"/>
         <DCCReference Include="GEMComponentsR.dcp"/>
-        <DCCReference Include="CnPack_D103R.dcp"/>
         <DCCReference Include="ComponentRegistration\AutoCompletEditReg.pas"/>
         <DCCReference Include="ComponentRegistration\PJDropFilesDsgn.pas">
             <Form>PJExtFileFilterExtPEDlg</Form>

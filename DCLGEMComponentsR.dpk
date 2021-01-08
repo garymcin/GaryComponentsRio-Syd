@@ -33,8 +33,7 @@ package DCLGEMComponentsR;
 requires
   rtl,
   DesignIDE,
-  GEMComponentsR,
-  CnPack_D103R;
+  GEMComponentsR;
 
 contains
   AutoCompletEditReg in 'ComponentRegistration\AutoCompletEditReg.pas',

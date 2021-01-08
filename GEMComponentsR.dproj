@@ -136,8 +136,8 @@
         <VerInfo_Locale>1033</VerInfo_Locale>
         <DCC_Description>Gary&apos;s Components Runtime</DCC_Description>
         <DllSuffix>260</DllSuffix>
-        <VerInfo_Build>2</VerInfo_Build>
-        <VerInfo_Keys>CompanyName=;FileDescription=$(MSBuildProjectName);FileVersion=1.0.0.2;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProgramID=com.embarcadero.$(MSBuildProjectName);ProductName=$(MSBuildProjectName);ProductVersion=1.0.0.0;Comments=</VerInfo_Keys>
+        <VerInfo_Build>4</VerInfo_Build>
+        <VerInfo_Keys>CompanyName=;FileDescription=$(MSBuildProjectName);FileVersion=1.0.0.4;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProgramID=com.embarcadero.$(MSBuildProjectName);ProductName=$(MSBuildProjectName);ProductVersion=1.0.0.0;Comments=;LastCompiledTime=2021/01/08 10:09:29</VerInfo_Keys>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_1_Win64)'!=''">
         <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
@@ -180,11 +180,10 @@
         <DCCReference Include="JvStdCtrls.dcp"/>
         <DCCReference Include="vcldb.dcp"/>
         <DCCReference Include="JvCore.dcp"/>
-        <DCCReference Include="NexusDB450db260.dcp"/>
-        <DCCReference Include="NexusDB450ll260.dcp"/>
-        <DCCReference Include="NexusDB450sd260.dcp"/>
+        <DCCReference Include="NexusDB450db270.dcp"/>
+        <DCCReference Include="NexusDB450ll270.dcp"/>
+        <DCCReference Include="NexusDB450sd270.dcp"/>
         <DCCReference Include="JvControls.dcp"/>
-        <DCCReference Include="CnPack_D103R.dcp"/>
         <DCCReference Include="CodeSiteLoggingPkg.dcp"/>
         <DCCReference Include="Source\GEMUpdaterPanel.pas"/>
         <DCCReference Include="Source\SelColVisGrid.pas"/>
@@ -262,7 +261,7 @@
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
-                <DeployFile LocalName="C:\Users\Public\Documents\Embarcadero\Studio\20.0\Bpl\GEMComponentsR260.bpl" Configuration="Debug" Class="ProjectOutput">
+                <DeployFile LocalName="..\..\..\..\Public\Documents\Embarcadero\Studio\21.0\Bpl\GEMComponentsR260.bpl" Configuration="Debug" Class="ProjectOutput">
                     <Platform Name="Win32">
                         <RemoteName>GEMComponentsR.bpl</RemoteName>
                         <Overwrite>true</Overwrite>
