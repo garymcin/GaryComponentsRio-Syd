@@ -8,8 +8,7 @@
 {                                                                              }
 {------------------------------------------------------------------------------}
 
-{.$I Y:\Delphi_Installs\GarysComponents-rio\Source\DELPHIAREA.INC}
-{$I \Source\DELPHIAREA.INC}
+{$I ..\Source\DELPHIAREA.INC}
 
 unit PSReg;
 

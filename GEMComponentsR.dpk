@@ -81,6 +81,7 @@ contains
   adpDBEdit in 'Source\adpDBEdit.pas',
   adpEdit in 'Source\adpEdit.pas',
   SBPro in 'Source\SBPro.pas',
-  gemCapPanelBtn in 'Source\gemCapPanelBtn.pas';
+  gemCapPanelBtn in 'Source\gemCapPanelBtn.pas',
+  GemINI in '..\GEMLibary-rio\GemINI.pas';
 
 end.
