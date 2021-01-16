@@ -262,12 +262,6 @@
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
-                <DeployFile LocalName="..\..\..\..\Public\Documents\Embarcadero\Studio\21.0\Bpl\GEMComponentsR260.bpl" Configuration="Debug" Class="ProjectOutput">
-                    <Platform Name="Win32">
-                        <RemoteName>GEMComponentsR.bpl</RemoteName>
-                        <Overwrite>true</Overwrite>
-                    </Platform>
-                </DeployFile>
                 <DeployFile LocalName="C:\Users\Public\Documents\Embarcadero\Studio\20.0\Bpl\GEMComponentsR260.bpl" Configuration="Release" Class="ProjectOutput">
                     <Platform Name="Win32">
                         <RemoteName>GEMComponentsR.bpl</RemoteName>
@@ -276,6 +270,12 @@
                 </DeployFile>
                 <DeployFile LocalName="C:\Users\Public\Documents\Embarcadero\Studio\20.0\Bpl\Win64\GEMComponentsR260.bpl" Configuration="Release" Class="ProjectOutput">
                     <Platform Name="Win64">
+                        <RemoteName>GEMComponentsR.bpl</RemoteName>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
+                <DeployFile LocalName="..\..\..\..\Public\Documents\Embarcadero\Studio\21.0\Bpl\GEMComponentsR260.bpl" Configuration="Debug" Class="ProjectOutput">
+                    <Platform Name="Win32">
                         <RemoteName>GEMComponentsR.bpl</RemoteName>
                         <Overwrite>true</Overwrite>
                     </Platform>
