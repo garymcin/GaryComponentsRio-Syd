@@ -41,11 +41,10 @@ requires
   JvStdCtrls,
   vcldb,
   JvCore,
-  NexusDB450db260,
-  NexusDB450ll260,
-  NexusDB450sd260,
+  NexusDB450db270,
+  NexusDB450ll270,
+  NexusDB450sd270,
   JvControls,
-  CnPack_D103R,
   CodeSiteLoggingPkg;
 
 contains

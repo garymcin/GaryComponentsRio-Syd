@@ -28,9 +28,6 @@ type
     fImage              : TImage;
   private
     fComponentVersion   : tGEMComponents;
-//    fOnImage_MouseUp    : TMouseEvent;
-//    fOnImage_MouseDown  : TMouseEvent;
-//    fOnImage_MouseMove  : TMouseMoveEvent;
 
     fOnPnlMouseEnter    : TCapPnlEventMouseEnter;
     fOnPnlMouseLeave    : TCapPnlEventMouseLeave;
@@ -148,6 +145,7 @@ type
     destructor Destory;
     procedure Click; override;
     property Color;
+    property DockManager;
   published
     property AllowAllUp: Boolean read FAllowAllUp write SetAllowAllUp default False;
     property ClicksDisabled: Boolean read FClicksDisabled write FClicksDisabled;
@@ -183,6 +181,8 @@ type
 
 //    property Transparent: Boolean read FTransparent write SetTransparent default True;
     property Align;
+    property Alignment;
+    property Anchors;
     property Action;
     property BorderStyle default bsSingle;
     property Caption: string read FCaption write SetCaption;
