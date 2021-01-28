@@ -41,9 +41,16 @@ requires
   JvStdCtrls,
   vcldb,
   JvCore,
+  {$IFDEF VER340}
   NexusDB450db270,
   NexusDB450ll270,
   NexusDB450sd270,
+  {$ENDIF}
+  {$IFDEF VER330}
+  NexusDB450db260,
+  NexusDB450ll260,
+  NexusDB450sd260,
+  {$ENDIF}
   JvControls,
   CodeSiteLoggingPkg;
 

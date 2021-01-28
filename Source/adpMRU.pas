@@ -141,7 +141,7 @@ begin
 
   FShowFullPath := True;
   FVersion := VersionAdpMRU;
-  SetIniFilePathExists;
+//  SetIniFilePathExists;
 end; (* Create *)
 
 procedure TadpMRU.Loaded;
@@ -191,7 +191,8 @@ begin
   begin
     fIniFilePathExists := false;
     Result := False;
-    fStatusMsg := 'Error: Getting Ini File Path.'
+    fStatusMsg := 'Error: Getting Ini File Path.';
+    raise Exception.Create('Ini Path Does NOT Exist! Exception in: ''adpMRU'' component!');
   end;
 end;
 
