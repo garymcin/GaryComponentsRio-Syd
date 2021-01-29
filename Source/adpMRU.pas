@@ -192,7 +192,7 @@ begin
     fIniFilePathExists := false;
     Result := False;
     fStatusMsg := 'Error: Getting Ini File Path.';
-    raise Exception.Create('Ini Path Does NOT Exist! Exception in: ''adpMRU'' component!');
+    raise Exception.Create('Ini Path Does NOT Exist: '+ QuotedStr(FIniFilePath)+' ! Exception in: ''adpMRU'' component!');
   end;
 end;
 
