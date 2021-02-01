@@ -44,9 +44,11 @@ uses
 type
 
   TMRUClickEvent = procedure(Sender: TObject; const FileName: String) of object;
+  TMRUStoreType  = (mstIni, mstReg, mstNone);
 
   TadpMRU = class(TComponent)
   private
+    fMRUOn: Boolean;
     FItems: TStringList;
     FMaxItems: cardinal;
     FShowFullPath: boolean;
@@ -54,7 +56,7 @@ type
     FIniFilePath: string;
     FParentMenuItem: TMenuItem;
     FOnClick: TMRUClickEvent;
-    FUseIniFile: boolean;
+    FUseIniReg: TMRUStoreType;
     fGroupIndex: byte;
     fRadioItem: boolean;
     FVersion: string;
@@ -62,7 +64,7 @@ type
     fIniFilePathExists: boolean;
     fStatusMsg: string;
     procedure SetMaxItems(const Value: cardinal);
-    procedure SetUseIniFile(const Value: boolean);
+//    procedure SetUseIniFile(const Value: TMRUStoreType);
     procedure SetShowFullPath(const Value: boolean);
     procedure SetRegistryPath(const Value: string);
     procedure SetParentMenuItem(const Value: TMenuItem);
@@ -106,7 +108,7 @@ type
     property ParentMenuItem: TMenuItem read FParentMenuItem
       write SetParentMenuItem;
     property RadioItem: boolean read fRadioItem write fRadioItem default false;
-    property UseIniFile: boolean read FUseIniFile write SetUseIniFile;
+    property UseIniReg: TMRUStoreType read FUseIniReg write FUseIniReg;
     // default True;
     property Version: string read GetVersion write SetVersion;
     property StartingSection: string read fSectionIniNameReg
@@ -147,18 +149,17 @@ end; (* Create *)
 procedure TadpMRU.Loaded;
 begin
   inherited;
+
   if not(csDesigning in ComponentState) then
-    if FUseIniFile then
-    begin
-      if SetIniFilePathExists then
-        LoadMRU;
-    end
-    else
-    begin
-      if FRegistryPath <> '' then
-        LoadMRU;
+    case UseIniReg of
+      mstIni: if SetIniFilePathExists then
+                LoadMRU;
+
+      mstReg: if FRegistryPath <> '' then
+                LoadMRU;
     end;
 end; (* Loaded *)
+
 
 destructor TadpMRU.Destroy;
 begin
@@ -197,16 +198,14 @@ begin
 end;
 
 
-procedure TadpMRU.AddItem(const aSection, aFileName: string;
-  aResetIFNewSection: boolean = false);
+procedure TadpMRU.AddItem(const aSection, aFileName: string; aResetIFNewSection: boolean = false);
 begin
   if aFileName <> '' then
   begin
     Trim(aSection);
     if aSection <> '' then
     begin
-      if (fSectionIniNameReg <> aSection) and aResetIFNewSection and FUseIniFile
-      then
+      if (fSectionIniNameReg <> aSection) and aResetIFNewSection and (UseIniReg  = mstIni)then
       begin
         // showmessage('reset '+aSection+ '  '+ fSectionIniNameReg);
         SaveMRU;
@@ -264,18 +263,6 @@ begin
   SetIniFilePathExists;
 end;
 
-(* SetIniFilePath *)
-
-procedure TadpMRU.SetUseIniFile(const Value: boolean);
-begin
-  if (FUseIniFile <> Value) then
-  begin
-    FUseIniFile := Value;
-    ItemsChange(Self);
-  end;
-end;
-
-(* SetUseIniFile *)
 
 procedure TadpMRU.SetMaxItems(const Value: cardinal);
 begin
@@ -360,7 +347,7 @@ end;
 function TadpMRU.GetSectionNames: TStrings;
 begin
   Result := nil;
-  if FUseIniFile and FileExists(FIniFilePath) then
+  if (UseIniReg  = mstIni) and FileExists(FIniFilePath) then
     with TIniFile.Create(FIniFilePath) do
       try
         ReadSections(Result);
@@ -391,49 +378,52 @@ begin
   if not fIniFilePathExists then
     Exit;
 
-  if FUseIniFile then
-  begin
-    if FileExists(FIniFilePath) then
-      with TIniFile.Create(FIniFilePath) do
-      begin
-        FItems.BeginUpdate;
-        FItems.Clear;
-        try
-          for i := 1 to FMaxItems do
-            if ValueExists(fSectionIniNameReg, fSectionIniNameReg + IntToStr(i))
-            then
-            begin
-              s := ReadString(fSectionIniNameReg, fSectionIniNameReg +
-                IntToStr(i), 'None');
-              FItems.Add(s);
-            end;
-        finally
-          FItems.EndUpdate;
-          Free;
-        end;
-      end;
-  end
-  else
-  begin
-    with TRegistry.Create do
-      try
-        RootKey := HKEY_CURRENT_USER;
-        if OpenKey(FRegistryPath, false) then
+  case UseIniReg of
+    mstIni:
+    begin
+      if FileExists(FIniFilePath) then
+        with TIniFile.Create(FIniFilePath) do
         begin
           FItems.BeginUpdate;
           FItems.Clear;
           try
             for i := 1 to FMaxItems do
-              if ValueExists(fSectionIniNameReg + IntToStr(i)) then
-                FItems.Add(ReadString(fSectionIniNameReg + IntToStr(i)));
+              if ValueExists(fSectionIniNameReg, fSectionIniNameReg + IntToStr(i))
+              then
+              begin
+                s := ReadString(fSectionIniNameReg, fSectionIniNameReg +
+                  IntToStr(i), 'None');
+                FItems.Add(s);
+              end;
           finally
             FItems.EndUpdate;
+            Free;
           end;
-          CloseKey;
         end;
-      finally
-        Free;
-      end;
+    end;
+
+    mstReg:
+    begin
+      with TRegistry.Create do
+        try
+          RootKey := HKEY_CURRENT_USER;
+          if OpenKey(FRegistryPath, false) then
+          begin
+            FItems.BeginUpdate;
+            FItems.Clear;
+            try
+              for i := 1 to FMaxItems do
+                if ValueExists(fSectionIniNameReg + IntToStr(i)) then
+                  FItems.Add(ReadString(fSectionIniNameReg + IntToStr(i)));
+            finally
+              FItems.EndUpdate;
+            end;
+            CloseKey;
+          end;
+        finally
+          Free;
+        end;
+    end;
   end;
 end; (* LoadMRU *)
 
@@ -445,41 +435,42 @@ begin
   if not fIniFilePathExists then
     Exit;
 
-  if FUseIniFile then
-  begin
-    with TIniFile.Create(FIniFilePath) do
-      try
-        EraseSection(fSectionIniNameReg);
-        for i := 0 to -1 + FItems.Count do
-          WriteString(fSectionIniNameReg, fSectionIniNameReg + IntToStr(i + 1),
-            FItems[i]);
-      finally
-        Free;
-      end;
-  end
-  else
-  begin
-    with TRegistry.Create do
-      try
-        RootKey := HKEY_CURRENT_USER;
-        if OpenKey(FRegistryPath, True) then
-        begin
-          // delete old mru
-          i := 1;
-          while ValueExists(fSectionIniNameReg + IntToStr(i)) do
-          begin
-            DeleteValue(fSectionIniNameReg + IntToStr(i));
-            Inc(i);
-          end;
-
-          // write new mru
+  case UseIniReg of
+    mstIni: begin
+      with TIniFile.Create(FIniFilePath) do
+        try
+          EraseSection(fSectionIniNameReg);
           for i := 0 to -1 + FItems.Count do
-            WriteString(fSectionIniNameReg + IntToStr(i + 1), FItems[i]);
-          CloseKey;
+            WriteString(fSectionIniNameReg, fSectionIniNameReg + IntToStr(i + 1),
+              FItems[i]);
+        finally
+          Free;
         end;
-      finally
-        Free;
-      end;
+    end;
+
+    mstReg: begin
+      with TRegistry.Create do
+        try
+          RootKey := HKEY_CURRENT_USER;
+          if OpenKey(FRegistryPath, True) then
+          begin
+            // delete old mru
+            i := 1;
+            while ValueExists(fSectionIniNameReg + IntToStr(i)) do
+            begin
+              DeleteValue(fSectionIniNameReg + IntToStr(i));
+              Inc(i);
+            end;
+
+            // write new mru
+            for i := 0 to -1 + FItems.Count do
+              WriteString(fSectionIniNameReg + IntToStr(i + 1), FItems[i]);
+            CloseKey;
+          end;
+        finally
+          Free;
+        end;
+    end;
   end;
 end; (* SaveMRU *)
 
