@@ -5,7 +5,12 @@
 {                                                                              }
 {  kambiz@delphiarea.com                                                       }
 {  http://www.delphiarea.com                                                   }
-{                                                                              }
+{   
+(*
+  Gary E McIntosh
+   Add word wrap to this component.
+   gary@slickrocksoftwaredesign.com
+*)
 {------------------------------------------------------------------------------}
 
 {$I DELPHIAREA.INC}
@@ -214,8 +219,8 @@ type
     procedure SetUseSystemFont(const Value: Boolean);
     function  FindPanelAtPos(X, Y: Integer): TStatusPanelPro;
     procedure UpdateCursor;
-    procedure SetWordWrap(const Value: boolean);
-    function WrapText(Canvas: TCanvas; Text: string; const MaxWidth: integer): TWrapRecord;
+    procedure SetWordWrap(const Value: boolean); //Gary E McIntosh
+    function WrapText(Canvas: TCanvas; Text: string; const MaxWidth: integer): TWrapRecord;//Gary E McIntosh
   protected
     procedure Notification(AComponent: TComponent; Operation: TOperation); override;
     procedure ChangeScale(M, D: Integer); override;
@@ -265,7 +270,7 @@ type
     property SizeGrip: Boolean read FSizeGrip write SetSizeGrip default True;
     property UseSystemFont: Boolean read FUseSystemFont write SetUseSystemFont default True;
     property Visible;
-    property WordWrap: boolean read FWordWrap write SetWordWrap;
+    property WordWrap: boolean read FWordWrap write SetWordWrap; //Gary E McIntosh
     property OnClick;
     property OnContextPopup;
     property OnDblClick;
@@ -851,7 +856,7 @@ end;
 
 
 //==============================================================================
-//== Gary added to do the actual wrapping of the text.  This makes line breaks
+//== Gary E McIOntosh added to do the actual wrapping of the text.  This makes line breaks
 //== at a space in the string.
 function TStatusBarPro.WrapText(Canvas: TCanvas; Text: string;
                                          const MaxWidth: integer): TWrapRecord;
@@ -954,7 +959,7 @@ begin
         FCanvas.TextFlags := FCanvas.TextFlags or ETO_RTLREADING
       else
         FCanvas.TextFlags := FCanvas.TextFlags and not ETO_RTLREADING;
-      // gary add to allow for wrapping of text
+      // Gary E McIntosh add to allow for wrapping of text.  
       if FWordWrap then begin
         Canvas.FillRect(Rect);
 
@@ -974,7 +979,7 @@ begin
   end;
 end;
 
-(*
+(* original code
     // Draws text
     if Panel.Text <> '' then
     begin
@@ -1560,7 +1565,7 @@ begin
 end;
 
 
-procedure TStatusBarPro.SetWordWrap(const Value: boolean);
+procedure TStatusBarPro.SetWordWrap(const Value: boolean);// Added by Gary E McIntosh
 begin
   FWordWrap := Value;
   Invalidate;
