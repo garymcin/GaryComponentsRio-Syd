@@ -9,8 +9,8 @@ have been modified. This is added to tnxtable.
 Using this component as a substitute for TnxTable allows you to check the
 ModifiedFieldList property in the Before or After Post methods.  The event
 OnModifiedField is triggered each time a field value is modified.  It passes
-the TField in as the parameter.  Using this event you can capture each field as
-it is modified in real-time.
+the TField in as the parameter.  Using this event you can capture the fields
+you want to monitor as they are change or if they are changed in real-time.
 
 From:
 Delphi TFields -- What Changed?
