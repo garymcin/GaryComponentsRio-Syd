@@ -33,10 +33,10 @@ package DCLGEMComponentsR;
 requires
   rtl,
   DesignIDE,
-  GEMComponentsR;
+  GEMComponentsR,
+  CnPack_D103R;
 
 contains
-  AutoCompletEditReg in 'ComponentRegistration\AutoCompletEditReg.pas',
   PJDropFilesDsgn in 'ComponentRegistration\PJDropFilesDsgn.pas' {PJExtFileFilterExtPEDlg},
   PSReg in 'ComponentRegistration\PSReg.pas',
   GarysComponentsReg in 'ComponentRegistration\GarysComponentsReg.pas';

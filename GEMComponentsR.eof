@@ -1,0 +1,23 @@
+﻿
+
+[Exception Log]
+EurekaLog Version=8000
+Activate=1
+atNonVisual=1
+DeleteMapAfterCompile=0
+Dialog Class=""
+dpDLLExports=0
+Encrypt Password=""
+InjectInfo=1
+InjectOptions=1
+loCatchLeaks=0
+loCatchLeaksExceptions=0
+loWipeStackOnIdle=0
+ProjectID="{90D0241D-CC39-4B5E-8729-1D49F7A23958}"
+sndScreenshot=0
+sndSendInSeparatedThread=0
+sndShowFailureMsg=0
+sndShowSendDialog=0
+sndShowSuccessMsg=0
+_CustomProfile=""
+

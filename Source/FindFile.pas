@@ -1556,7 +1556,7 @@ begin
   inherited Create(True);
   Owner := AOwner;
   Priority := Owner.ThreadPriority;
-  Resume;
+  Start; //Resume;
 end;
 
 procedure TSearchThread.Execute;

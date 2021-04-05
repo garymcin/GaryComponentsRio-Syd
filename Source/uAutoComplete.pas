@@ -109,10 +109,10 @@ type
     procedure SetACOptions(const Value: TACOptions);
     procedure SetACSource(const Value: TACSource);
     procedure SetACStrings(const Value: TStringList);
-    procedure KeyPress(var Key: Char); override;
   protected
     procedure CreateWnd; override;
     procedure DestroyWnd; override;
+    procedure KeyPress(var Key: Char); override;
   public
     constructor Create(AOwner: TComponent); override;
   published

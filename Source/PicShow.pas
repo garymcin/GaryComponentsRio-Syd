@@ -107,8 +107,6 @@ type
     procedure SetProgress(Value: TPercent);
     procedure SetManual(Value: Boolean);
     procedure SetStyle(Value: TShowStyle);
-    procedure SetStyleName(const Value: String);
-    function GetStyleName: String;
     function GetEmpty: Boolean;
     procedure PictureChange(Sender: TObject);
     procedure BgPictureChange(Sender: TObject);
@@ -126,6 +124,7 @@ type
     {$ELSE}
     procedure AdjustSize;
     {$ENDIF}
+    procedure SetStyleName(const Value: String); //override;
     procedure Paint; override;
     procedure Prepare;
     procedure Unprepare;
@@ -156,6 +155,11 @@ type
     property Busy: Boolean read fBusy;
     property Empty: Boolean read GetEmpty;
     property Progress: TPercent read fProgress write SetProgress;
+    {$IFDEF  VER340}}
+    function GetStyleName: String; override;
+    {$ELSE}
+    function GetStyleName: String;
+    {$ENDIF}
   protected
     {$IFNDEF COMPILER4_UP}
     property AutoSize: Boolean read fAutoSize write SetAutoSize default False;

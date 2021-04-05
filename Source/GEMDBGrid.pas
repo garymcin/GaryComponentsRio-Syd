@@ -1,6 +1,5 @@
 unit GEMDBGrid;
   {.$DEFINE USE_CODESITE}
-  {.$DEFINE GRID_DEBUG}
 
 interface
 
@@ -14,9 +13,10 @@ uses
 
   Data.DB,
 
-  GEMCalendar, GEMDBGridEdit, GEMComponentsGlobal{,
-
-  CodeSiteLogging};
+  GEMCalendar, GEMDBGridEdit, GEMComponentsGlobal
+{$IFDEF USE_CODESITE}
+ , CodeSiteLogging
+{$ENDIF};
 
 const
   bmArrow = 'DBGARROW2';
@@ -288,7 +288,6 @@ type
 
     procedure DefaultDrawColumnCell(const Rect: TRect; DataCol: Integer; Column: TColumn; State: TGridDrawState); virtual;
     procedure DefaultDataCellDraw(const Rect: TRect; Field: TField; State: TGridDrawState);
-
     procedure DisableScroll;
     procedure EnableScroll;
     procedure Notification(AComponent: TComponent; Operation: TOperation); override;
@@ -338,13 +337,17 @@ type
     property OnGetCellParams: TGetCellParamsEvent read FOnGetCellParams write FOnGetCellParams;
     property OnGetCellProps: TGetCellPropsEvent read FOnGetCellProps write FOnGetCellProps; { obsolete }
     { ShowMemos: if true, memo fields are shown as text }
-    property ShowMemos: Boolean read FShowMemos write SetShowMemos default True;
+
+    property ShowMemos: Boolean read FShowMemos write SetShowMemos default True;
     { WordWrap: if true, titles, memo and string fields are displayed on several lines }
-    property WordWrap: Boolean read FWordWrap write SetWordWrap default False;
+
+    property WordWrap: Boolean read FWordWrap write SetWordWrap default False;
     { WordWrapAllFields: if true and WordWrap is true, not only memo and string fields are displayed on several lines }
-    property WordWrapAllFields: Boolean read FWordWrapAllFields write SetWordWrapAllFields default False;
+
+    property WordWrapAllFields: Boolean read FWordWrapAllFields write SetWordWrapAllFields default False;
     { ReduceFlicker: improve (but slow) the display when painting/scrolling ? }
-    property ReduceFlicker: Boolean read FReduceFlicker write FReduceFlicker default True;
+
+    property ReduceFlicker: Boolean read FReduceFlicker write FReduceFlicker default True;
 //    property OnGetBtnParams: TGetBtnParamsEvent read FOnGetBtnParams write FOnGetBtnParams;
 
     property Align;
@@ -440,7 +443,6 @@ begin
 end;
 
 
-
 function ShiftStateToKeyData(Shift: TShiftState): Longint;
 const
   AltMask = $20000000;
@@ -501,7 +503,6 @@ begin
   Result := WinApi.Windows.DrawText(DC, PChar(Text), Length(Text), R,
     AlignFlags[Alignment] or RTL[RightToLeft] or Flags);
 end;
-
 
 procedure CreateWMMessage(var Mesg: TMessage; Msg: Cardinal; WParam: WPARAM; LParam: LPARAM);
 begin
@@ -624,7 +625,6 @@ begin
       Invalidate;
   end;
 end;
-
 
 
 procedure TGemDBGrid.SetWordWrap(const Value: Boolean);
@@ -877,7 +877,6 @@ end;
 type
   TWinControlAccessProtected = class(TWinControl);
 
-
 //function TGemDBGrid.DoKeyPress(var Msg: TWMChar): Boolean;
 //var
 //  Form: TCustomForm;
@@ -982,7 +981,6 @@ begin
       begin
         Canvas.Brush.Color := ReadOnlyCellColor;
 //        LookupInfo := GetColumnLookupInfo(Column);
-
         { When column works as a lookup, check the 'keyfield' }
 //        if LookupInfo.IsLookup and LookupInfoValid(LookupInfo) then
 //        begin
@@ -1246,7 +1244,6 @@ procedure TGemDBGrid.GetCellProps(Column: TColumn; AFont: TFont;
   begin
     Result := Column.Index >= FixedCols;
   end;
-
 begin
   if IsAfterFixedCols and (FCurrentDrawRow >= FixedRows) then
   begin
@@ -1259,7 +1256,6 @@ begin
         if not ((cvColor in Column.AssignedValues) and (Column.Color <> Column.DefaultColor)) then
           Background := fAlternateRowColor;
       end;
-
 //      if FAlternateRowFontColor <> clNone then
       if fAltRowColorUse then
       begin
@@ -1271,7 +1267,6 @@ begin
   end(*
   else
     Background := FixedColor*);
-
   if Highlight then
   begin
     AFont.Color := clHighlightText;
@@ -1338,7 +1333,8 @@ end;
 ////  else
 ////    Result := False;
 //end;
-
+
+
 procedure TGemDBGrid.AltColorsSet;
 begin
   {$IFDEF USE_CODESITE}CodeSite.TraceMethod( Self, 'AltColorsSet' );{$ENDIF}
@@ -1522,7 +1518,6 @@ begin
     if ((fAlternateRowColor <> clNone) and (fAlternateRowColor <> Color)) or
        ((AltRowFontColor <> clNone) and (AltRowFontColor <> Font.Color)) then
       Invalidate;
-
     if FAlwaysShowEditor and HandleAllocated and ([dgRowSelect, dgEditing] * Options = [dgEditing]) and
        Focused then
     begin
@@ -1530,7 +1525,8 @@ begin
       InvalidateCol(Col);
     end;
   end;
-end;
+
+end;
 
 
 procedure TGemDBGrid.SetAlternateRowColor(const Value: TColor);
@@ -1856,7 +1852,6 @@ var
   Hold: Integer;
   B, R: TRect;
   DrawOptions: Integer;
-
   procedure DrawAText(CellCanvas: TCanvas);
   begin
     DrawOptions := DT_EXPANDTABS or DT_NOPREFIX;
@@ -1879,7 +1874,6 @@ var
     SetBkMode(CellCanvas.Handle, TRANSPARENT);
     DrawBiDiText(CellCanvas.Handle, Text, R, DrawOptions, Alignment, ARightToLeft, Canvas.CanvasOrientation);
   end;
-
 begin
   if ReduceFlicker
      {$IFDEF COMPILER14_UP} and not FixCell {$ENDIF}
@@ -1898,7 +1892,6 @@ begin
         DrawBitmap.Canvas.Font := Canvas.Font;
         DrawBitmap.Canvas.Font.Color := Canvas.Font.Color;
         DrawBitmap.Canvas.Brush := Canvas.Brush;
-
         DrawAText(DrawBitmap.Canvas);
         if Canvas.CanvasOrientation = coRightToLeft then
         begin
@@ -1944,7 +1937,6 @@ begin
     if DrawColumn <> nil then
       Canvas.Font := DrawColumn.Font;
   end;
-
   DoDrawCell(ACol, ARow, ARect, AState);
 //  if FTitleArrow and (ARow = 0) and (ACol = 0) and
 //    (dgIndicator in Options) and (dgTitles in Options) then

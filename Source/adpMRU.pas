@@ -43,7 +43,9 @@ uses
 
 type
 
-  TMRUClickEvent = procedure(Sender: TObject; const FileName: String) of object;
+  TMRUClickEvent = procedure(Sender: TObject; aItem: string) of object;
+  TMRUFileNameChange = procedure(Sender: TObject; const FileName: String) of object;
+
   TMRUStoreType  = (mstIni, mstReg, mstNone);
 
   TadpMRU = class(TComponent)
@@ -56,6 +58,7 @@ type
     FIniFilePath: string;
     FParentMenuItem: TMenuItem;
     FOnClick: TMRUClickEvent;
+    fOnFileNameChange: TMRUFileNameChange;
     FUseIniReg: TMRUStoreType;
     fGroupIndex: byte;
     fRadioItem: boolean;
@@ -63,11 +66,14 @@ type
     fSectionIniNameReg: string;
     fIniFilePathExists: boolean;
     fStatusMsg: string;
+//    FUseIniFile: Boolean;
+
     procedure SetMaxItems(const Value: cardinal);
 //    procedure SetUseIniFile(const Value: TMRUStoreType);
     procedure SetShowFullPath(const Value: boolean);
     procedure SetRegistryPath(const Value: string);
     procedure SetParentMenuItem(const Value: TMenuItem);
+//    procedure SetUseIniFile(const Value: Boolean);
 
     procedure LoadMRU;
     procedure SaveMRU;
@@ -80,19 +86,24 @@ type
     function GetTheItems: TStringList;
     procedure SetVersion(const Value: string);
     function SetIniFilePathExists: boolean;
+    procedure SetUseIniReg(const Value: TMRUStoreType);
+
+    procedure Click(Sender: TObject; const FileName: String);
+    procedure FileNameChange(Sender: TObject; const FileName: String);
   protected
     procedure Loaded; override;
-    procedure Notification(AComponent: TComponent;
-      Operation: TOperation); override;
+    procedure Notification(AComponent: TComponent; Operation: TOperation); override;
     procedure DoClick(Sender: TObject);
+    procedure DoIniFileNameChange(Sender: TObject; const FileName: String);
 
   public
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
 
-    procedure AddItem(const aSection, aFileName: string;
-      aResetIFNewSection: boolean = false);
-    function RemoveItem(const FileName: string): boolean;
+    procedure LoadIniFile(Section: string);
+    procedure SaveIniFile(Section: string);
+    procedure AddItem(const aSection, aFileName: string; aResetIFNewSection: Boolean = false);
+    function RemoveItem(const FileName : string) : boolean;
     procedure SetupNewSection(const aSection: string);
     function GetSectionNames: TStrings;
 //    function IniFilePathExists: boolean;
@@ -102,29 +113,26 @@ type
     property IniFilePath: string read FIniFilePath write SetIniFilePath;
     property GroupIndex: byte read fGroupIndex write fGroupIndex;
     property MaxItems: cardinal read FMaxItems write SetMaxItems default 7;
-    property ShowFullPath: boolean read FShowFullPath write SetShowFullPath
-      default True;
+    property ShowFullPath: boolean read FShowFullPath write SetShowFullPath default True;
     property RegistryPath: string read FRegistryPath write SetRegistryPath;
-    property ParentMenuItem: TMenuItem read FParentMenuItem
-      write SetParentMenuItem;
-    property RadioItem: boolean read fRadioItem write fRadioItem default false;
-    property UseIniReg: TMRUStoreType read FUseIniReg write FUseIniReg;
-    // default True;
+    property ParentMenuItem: TMenuItem read FParentMenuItem write SetParentMenuItem;
+    property RadioItem: boolean read fRadioItem write fRadioItem default False;
+//    property UseIniFile: Boolean read FUseIniFile write SetUseIniFile;// default True;
+    property UseIniReg: TMRUStoreType read FUseIniReg write SetUseIniReg;// default True;
     property Version: string read GetVersion write SetVersion;
-    property StartingSection: string read fSectionIniNameReg
-      write SetSectionIniNameReg;
+    property StartingSection: string read fSectionIniNameReg write SetSectionIniNameReg;
     property TheItems: TStringList read GetTheItems;
 
     property OnClick: TMRUClickEvent read FOnClick write FOnClick;
+    property OnFileNameChange: TMRUFileNameChange read fOnFileNameChange write fOnFileNameChange;
   end;
 
-  // procedure Register;
+//procedure Register;
 
 implementation
 
 type
-  TMRUMenuItem = class(TMenuItem);
-  // to be able to recognize MRU menu item when deleting
+  TMRUMenuItem = class(TMenuItem); //to be able to recognize MRU menu item when deleting
 
 
   // procedure Register;
@@ -260,8 +268,19 @@ begin
     FIniFilePath := Value;
     LoadMRU;
   end;
-  SetIniFilePathExists;
-end;
+end; (*SetIniFilePath*)
+
+
+//procedure TadpMRU.SetUseIniFile(const Value: Boolean);
+//begin
+//  if (FUseIniFile <> Value) then
+//  begin
+//    FUseIniFile := Value;
+//    ItemsChange(Self);
+//  end;
+//end;
+
+(*SetUseIniFile*)
 
 
 procedure TadpMRU.SetMaxItems(const Value: cardinal);
@@ -270,19 +289,20 @@ begin
   begin
     if Value < 1 then
       FMaxItems := 1
-    else if Value > cardinal(MaxInt) then
-      FMaxItems := MaxInt - 1
     else
-    begin
-      FMaxItems := Value;
-      FItems.BeginUpdate;
-      try
-        while cardinal(FItems.Count) > MaxItems do
-          FItems.Delete(FItems.Count - 1);
-      finally
-        FItems.EndUpdate;
+      if Value > Cardinal(MaxInt) then
+        FMaxItems := MaxInt - 1
+      else
+      begin
+        FMaxItems := Value;
+        FItems.BeginUpdate;
+        try
+          while Cardinal(FItems.Count) > MaxItems do
+            FItems.Delete(FItems.Count - 1);
+        finally
+          FItems.EndUpdate;
+        end;
       end;
-    end;
   end;
   ItemsChange(Self);
 end; (* SetMaxItems *)
@@ -320,10 +340,10 @@ begin
 end;
 
 
-// procedure TadpMRU.SetTheItems(const Value: TStringList);
-// begin
-// FItems := Value;
-// end;
+//procedure TadpMRU.SetTheItems(const Value: TStringList);
+//begin
+//  FItems := Value;
+//end;
 //
 
 procedure TadpMRU.SetupNewSection(const aSection: string);
@@ -335,6 +355,12 @@ begin
     LoadMRU;
     ItemsChange(Self);
   end;
+end;
+
+
+procedure TadpMRU.SetUseIniReg(const Value: TMRUStoreType);
+begin
+  FUseIniReg := Value;
 end;
 
 
@@ -350,7 +376,7 @@ begin
   if (UseIniReg  = mstIni) and FileExists(FIniFilePath) then
     with TIniFile.Create(FIniFilePath) do
       try
-        ReadSections(Result);
+        ReadSections(result);
       finally
         Free;
       end;
@@ -359,7 +385,7 @@ end;
 
 function TadpMRU.GetTheItems: TStringList;
 begin
-  Result := FItems;
+  Result :=  FItems;
 end;
 
 
@@ -368,7 +394,21 @@ begin
   Result := VersionAdpMRU; // VersionAdpMRU;
 end;
 
-(* SetShowFullPath *)
+(*SetShowFullPath*)
+
+procedure TadpMRU.LoadIniFile(Section: string);
+begin
+  fSectionIniNameReg := Section;
+  LoadMRU;
+end;
+
+procedure TadpMRU.SaveIniFile(Section: string);
+begin
+  fSectionIniNameReg := Section;
+  SaveMRU;
+end;
+
+
 
 procedure TadpMRU.LoadMRU;
 var
@@ -487,19 +527,17 @@ begin
     for i := 0 to -1 + FItems.Count do
     begin
       if ShowFullPath then
-        FileName := StringReplace(FItems[i], '&', '&&',
-          [rfReplaceAll, rfIgnoreCase])
+        FileName := StringReplace(FItems[I], '&', '&&', [rfReplaceAll, rfIgnoreCase])
       else
-        FileName := StringReplace(ExtractFileName(FItems[i]), '&', '&&',
-          [rfReplaceAll, rfIgnoreCase]);
+        FileName := StringReplace(ExtractFileName(FItems[i]), '&', '&&', [rfReplaceAll, rfIgnoreCase]);
 
       NewMenuItem := TMRUMenuItem.Create(Self);
       NewMenuItem.GroupIndex := fGroupIndex;
       if fRadioItem then
         NewMenuItem.RadioItem := True;
       NewMenuItem.Caption := Format('%s', [FileName]);
-      // if fHint <> '' then
-      // NewMenuItem.Hint := fHint;
+//      if fHint <> '' then
+//        NewMenuItem.Hint := fHint;
       NewMenuItem.Tag := i;
       NewMenuItem.OnClick := DoClick;
       ParentMenuItem.Add(NewMenuItem);
@@ -516,22 +554,28 @@ begin
     for i := -1 + ParentMenuItem.Count downto 0 do
       if ParentMenuItem.Items[i] is TMRUMenuItem then
         ParentMenuItem.Delete(i);
-end; (* ClearParentMenu *)
+end; 
+
+procedure TadpMRU.Click(Sender: TObject; const FileName: String);
+begin
+
+end;
+
+(* ClearParentMenu *)
 
 
 procedure TadpMRU.DoClick(Sender: TObject);
 var
-  ListIndex: integer;
-  s: string;
+  ListIndex: Integer;
+  S: string;
 begin
   if Assigned(FOnClick) and (Sender is TMRUMenuItem) then
   begin
     FOnClick(Self, FItems[TMRUMenuItem(Sender).Tag]);
     TMRUMenuItem(Sender).checked := True;
-    // fCheckedMenuItem := TMRUMenuItem(Sender).Tag;
+//    fCheckedMenuItem := TMRUMenuItem(Sender).Tag;
 
-    s := StringReplace(TMRUMenuItem(Sender).Caption, '&', '',
-      [rfReplaceAll, rfIgnoreCase]);
+    s := StringReplace(TMRUMenuItem(Sender).Caption, '&', '',[rfReplaceAll, rfIgnoreCase]);
     ListIndex := FItems.IndexOf(s);
     // ShowMessage(TMRUMenuItem(Sender).Caption+'  '+IntToStr(ListIndex));
     if ListIndex > -1 then
@@ -542,7 +586,19 @@ begin
       FItems.EndUpdate;
     end;
   end;
-end; (* DoClick *)
+end; 
+
+procedure TadpMRU.DoIniFileNameChange(Sender: TObject; const FileName: String);
+begin
+
+end;
+
+procedure TadpMRU.FileNameChange(Sender: TObject; const FileName: String);
+begin
+
+end;
+
+(* DoClick *)
 
 
 procedure TadpMRU.SetParentMenuItem(const Value: TMenuItem);

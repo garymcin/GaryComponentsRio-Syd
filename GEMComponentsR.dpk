@@ -9,13 +9,13 @@ package GEMComponentsR;
 {$EXTENDEDSYNTAX ON}
 {$IMPORTEDDATA ON}
 {$IOCHECKS ON}
-{$LOCALSYMBOLS ON}
+{$LOCALSYMBOLS OFF}
 {$LONGSTRINGS ON}
 {$OPENSTRINGS ON}
-{$OPTIMIZATION OFF}
+{$OPTIMIZATION ON}
 {$OVERFLOWCHECKS OFF}
 {$RANGECHECKS OFF}
-{$REFERENCEINFO ON}
+{$REFERENCEINFO OFF}
 {$SAFEDIVIDE OFF}
 {$STACKFRAMES ON}
 {$TYPEDADDRESS OFF}
@@ -23,9 +23,10 @@ package GEMComponentsR;
 {$WRITEABLECONST OFF}
 {$MINENUMSIZE 1}
 {$IMAGEBASE $400000}
-{$DEFINE DEBUG}
+{$DEFINE RELEASE}
+{$DEFINE EUREKALOG}
 {$ENDIF IMPLICITBUILDING}
-{$DESCRIPTION 'Gary''s Components Runtime'}
+{$DESCRIPTION 'Gary''s compnonets'}
 {$LIBSUFFIX '260'}
 {$RUNONLY}
 {$IMPLICITBUILD OFF}
@@ -41,18 +42,11 @@ requires
   JvStdCtrls,
   vcldb,
   JvCore,
-  {$IFDEF VER340}
-  NexusDB450db270,
-  NexusDB450ll270,
-  NexusDB450sd270,
-  {$ENDIF}
-  {$IFDEF VER330}
-  NexusDB450db260,
+  JvControls,
+  CodeSiteLoggingPkg,
   NexusDB450ll260,
   NexusDB450sd260,
-  {$ENDIF}
-  JvControls,
-  CodeSiteLoggingPkg;
+  NexusDB450db260;
 
 contains
   GEMUpdaterPanel in 'Source\GEMUpdaterPanel.pas',
@@ -88,6 +82,8 @@ contains
   adpEdit in 'Source\adpEdit.pas',
   SBPro in 'Source\SBPro.pas',
   gemCapPanelBtn in 'Source\gemCapPanelBtn.pas',
-  GemINI in '..\GEMLibary-rio\GemINI.pas';
+  GemINI in '..\GEMLibary-rio\GemINI.pas',
+  GEMTrafficLight in 'Source\GEMTrafficLight.pas',
+  GEMTrafficLight2 in 'Source\GEMTrafficLight2.pas';
 
 end.

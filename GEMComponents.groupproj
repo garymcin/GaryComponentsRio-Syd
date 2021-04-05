@@ -3,10 +3,10 @@
         <ProjectGuid>{7DA214B9-7B5A-4C50-A238-04682B017C90}</ProjectGuid>
     </PropertyGroup>
     <ItemGroup>
-        <Projects Include="GEMComponentsR.dproj">
+        <Projects Include="DCLGEMComponentsR.dproj">
             <Dependencies/>
         </Projects>
-        <Projects Include="DCLGEMComponentsR.dproj">
+        <Projects Include="GEMComponentsR.dproj">
             <Dependencies/>
         </Projects>
     </ItemGroup>
@@ -17,15 +17,6 @@
             <Default.Personality/>
         </BorlandProject>
     </ProjectExtensions>
-    <Target Name="GEMComponentsR">
-        <MSBuild Projects="GEMComponentsR.dproj"/>
-    </Target>
-    <Target Name="GEMComponentsR:Clean">
-        <MSBuild Projects="GEMComponentsR.dproj" Targets="Clean"/>
-    </Target>
-    <Target Name="GEMComponentsR:Make">
-        <MSBuild Projects="GEMComponentsR.dproj" Targets="Make"/>
-    </Target>
     <Target Name="DCLGEMComponentsR">
         <MSBuild Projects="DCLGEMComponentsR.dproj"/>
     </Target>
@@ -35,14 +26,23 @@
     <Target Name="DCLGEMComponentsR:Make">
         <MSBuild Projects="DCLGEMComponentsR.dproj" Targets="Make"/>
     </Target>
+    <Target Name="GEMComponentsR">
+        <MSBuild Projects="GEMComponentsR.dproj"/>
+    </Target>
+    <Target Name="GEMComponentsR:Clean">
+        <MSBuild Projects="GEMComponentsR.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="GEMComponentsR:Make">
+        <MSBuild Projects="GEMComponentsR.dproj" Targets="Make"/>
+    </Target>
     <Target Name="Build">
-        <CallTarget Targets="GEMComponentsR;DCLGEMComponentsR"/>
+        <CallTarget Targets="DCLGEMComponentsR;GEMComponentsR"/>
     </Target>
     <Target Name="Clean">
-        <CallTarget Targets="GEMComponentsR:Clean;DCLGEMComponentsR:Clean"/>
+        <CallTarget Targets="DCLGEMComponentsR:Clean;GEMComponentsR:Clean"/>
     </Target>
     <Target Name="Make">
-        <CallTarget Targets="GEMComponentsR:Make;DCLGEMComponentsR:Make"/>
+        <CallTarget Targets="DCLGEMComponentsR:Make;GEMComponentsR:Make"/>
     </Target>
     <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
 </Project>

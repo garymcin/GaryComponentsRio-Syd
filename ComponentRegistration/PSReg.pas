@@ -74,7 +74,12 @@ uses
 
 procedure Register;
 begin
-  RegisterComponents('Garys Stuff', [TPicShow, TDBPicShow]);
+{$IFDEF VER340}
+  RegisterComponents('Garys Stuff Syd', [TPicShow, TDBPicShow]);
+{$ELSEIF VER330 }
+  RegisterComponents('Garys Stuff Rio', [TPicShow, TDBPicShow]);
+{$ENDIF}
+
   RegisterComponentEditor(TPicShow, TPicShowComponentEditor);
   RegisterPropertyEditor(TypeInfo(String), TCustomPicShow, 'StyleName', TStyleNamePropertyEditor);
   RegisterPropertyEditor(TypeInfo(TAbout), TCustomPicShow, 'About', TAboutPropertyEditor);

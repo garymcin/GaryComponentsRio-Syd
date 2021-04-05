@@ -484,7 +484,7 @@ begin
   UpdateBtn             := TColorButton.Create(Self);
   Status1Lbl            := TJvLabel.Create(Self);
   Status1Lb2            := TJvLabel.Create(Self);
-  AppInstallName            := TAppInstallFileName.Create;
+  AppInstallName        := TAppInstallFileName.Create;
 
   fColorNoUpdates       := clLime;
   fColorGetReadyUpdates := clYellow;
@@ -833,7 +833,6 @@ begin
   Status1Lb2.Caption := s + ': ' + FormatDateTime('mm/dd/yyyy hh:nn', Now);//DateTimeToStr(Now);
   {$IFDEF USE_CODESITE}CodeSite.ExitMethod( Self, 'UpDateThreadTerminated' );{$ENDIF}
 end;
-
 
 
 function TGEMAppUpdater.GetVersionInfo(aIdent: tEXEVersionType; aVersionPlaces: byte): String;
