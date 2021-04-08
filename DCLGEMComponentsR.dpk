@@ -26,15 +26,24 @@ package DCLGEMComponentsR;
 {$DEFINE RELEASE}
 {$ENDIF IMPLICITBUILDING}
 {$DESCRIPTION 'Gary''s component library'}
-{$LIBSUFFIX '260'}
+
+{$IFDEF VER340}
+  {$LIBSUFFIX '270'}
+{$ELSEIF VER330 }
+  {$LIBSUFFIX '260'}
+{$ENDIF}
+
 {$DESIGNONLY}
 {$IMPLICITBUILD ON}
 
 requires
   rtl,
   DesignIDE,
-  GEMComponentsR,
-  CnPack_D103R;
+  GEMComponentsR
+  {$IFDEF VER330}
+  , CnPack_D103R
+  {$ENDIF};
+
 
 contains
   PJDropFilesDsgn in 'ComponentRegistration\PJDropFilesDsgn.pas' {PJExtFileFilterExtPEDlg},

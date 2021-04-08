@@ -155,7 +155,7 @@ type
     property Busy: Boolean read fBusy;
     property Empty: Boolean read GetEmpty;
     property Progress: TPercent read fProgress write SetProgress;
-    {$IFDEF  VER340}}
+    {$IFDEF  VER340}
     function GetStyleName: String; override;
     {$ELSE}
     function GetStyleName: String;

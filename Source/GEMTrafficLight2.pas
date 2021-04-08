@@ -195,7 +195,7 @@ type
     property VerticalAlignment;
     property Visible;
     property StyleElements;
-    {$IFDEF  VER340}}
+    {$IFDEF  VER340}
     property StyleName;
     {$ENDIF}
     property OnAlignInsertBefore;

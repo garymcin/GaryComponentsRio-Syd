@@ -18,7 +18,7 @@ const
   TrafficLightColors : array[tlsRed..tlsNone] of TColor = (clRed, clYellow, clGreen, clBlack);
 
 type
-  tGEMShape = class(TShape) // this allows for then use of OnClick
+  tGEMShape = class(TShape) // this adds OnClick
   private
   published
   public
@@ -52,7 +52,6 @@ type
     property OnStartDock;
     property OnStartDrag;
   end;
-
 
 
   TGEMTrafficLight = class(TCustomGridPanel)
@@ -116,7 +115,7 @@ type
     property VerticalAlignment;
     property Visible;
     property StyleElements;
-    {$IFDEF  VER340}}
+    {$IFDEF  VER340}
     property StyleName;
     {$ENDIF}
     property OnAlignInsertBefore;

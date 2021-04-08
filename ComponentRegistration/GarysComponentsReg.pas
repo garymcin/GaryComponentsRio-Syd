@@ -12,18 +12,12 @@ uses
  GEMProcessTimer, gemArrow, SelColVisGrid, ColorPanelBtn, Preview, ColorButton,
  gemCustomButton, adpMRU, GEMDBLabel, URLLabel, FindFile, adpDBEdit, GemDBGrid,
  gemDBComboBox, gemDBLookupComboBox, PJVersionInfo, GEMColorButton, GEMTrafficLight,
- GEMTrafficLight2, uAutoComplete,  gemCapPanelBtn,
-
-
-{$IFDEF VER330}
-  cnColorGrid;
-{$ENDIF}
+ GEMTrafficLight2, uAutoComplete,  gemCapPanelBtn {$IFDEF VER330}, cnColorGrid{$ENDIF};
 
 
 procedure Register;
 begin
 {$IFDEF VER340}
-
   RegisterComponents('Garys Stuff Syd', [TGEMAppUpdater, TGemMruList, TStatusBarPro,
                                      TgemResistor, TGEMNxQuery, TGEMNxTable, TColorButton,
                                      TGEMProcessTimer, TgemArrow, TSelColVisGridBtn,
@@ -34,7 +28,6 @@ begin
                                      TGEMColorButton, TGEMTrafficLight, TGEMTrafficLight2, TgemCapPanelBtn,
                                      TAutoCompleteEdit, TGEMShape, TGEMShape2]);
 {$ELSEIF VER330 }
-
   RegisterComponents('Garys Stuff Rio', [TGEMAppUpdater, TGemMruList, TStatusBarPro,
                                      TgemResistor, TGEMNxQuery, TGEMNxTable, TColorButton,
                                      TGEMProcessTimer, TgemArrow, TSelColVisGridBtn,
