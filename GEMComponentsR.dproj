@@ -185,11 +185,8 @@
         <DCCReference Include="JvStdCtrls.dcp"/>
         <DCCReference Include="vcldb.dcp"/>
         <DCCReference Include="JvCore.dcp"/>
-        <DCCReference Include="JvControls.dcp"/>
         <DCCReference Include="CodeSiteLoggingPkg.dcp"/>
-        <DCCReference Include="NexusDB450ll270.dcp"/>
-        <DCCReference Include="NexusDB450sd270.dcp"/>
-        <DCCReference Include="NexusDB450db270.dcp"/>
+        <DCCReference Include="JvControls.dcp"/>
         <DCCReference Include="Source\GEMUpdaterPanel.pas"/>
         <DCCReference Include="Source\SelColVisGrid.pas"/>
         <DCCReference Include="Source\GemMruList.pas"/>

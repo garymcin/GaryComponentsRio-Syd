@@ -28,11 +28,7 @@ package GEMComponentsR;
 {$ENDIF IMPLICITBUILDING}
 {$DESCRIPTION 'Gary''s Components Runtime'}
 
-{$IFDEF VER340}
-  {$LIBSUFFIX '270'}
-{$ELSEIF VER330 }
   {$LIBSUFFIX '260'}
-{$ENDIF}
 
 {$RUNONLY}
 {$IMPLICITBUILD OFF}
@@ -48,18 +44,17 @@ requires
   JvStdCtrls,
   vcldb,
   JvCore,
-  JvControls,
   CodeSiteLoggingPkg,
-//{$IFDEF VER340}
+{$IFDEF VER340}
   NexusDB450ll270,
   NexusDB450sd270,
-  NexusDB450db270;
-//{$ENDIF}
-//{$IFDEF VER330 }
-//  NexusDB450ll260,
-//  NexusDB450sd260,
-//  NexusDB450db260;
-//{$ENDIF}
+  NexusDB450db270,
+{$ELSEIF VER330}
+  NexusDB450ll260,
+  NexusDB450sd260,
+  NexusDB450db260,
+{$ENDIF}
+  JvControls;
 
 
 contains
