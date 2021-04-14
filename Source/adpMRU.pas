@@ -50,7 +50,7 @@ type
 
   TadpMRU = class(TComponent)
   private
-    fMRUOn: Boolean;
+//    fMRUOn: Boolean;
     FItems: TStringList;
     FMaxItems: cardinal;
     FShowFullPath: boolean;
@@ -88,8 +88,6 @@ type
     function SetIniFilePathExists: boolean;
     procedure SetUseIniReg(const Value: TMRUStoreType);
 
-    procedure Click(Sender: TObject; const FileName: String);
-    procedure FileNameChange(Sender: TObject; const FileName: String);
   protected
     procedure Loaded; override;
     procedure Notification(AComponent: TComponent; Operation: TOperation); override;
@@ -150,7 +148,7 @@ begin
   FItems.OnChange := ItemsChange;
 
   FShowFullPath := True;
-  FVersion := VersionAdpMRU;
+//  FVersion := VersionAdpMRU;
 //  SetIniFilePathExists;
 end; (* Create *)
 
@@ -366,7 +364,7 @@ end;
 
 procedure TadpMRU.SetVersion(const Value: string);
 begin
-  FVersion := VersionAdpMRU;
+//  FVersion := VersionAdpMRU;
 end;
 
 
@@ -391,7 +389,7 @@ end;
 
 function TadpMRU.GetVersion: string;
 begin
-  Result := VersionAdpMRU; // VersionAdpMRU;
+//  Result := VersionAdpMRU; // VersionAdpMRU;
 end;
 
 (*SetShowFullPath*)
@@ -556,10 +554,6 @@ begin
         ParentMenuItem.Delete(i);
 end; 
 
-procedure TadpMRU.Click(Sender: TObject; const FileName: String);
-begin
-
-end;
 
 (* ClearParentMenu *)
 
@@ -589,11 +583,6 @@ begin
 end; 
 
 procedure TadpMRU.DoIniFileNameChange(Sender: TObject; const FileName: String);
-begin
-
-end;
-
-procedure TadpMRU.FileNameChange(Sender: TObject; const FileName: String);
 begin
 
 end;

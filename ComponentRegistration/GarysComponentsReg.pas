@@ -1,4 +1,4 @@
-unit GarysComponentsReg;
+ unit GarysComponentsReg;
 
 interface
 
@@ -12,23 +12,18 @@ uses
  GEMProcessTimer, gemArrow, SelColVisGrid, ColorPanelBtn, Preview, ColorButton,
  gemCustomButton, adpMRU, GEMDBLabel, URLLabel, FindFile, adpDBEdit, GemDBGrid,
  gemDBComboBox, gemDBLookupComboBox, PJVersionInfo, GEMColorButton, GEMTrafficLight,
- GEMTrafficLight2, uAutoComplete,  gemCapPanelBtn {$IFDEF VER330}, cnColorGrid{$ENDIF};
+ GEMTrafficLight2, uAutoComplete,  gemCapPanelBtn;
 
 
 procedure Register;
 begin
-{$IFDEF VER340}
-  RegisterComponents('Garys Stuff Syd', [TGEMAppUpdater, TGemMruList, TStatusBarPro,
-                                     TgemResistor, TGEMNxQuery, TGEMNxTable, TColorButton,
-                                     TGEMProcessTimer, TgemArrow, TSelColVisGridBtn,
-                                     TColorPanelSpecial, TPrintPreview, TThumbnailPreview,
-                                     TPaperPreview, TgemShapeBtn, TadpMRU, TGEMDBLabel,
-                                     TGEMUrlLabel, TFindFile, TGemDBGrid, TadpDBEdit,
-                                     TgemDBComboBox, TgemDBLookupComboBox, TPJVersionInfo,
-                                     TGEMColorButton, TGEMTrafficLight, TGEMTrafficLight2, TgemCapPanelBtn,
-                                     TAutoCompleteEdit, TGEMShape, TGEMShape2]);
-{$ELSEIF VER330 }
-  RegisterComponents('Garys Stuff Rio', [TGEMAppUpdater, TGemMruList, TStatusBarPro,
+{$IF CompilerVersion = 34.0}
+  var VerType := 'Garys Stuff Syd';
+{$IFEND}
+{$IF CompilerVersion = 33.0}
+  var VerType := 'Garys Stuff Rio';
+{$IFEND}
+  RegisterComponents(VerType, [TGEMAppUpdater, TGemMruList, TStatusBarPro,
                                      TgemResistor, TGEMNxQuery, TGEMNxTable, TColorButton,
                                      TGEMProcessTimer, TgemArrow, TSelColVisGridBtn,
                                      TColorPanelSpecial, TPrintPreview, TThumbnailPreview,
@@ -36,10 +31,8 @@ begin
                                      TGEMUrlLabel, TFindFile, TGemDBGrid, TadpDBEdit,
                                      TgemDBComboBox, TgemDBLookupComboBox, TPJVersionInfo,
                                      TGEMColorButton, TGEMTrafficLight, TGEMTrafficLight2,
-                                     TCnColorGrid, TgemCapPanelBtn, TAutoCompleteEdit,
+                                     TgemCapPanelBtn, TAutoCompleteEdit,
                                      TGEMShape, TGEMShape2]);
-{$ENDIF}
-
 end;
 
 end.

@@ -77,7 +77,7 @@ end;
 
 function TGEMNxQuery.SetVersion: string;
 begin
-  Result := VersionGEMnxQuery;
+//  Result := VersionGEMnxQuery;
 end;
 
 

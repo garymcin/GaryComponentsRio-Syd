@@ -34,7 +34,7 @@ type
 
   TColorPanelSpecial = class(TPanel)
   private
-    FBackBeforeHoverColor: TColor;
+ //   FBackBeforeHoverColor: TColor;
   private
 //    FCanvas           : TCanvas;
 //    IsFocused         : Boolean;
@@ -199,7 +199,7 @@ end;
 
 function TColorPanelSpecial.SetVersion: string;
 begin
-  Result := VersionColorPanelBtnSpecial;
+//  Result := VersionColorPanelBtnSpecial;
 end;
 
 

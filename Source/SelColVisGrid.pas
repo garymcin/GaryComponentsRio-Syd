@@ -253,9 +253,6 @@ uses
 
   GemINI;
 
-{$R DBColVisible.RES}
-//{$R Buttons.res}
-
 
 //var
 //  BitBtnResNames: array[TBitBtnKind] of PChar = (
@@ -1132,7 +1129,7 @@ end;
 
 function TSelColVisGridBtn.SetVersion: string;
 begin
-  Result := VersionSelColVisGrid;
+//  Result := VersionSelColVisGrid;
 end;
 
 

@@ -1,6 +1,7 @@
 package DCLGEMComponentsR;
 
 {$R *.res}
+{$R *.dres}
 {$IFDEF IMPLICITBUILDING This IFDEF should not be used by users}
 {$ALIGN 8}
 {$ASSERTIONS ON}
@@ -9,41 +10,36 @@ package DCLGEMComponentsR;
 {$EXTENDEDSYNTAX ON}
 {$IMPORTEDDATA ON}
 {$IOCHECKS ON}
-{$LOCALSYMBOLS OFF}
+{$LOCALSYMBOLS ON}
 {$LONGSTRINGS ON}
 {$OPENSTRINGS ON}
-{$OPTIMIZATION ON}
+{$OPTIMIZATION OFF}
 {$OVERFLOWCHECKS OFF}
 {$RANGECHECKS OFF}
-{$REFERENCEINFO OFF}
+{$REFERENCEINFO ON}
 {$SAFEDIVIDE OFF}
-{$STACKFRAMES OFF}
+{$STACKFRAMES ON}
 {$TYPEDADDRESS OFF}
 {$VARSTRINGCHECKS ON}
 {$WRITEABLECONST OFF}
 {$MINENUMSIZE 1}
 {$IMAGEBASE $400000}
-{$DEFINE RELEASE}
+{$DEFINE DEBUG}
 {$ENDIF IMPLICITBUILDING}
-{$DESCRIPTION 'Gary''s component library'}
-
-  {$LIBSUFFIX '260'}
-
+{$DESCRIPTION 'Gary''s Components'}
+{$LIBSUFFIX '260'}
 {$DESIGNONLY}
 {$IMPLICITBUILD ON}
 
 requires
   rtl,
   DesignIDE,
-  GEMComponentsR
-  {$IFDEF VER330}
-  , CnPack_D103R
-  {$ENDIF};
-
+  GEMComponentsR,
+  CnPack_D103R;
 
 contains
-  PJDropFilesDsgn in 'ComponentRegistration\PJDropFilesDsgn.pas' {PJExtFileFilterExtPEDlg},
   PSReg in 'ComponentRegistration\PSReg.pas',
-  GarysComponentsReg in 'ComponentRegistration\GarysComponentsReg.pas';
+  GarysComponentsReg in 'ComponentRegistration\GarysComponentsReg.pas',
+  PJDropFilesDsgn in 'ComponentRegistration\PJDropFilesDsgn.pas' {PJExtFileFilterExtPEDlg};
 
 end.

@@ -114,7 +114,7 @@ type
     function DarkerColor(thisColor: TColor; thePercent: Byte): TColor;
     function LighterColor(thisColor: TColor; thePercent: Byte): TColor;
     Function InRange (Lo,Hi,Val : Integer) : Boolean;
-    function getImageAlign: TAlign;
+//    function getImageAlign: TAlign;
 //    procedure SetTransparent(const Value: Boolean);
   protected
     property MouseInControl: Boolean read FMouseInControl;
@@ -827,10 +827,10 @@ begin
 end;
 
 
-function TgemCapPanelBtn.getImageAlign: TAlign;
-begin
-  Result := fImage.Align;
-end;
+//function TgemCapPanelBtn.getImageAlign: TAlign;
+//begin
+//  Result := fImage.Align;
+//end;
 
 
 function TgemCapPanelBtn.GetImage_Align: TAlign;

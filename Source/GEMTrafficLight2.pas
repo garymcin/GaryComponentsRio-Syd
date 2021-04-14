@@ -7,18 +7,17 @@ uses
   System.SysUtils, System.Variants, System.Classes,
 
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls,
-  Vcl.ExtCtrls,
+  Vcl.ExtCtrls;
 
-  JvExExtCtrls, JvExtComponent, JvShape;
 
 type
   TTrafficLightState = (tlsRed, tlsYellow, tlsGreen, tlsNone);
 
 const
-  TrafficLightColors : array[tlsRed..tlsNone] of TColor = (clRed, clYellow, clGreen, clBlack);
+  TrafficLightColors : array[TTrafficLightState] of TColor = (clRed, clYellow, clGreen, clBlack);
 
 type
-  TGEMExShape = class(TShape)
+  TGEMExShape2 = class(TShape)
   private
     FHintColor: TColor;
     FMouseOver: Boolean;
@@ -27,83 +26,61 @@ type
     FOnMouseLeave: TNotifyEvent;
     FOnParentColorChanged: TNotifyEvent;
     function BaseWndProc(Msg: Cardinal; WParam: WPARAM = 0; LParam: LPARAM = 0): LRESULT; overload;
-    function BaseWndProc(Msg: Cardinal; WParam: WPARAM; LParam: TObject): LRESULT; overload;
-    function BaseWndProcEx(Msg: Cardinal; WParam: WPARAM; var StructLParam): LRESULT;
+//    function BaseWndProc(Msg: Cardinal; WParam: WPARAM; LParam: TObject): LRESULT; overload;
+//    function BaseWndProcEx(Msg: Cardinal; WParam: WPARAM; var StructLParam): LRESULT;
   protected
     procedure WndProc(var Msg: TMessage); override;
-    procedure FocusChanged(AControl: TWinControl); dynamic;
-    procedure VisibleChanged; reintroduce; dynamic;
-    procedure EnabledChanged; reintroduce; dynamic;
-    procedure TextChanged; reintroduce; virtual;
-    procedure ColorChanged; reintroduce; dynamic;
-    procedure FontChanged; reintroduce; dynamic;
-    procedure ParentFontChanged; reintroduce; dynamic;
-    procedure ParentColorChanged; reintroduce; dynamic;
-    procedure ParentShowHintChanged; reintroduce; dynamic;
-    function WantKey(Key: Integer; Shift: TShiftState): Boolean; virtual;
-    function HintShow(var HintInfo: Vcl.Controls.THintInfo): Boolean; reintroduce; dynamic;
+//    procedure FocusChanged(AControl: TWinControl); dynamic;
+//    procedure VisibleChanged; reintroduce; dynamic;
+//    procedure EnabledChanged; reintroduce; dynamic;
+//    procedure TextChanged; reintroduce; virtual;
+//    procedure ColorChanged; reintroduce; dynamic;
+//    procedure FontChanged; reintroduce; dynamic;
+//    procedure ParentFontChanged; reintroduce; dynamic;
+//    procedure ParentColorChanged; reintroduce; dynamic;
+//    procedure ParentShowHintChanged; reintroduce; dynamic;
+//    function WantKey(Key: Integer; Shift: TShiftState): Boolean; virtual;
+//    function HintShow(var HintInfo: Vcl.Controls.THintInfo): Boolean; reintroduce; dynamic;
     function HitTest(X, Y: Integer): Boolean; reintroduce; virtual;
-    procedure MouseEnter(AControl: TControl); reintroduce; dynamic;
-    procedure MouseLeave(AControl: TControl); reintroduce; dynamic;
-    property MouseOver: Boolean read FMouseOver write FMouseOver;
-    property HintColor: TColor read FHintColor write FHintColor default clDefault;
-    property OnMouseEnter: TNotifyEvent read FOnMouseEnter write FOnMouseEnter;
-    property OnMouseLeave: TNotifyEvent read FOnMouseLeave write FOnMouseLeave;
-    property OnParentColorChange: TNotifyEvent read FOnParentColorChanged write FOnParentColorChanged;
+//    procedure MouseEnter(AControl: TControl); reintroduce; dynamic;
+//    procedure MouseLeave(AControl: TControl); reintroduce; dynamic;
+//    property MouseOver: Boolean read FMouseOver write FMouseOver;
+//    property HintColor: TColor read FHintColor write FHintColor default clDefault;
+//    property OnMouseEnter: TNotifyEvent read FOnMouseEnter write FOnMouseEnter;
+//    property OnMouseLeave: TNotifyEvent read FOnMouseLeave write FOnMouseLeave;
+//    property OnParentColorChange: TNotifyEvent read FOnParentColorChanged write FOnParentColorChanged;
   public
     constructor Create(AOwner: TComponent); override;
     property HintWindowClass: THintWindowClass read FHintWindowClass write FHintWindowClass;
   published
   end;
 
-  TGEMShape2 = class(TShape)
+  TGEMShape2 = class(TGEMExShape2)
   published
-    property Align;
     property Anchors;
+    property Constraints;
+//    property HintColor;
+    property Align;
     property Brush;
     property DragCursor;
     property DragKind;
     property DragMode;
     property Enabled;
-    property Constraints;
     property ParentShowHint;
     property Pen;
     property Shape;
     property ShowHint;
     property Touch;
     property Visible;
-    property OnClick;
-    property OnContextPopup;
-    property OnDragDrop;
-    property OnDragOver;
+
+    property OnMouseEnter;
+    property OnMouseLeave;
     property OnEndDock;
-    property OnEndDrag;
+    property OnStartDock;
+//    property OnParentColorChange;
     property OnMouseActivate;
-    property OnMouseDown;
-    property OnMouseEnter;
-    property OnMouseLeave;
-    property OnMouseMove;
-    property OnMouseUp;
     property OnGesture;
-    property OnStartDock;
-    property OnStartDrag;
-  end;
 
-
-
-  tGEMShape1 = class(TGEMExShape)
-  private
-//    FOnMouseEnter: TNotifyEvent;
-  public
-  published
-    property Anchors;
-    property Constraints;
-    property HintColor;
-    property OnMouseEnter;
-    property OnMouseLeave;
-    property OnEndDock;
-    property OnStartDock;
-    property OnParentColorChange;
     property OnClick;
     property OnConstrainedResize;
     property OnContextPopup;
@@ -119,27 +96,13 @@ type
     property OnMouseWheelUp;
     property OnResize;
     property OnStartDrag;
-
-    property Align;
-    property Brush;// TBrush read FBrush write SetBrush;
-    property DragCursor;
-    property DragKind;
-    property DragMode;
-    property Enabled;
-    property ParentShowHint;
-    property Pen;//: TPen read FPen write SetPen;
-    property Shape;//: TShapeType read FShape write SetShape default stRectangle;
-    property ShowHint;
-    property Touch;
-    property Visible;
-    property OnMouseActivate;
-    property OnGesture;
-  end;
+  end;
+
 
   TGEMTrafficLight2 = class(TCustomGridPanel)
-    RedLight   : tGEMShape1;
-    YellowLight: tGEMShape1;
-    GreenLight : tGEMShape1;
+    RedLight   : TGEMShape2;
+    YellowLight: TGEMShape2;
+    GreenLight : TGEMShape2;
   private
   { Private declarations }
     fState: TTrafficLightState;
@@ -156,6 +119,7 @@ type
   protected
    { Protected declarations }
     procedure CreateWindowHandle(const Params: TCreateParams); override;
+//    procedure CreateWindowHandle(const Params: TCreateParams); override;
 //    procedure Paint; override;
   Public
   { Public declarations }
@@ -297,7 +261,6 @@ end;
 constructor TGEMTrafficLight2.Create(AOwner: TComponent);
 begin
   inherited Create(AOwner);
-
   RowCollection.Add;     //Default is 2 rows.  Need 3.
   ColumnCollection[1].Destroy; // default is 2 columns.  only need one.
 
@@ -306,23 +269,17 @@ begin
   Color := clBlack;
   ParentBackground := False;
 
-  RedLight := tGEMShape1.create(self);
+  RedLight := tGEMShape2.create(self);
   RedLight.Parent := self;
 
-  YellowLight := tGEMShape1.create(self);
+  YellowLight := tGEMShape2.create(self);
   YellowLight.Parent := self;
 
-  GreenLight := tGEMShape1.create(self);
+  GreenLight := tGEMShape2.create(self);
   GreenLight.parent := self;
 
   fLightsOutLineColor := clWhite;
 end;
-
-
-//destructor TGEMTrafficLight2.Destory;
-//begin
-//  inherited;
-//end;
 
 
 procedure TGEMTrafficLight2.CreateWindowHandle(const Params: TCreateParams);
@@ -474,9 +431,9 @@ end;
 //
 //end;
 
-{ TGEMExShape }
+{ TGEMExShape2 }
 
-function TGEMExShape.BaseWndProc(Msg: Cardinal; WParam: WPARAM = 0; LParam: LPARAM = 0): LRESULT;
+function TGEMExShape2.BaseWndProc(Msg: Cardinal; WParam: WPARAM = 0; LParam: LPARAM = 0): LRESULT;
 var
   Mesg: TMessage;
 begin
@@ -485,132 +442,135 @@ begin
   Result := Mesg.Result;
 end;
 
-function TGEMExShape.BaseWndProc(Msg: Cardinal; WParam: WPARAM; LParam: TObject): LRESULT;
-begin
-  Result := BaseWndProc(Msg, WParam, WinApi.Windows.LPARAM(LParam));
-end;
+//function TGEMExShape.BaseWndProc(Msg: Cardinal; WParam: WPARAM; LParam: TObject): LRESULT;
+//begin
+//  Result := BaseWndProc(Msg, WParam, WinApi.Windows.LPARAM(LParam));
+//end;
 
-function TGEMExShape.BaseWndProcEx(Msg: Cardinal; WParam: WPARAM;
-  var StructLParam): LRESULT;
-begin
-  Result := BaseWndProc(Msg, WParam, WinApi.Windows.LPARAM(@StructLParam));
-end;
+//function TGEMExShape.BaseWndProcEx(Msg: Cardinal; WParam: WPARAM;
+//  var StructLParam): LRESULT;
+//begin
+//  Result := BaseWndProc(Msg, WParam, WinApi.Windows.LPARAM(@StructLParam));
+//end;
 
-procedure TGEMExShape.ColorChanged;
-begin
-  BaseWndProc(CM_COLORCHANGED);
-end;
 
-constructor TGEMExShape.Create(AOwner: TComponent);
+constructor TGEMExShape2.Create(AOwner: TComponent);
 begin
   inherited Create(AOwner);
   FHintColor := clDefault;
 end;
 
-procedure TGEMExShape.EnabledChanged;
-begin
-  BaseWndProc(CM_ENABLEDCHANGED);
-end;
+//procedure TGEMExShape.ColorChanged;
+//begin
+//  BaseWndProc(CM_COLORCHANGED);
+//end;
+//
+//procedure TGEMExShape.EnabledChanged;
+//begin
+//  BaseWndProc(CM_ENABLEDCHANGED);
+//end;
+//
+//function TGEMExShape.HintShow(var HintInfo: Vcl.Controls.THintInfo): Boolean;
+//begin
+//  GetHintColor(HintInfo, Self, FHintColor);
+//  if FHintWindowClass <> nil then
+//    HintInfo.HintWindowClass := FHintWindowClass;
+//  Result := BaseWndProcEx(CM_HINTSHOW, 0, HintInfo) <> 0;
+//end;
+//
+//procedure TGEMExShape.ParentColorChanged;
+//begin
+//  BaseWndProc(CM_PARENTCOLORCHANGED);
+//  if Assigned(OnParentColorChange) then
+//    OnParentColorChange(Self);
+//end;
+//
+//procedure TGEMExShape.ParentFontChanged;
+//begin
+//  BaseWndProc(CM_PARENTFONTCHANGED);
+//end;
+//
+//procedure TGEMExShape.ParentShowHintChanged;
+//begin
+//  BaseWndProc(CM_PARENTSHOWHINTCHANGED);
+//end;
+//
+//procedure TGEMExShape.TextChanged;
+//begin
+//  BaseWndProc(CM_TEXTCHANGED);
+//end;
+//
+//procedure TGEMExShape.VisibleChanged;
+//begin
+//  BaseWndProc(CM_VISIBLECHANGED);
+//end;
+//
+//function TGEMExShape.WantKey(Key: Integer; Shift: TShiftState): Boolean;
+//begin
+//  Result := BaseWndProc(CM_DIALOGCHAR, Word(Key), ShiftStateToKeyData(Shift)) <> 0;
+//end;
+//
+//procedure TGEMExShape.FontChanged;
+//begin
+//  BaseWndProc(CM_FONTCHANGED);
+//end;
 
-procedure TGEMExShape.FocusChanged(AControl: TWinControl);
-begin
-  BaseWndProc(CM_FOCUSCHANGED, 0, AControl);
-end;
+//procedure TGEMExShape.FocusChanged(AControl: TWinControl);
+//begin
+//  BaseWndProc(CM_FOCUSCHANGED, 0, AControl);
+//end;
+//
 
-procedure TGEMExShape.FontChanged;
-begin
-  BaseWndProc(CM_FONTCHANGED);
-end;
-
-function TGEMExShape.HintShow(var HintInfo: Vcl.Controls.THintInfo): Boolean;
-begin
-  GetHintColor(HintInfo, Self, FHintColor);
-  if FHintWindowClass <> nil then
-    HintInfo.HintWindowClass := FHintWindowClass;
-  Result := BaseWndProcEx(CM_HINTSHOW, 0, HintInfo) <> 0;
-end;
-
-function TGEMExShape.HitTest(X, Y: Integer): Boolean;
+function TGEMExShape2.HitTest(X, Y: Integer): Boolean;
 begin
   Result := BaseWndProc(CM_HITTEST, 0, SmallPointToLong(PointToSmallPoint(Point(X, Y)))) <> 0;
 end;
 
-procedure TGEMExShape.MouseEnter(AControl: TControl);
-begin
-  FMouseOver := True;
-  if Assigned(FOnMouseEnter) then
-    FOnMouseEnter(Self);
-  BaseWndProc(CM_MOUSEENTER, 0, AControl);
-end;
+//procedure TGEMExShape.MouseEnter(AControl: TControl);
+//begin
+//  FMouseOver := True;
+//  if Assigned(FOnMouseEnter) then
+//    FOnMouseEnter(Self);
+//  BaseWndProc(CM_MOUSEENTER, 0, AControl);
+//end;
+//
+//procedure TGEMExShape.MouseLeave(AControl: TControl);
+//begin
+//  FMouseOver := False;
+//  BaseWndProc(CM_MOUSELEAVE, 0, AControl);
+//  if Assigned(FOnMouseLeave) then
+//    FOnMouseLeave(Self);
+//end;
 
-procedure TGEMExShape.MouseLeave(AControl: TControl);
-begin
-  FMouseOver := False;
-  BaseWndProc(CM_MOUSELEAVE, 0, AControl);
-  if Assigned(FOnMouseLeave) then
-    FOnMouseLeave(Self);
-end;
 
-procedure TGEMExShape.ParentColorChanged;
-begin
-  BaseWndProc(CM_PARENTCOLORCHANGED);
-  if Assigned(OnParentColorChange) then
-    OnParentColorChange(Self);
-end;
-
-procedure TGEMExShape.ParentFontChanged;
-begin
-  BaseWndProc(CM_PARENTFONTCHANGED);
-end;
-
-procedure TGEMExShape.ParentShowHintChanged;
-begin
-  BaseWndProc(CM_PARENTSHOWHINTCHANGED);
-end;
-
-procedure TGEMExShape.TextChanged;
-begin
-  BaseWndProc(CM_TEXTCHANGED);
-end;
-
-procedure TGEMExShape.VisibleChanged;
-begin
-  BaseWndProc(CM_VISIBLECHANGED);
-end;
-
-function TGEMExShape.WantKey(Key: Integer; Shift: TShiftState): Boolean;
-begin
-  Result := BaseWndProc(CM_DIALOGCHAR, Word(Key), ShiftStateToKeyData(Shift)) <> 0;
-end;
-
-procedure TGEMExShape.WndProc(var Msg: TMessage);
+procedure TGEMExShape2.WndProc(var Msg: TMessage);
 begin
   if not DispatchIsDesignMsg(Self, Msg) then
     case Msg.Msg of
-//    CM_DENYSUBCLASSING:
-//      Msg.Result := LRESULT(Ord(GetInterfaceEntry(IJvDenySubClassing) <> nil));
-    CM_DIALOGCHAR:
-      with TCMDialogChar{$IFDEF CLR}.Create{$ENDIF}(Msg) do
-        Result := LRESULT(Ord(WantKey(CharCode, KeyDataToShiftState(KeyData))));
-    CM_HINTSHOW:
-      with TCMHintShow(Msg) do
-        Result := LRESULT(HintShow(HintInfo^));
-    CM_HITTEST:
-      with TCMHitTest(Msg) do
-        Result := LRESULT(HitTest(XPos, YPos));
-    CM_MOUSEENTER: MouseEnter(TControl(Msg.LParam));
-    CM_MOUSELEAVE:  MouseLeave(TControl(Msg.LParam));
-    CM_VISIBLECHANGED: VisibleChanged;
-    CM_ENABLEDCHANGED: EnabledChanged;
-    CM_TEXTCHANGED: TextChanged;
-    CM_FONTCHANGED: FontChanged;
-    CM_COLORCHANGED: ColorChanged;
-    CM_FOCUSCHANGED:  FocusChanged(TWinControl(Msg.LParam));
-    CM_PARENTFONTCHANGED: ParentFontChanged;
-    CM_PARENTCOLORCHANGED: ParentColorChanged;
-    CM_PARENTSHOWHINTCHANGED: ParentShowHintChanged;
-    else
-      inherited WndProc(Msg);
+////    CM_DENYSUBCLASSING:
+////      Msg.Result := LRESULT(Ord(GetInterfaceEntry(IJvDenySubClassing) <> nil));
+////      CM_DIALOGCHAR:
+////        with TCMDialogChar{$IFDEF CLR}.Create{$ENDIF}(Msg) do
+////          Result := LRESULT(Ord(WantKey(CharCode, KeyDataToShiftState(KeyData))));
+      CM_HITTEST:
+        with TCMHitTest(Msg) do
+          Result := LRESULT(HitTest(XPos, YPos));
+////      CM_MOUSEENTER: MouseEnter(TControl(Msg.LParam));
+////      CM_MOUSELEAVE:  MouseLeave(TControl(Msg.LParam));
+////      CM_VISIBLECHANGED: VisibleChanged;
+////      CM_ENABLEDCHANGED: EnabledChanged;
+////      CM_TEXTCHANGED: TextChanged;
+////      CM_FONTCHANGED: FontChanged;
+////      CM_COLORCHANGED: ColorChanged;
+////      CM_FOCUSCHANGED:  FocusChanged(TWinControl(Msg.LParam));
+////      CM_PARENTFONTCHANGED: ParentFontChanged;
+////      CM_PARENTCOLORCHANGED: ParentColorChanged;
+////      CM_PARENTSHOWHINTCHANGED: ParentShowHintChanged;
+////      CM_HINTSHOW:
+////        with TCMHintShow(Msg) do
+////          Result := LRESULT(HintShow(HintInfo^));
+      else
+        inherited WndProc(Msg);
     end;
 end;
 

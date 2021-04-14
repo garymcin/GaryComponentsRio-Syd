@@ -187,6 +187,9 @@
         <DCCReference Include="JvCore.dcp"/>
         <DCCReference Include="CodeSiteLoggingPkg.dcp"/>
         <DCCReference Include="JvControls.dcp"/>
+        <DCCReference Include="NexusDB450ll260.dcp"/>
+        <DCCReference Include="NexusDB450sd260.dcp"/>
+        <DCCReference Include="NexusDB450db260.dcp"/>
         <DCCReference Include="Source\GEMUpdaterPanel.pas"/>
         <DCCReference Include="Source\SelColVisGrid.pas"/>
         <DCCReference Include="Source\GemMruList.pas"/>
@@ -243,8 +246,10 @@
         <BorlandProject>
             <Delphi.Personality>
                 <Excluded_Packages>
-                    <Excluded_Packages Name="$(BDSBIN)\dcloffice2k270.bpl">Microsoft Office 2000 Sample Automation Server Wrapper Components</Excluded_Packages>
-                    <Excluded_Packages Name="$(BDSBIN)\dclofficexp270.bpl">Microsoft Office XP Sample Automation Server Wrapper Components</Excluded_Packages>
+                    <Excluded_Packages Name="$(BDSBIN)\dcloffice2k260.bpl">Microsoft Office 2000 Sample Automation Server Wrapper Components</Excluded_Packages>
+                    <Excluded_Packages Name="$(BDSBIN)\dclofficexp260.bpl">Microsoft Office XP Sample Automation Server Wrapper Components</Excluded_Packages>
+                    <Excluded_Packages Name="C:\Program Files (x86)\FastReport 6 VCL Standard\LibD26\dclfrxIntIO26.bpl">FastReport 6.0 Internet transports</Excluded_Packages>
+                    <Excluded_Packages Name="C:\Program Files (x86)\FastReport 6 VCL Standard\LibD26\dclfrxIntIOIndy26.bpl">FastReport 6.0 Internet transports</Excluded_Packages>
                 </Excluded_Packages>
                 <Source>
                     <Source Name="MainSource">GEMComponentsR.dpk</Source>
@@ -266,7 +271,7 @@
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
-                <DeployFile LocalName="C:\Users\Public\Documents\Embarcadero\Studio\21.0\Bpl\GEMComponentsR260.bpl" Configuration="Release" Class="ProjectOutput">
+                <DeployFile LocalName="C:\Users\Public\Documents\Embarcadero\Studio\20.0\Bpl\GEMComponentsR260.bpl" Configuration="Release" Class="ProjectOutput">
                     <Platform Name="Win32">
                         <RemoteName>GEMComponentsR.bpl</RemoteName>
                         <Overwrite>true</Overwrite>

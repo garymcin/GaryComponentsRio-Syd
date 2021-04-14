@@ -115,7 +115,7 @@
         <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
         <VerInfo_Keys>CompanyName=;FileDescription=$(MSBuildProjectName);FileVersion=1.0.0.0;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProgramID=com.embarcadero.$(MSBuildProjectName);ProductName=$(MSBuildProjectName);ProductVersion=1.0.0.0;Comments=</VerInfo_Keys>
         <VerInfo_Locale>1033</VerInfo_Locale>
-        <DCC_UsePackage>rtl;GEMComponentsR;CnPack_D103R;$(DCC_UsePackage)</DCC_UsePackage>
+        <DCC_UsePackage>rtl;CnPack_D103R;GEMComponentsR;$(DCC_UsePackage)</DCC_UsePackage>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Base_Win64)'!=''">
         <DCC_UsePackage>rtl;GEMComponentsR;$(DCC_UsePackage)</DCC_UsePackage>
@@ -159,12 +159,20 @@
         <DCCReference Include="DesignIDE.dcp"/>
         <DCCReference Include="GEMComponentsR.dcp"/>
         <DCCReference Include="CnPack_D103R.dcp"/>
+        <DCCReference Include="ComponentRegistration\PSReg.pas"/>
+        <DCCReference Include="ComponentRegistration\GarysComponentsReg.pas"/>
         <DCCReference Include="ComponentRegistration\PJDropFilesDsgn.pas">
             <Form>PJExtFileFilterExtPEDlg</Form>
             <FormType>dfm</FormType>
         </DCCReference>
-        <DCCReference Include="ComponentRegistration\PSReg.pas"/>
-        <DCCReference Include="ComponentRegistration\GarysComponentsReg.pas"/>
+        <RcItem Include="Icons\Arrow64px.bmp">
+            <ResourceType>BITMAP</ResourceType>
+            <ResourceId>TgemArrow</ResourceId>
+        </RcItem>
+        <RcItem Include="Icons\Shape_48px.bmp">
+            <ResourceType>BITMAP</ResourceType>
+            <ResourceId>TGEMShape</ResourceId>
+        </RcItem>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>
@@ -183,8 +191,10 @@
         <BorlandProject>
             <Delphi.Personality>
                 <Excluded_Packages>
-                    <Excluded_Packages Name="$(BDSBIN)\dcloffice2k270.bpl">Microsoft Office 2000 Sample Automation Server Wrapper Components</Excluded_Packages>
-                    <Excluded_Packages Name="$(BDSBIN)\dclofficexp270.bpl">Microsoft Office XP Sample Automation Server Wrapper Components</Excluded_Packages>
+                    <Excluded_Packages Name="$(BDSBIN)\dcloffice2k260.bpl">Microsoft Office 2000 Sample Automation Server Wrapper Components</Excluded_Packages>
+                    <Excluded_Packages Name="$(BDSBIN)\dclofficexp260.bpl">Microsoft Office XP Sample Automation Server Wrapper Components</Excluded_Packages>
+                    <Excluded_Packages Name="C:\Program Files (x86)\FastReport 6 VCL Standard\LibD26\dclfrxIntIO26.bpl">FastReport 6.0 Internet transports</Excluded_Packages>
+                    <Excluded_Packages Name="C:\Program Files (x86)\FastReport 6 VCL Standard\LibD26\dclfrxIntIOIndy26.bpl">FastReport 6.0 Internet transports</Excluded_Packages>
                 </Excluded_Packages>
                 <Source>
                     <Source Name="MainSource">DCLGEMComponentsR.dpk</Source>
@@ -212,7 +222,7 @@
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
-                <DeployFile LocalName="C:\Users\Public\Documents\Embarcadero\Studio\20.0\Bpl\GEMDCLGEMComponentsR260.2.0.0.bpl" Configuration="Debug" Class="ProjectOutput">
+                <DeployFile LocalName="C:\Users\Public\Documents\Embarcadero\Studio\20.0\Bpl\DCLGEMComponentsR260.bpl" Configuration="Debug" Class="ProjectOutput">
                     <Platform Name="Win32">
                         <RemoteName>DCLGEMComponentsR.bpl</RemoteName>
                         <Overwrite>true</Overwrite>

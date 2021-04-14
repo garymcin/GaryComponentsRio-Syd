@@ -5,9 +5,9 @@ interface
 uses
   Winapi.Windows, Winapi.Messages,
 
-  System.SysUtils, System.Variants, System.Classes, System.UITypes,
+  {System.SysUtils, System.Variants,} System.Classes, System.UITypes,
 
-  Vcl.Controls, Vcl.Dialogs, Vcl.StdCtrls, Vcl.Themes;
+  Vcl.Controls, {Vcl.Dialogs,} Vcl.StdCtrls, Vcl.Themes;
 
 
 type
@@ -17,9 +17,9 @@ type
   TGEMScrollEvent = procedure(Sender: TObject; const Msg: TWMScroll; var DontScroll: Boolean) of object;
 
   tGemMruList = class(TCustomListBox)
-  strict private
-    class constructor Create;
-    class destructor Destroy;
+//  strict private
+//    class constructor Create;
+//    class destructor Destroy;
   private
     { Private declarations }
     fMruStringList: TStringList;
@@ -153,16 +153,16 @@ const
 //==================== constructor and destructor =============================
 //=============================================================================
 
-class constructor tGemMruList.Create;
-begin
-  TCustomStyleEngine.RegisterStyleHook(tGemMruList, TListBoxStyleHook);
-end;
-
-
-class destructor tGemMruList.Destroy;
-begin
-  TCustomStyleEngine.UnRegisterStyleHook(tGemMruList, TListBoxStyleHook);
-end;
+//class constructor tGemMruList.Create;
+//begin
+//  TCustomStyleEngine.RegisterStyleHook(tGemMruList, TListBoxStyleHook);
+//end;
+//
+//
+//class destructor tGemMruList.Destroy;
+//begin
+//  TCustomStyleEngine.UnRegisterStyleHook(tGemMruList, TListBoxStyleHook);
+//end;
 
 
 procedure tGemMruList.Loaded;
@@ -180,6 +180,8 @@ end;
 
 destructor tGemMruList.Destroy;
 begin
+  TCustomStyleEngine.UnRegisterStyleHook(tGemMruList, TListBoxStyleHook);
+
   var fPath := ExtractFilePath(fMruListFile);
   if DirectoryExists(fPath) then
     fMruStringList.SaveToFile(fMruListFile);
@@ -219,7 +221,8 @@ end;
 procedure tGemMruList.Click;
 begin
   inherited;
-  if Assigned(FOnClick) then begin
+  if Assigned(FOnClick) then
+  begin
     var fItemIndex := GetItemIndex;
     FOnClick(Self, fItemIndex, fMruStringList.Names[fItemIndex],
              fMruStringList.ValueFromIndex[fItemIndex]);
@@ -235,7 +238,8 @@ end;
 
 function tGemMruList.GetValue(const cIndex: Integer): string;
 begin
-  if cIndex <= fMruStringList.Count - 1 then begin
+  if cIndex <= fMruStringList.Count - 1 then
+  begin
     try
       Result := GetValueFItemStr(fMruStringList.ValueFromIndex[cIndex]);
     except
@@ -309,7 +313,8 @@ begin
   if fMruStringList = nil then
     Exit;
   fMruListFile := Value;
-  if FileExists(fMruListFile) then begin
+  if FileExists(fMruListFile) then
+  begin
     fMruStringList.LoadFromFile(fMruListFile);
     Items.Assign(fMruStringList);
   end;
@@ -330,7 +335,8 @@ procedure tGemMruList.Add(aName, aValue: string);
 begin
   aName := Trim(aName);
   aValue := Trim(aValue);
-  if (aName <> '') and (aValue <> '') then begin
+  if (aName <> '') and (aValue <> '') then
+  begin
     DeleteItem(aName);
     fMruStringList.Insert(0, aName + cSectionValueSeparator + aValue);
     PopLastIfMoreMax;

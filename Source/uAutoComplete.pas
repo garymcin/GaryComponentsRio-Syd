@@ -104,11 +104,11 @@ type
     FACOptions: TACOptions;
     FACSource: TACSource;
     //fListBox: TListBox;
-    function  GetACStrings: TStringList;
+//    function  GetACStrings: TStringList;
     procedure SetACEnabled(const Value: boolean);
     procedure SetACOptions(const Value: TACOptions);
     procedure SetACSource(const Value: TACSource);
-    procedure SetACStrings(const Value: TStringList);
+//    procedure SetACStrings(const Value: TStringList);
   protected
     procedure CreateWnd; override;
     procedure DestroyWnd; override;
@@ -119,7 +119,7 @@ type
     property ACEnabled: boolean read FACEnabled write SetACEnabled;
     property ACOptions: TACOptions read FACOptions write SetACOptions;
     property ACSource: TACSource read FACSource write SetACSource;
-    property ACStrings: TStringList read GetACStrings write SetACStrings;
+//    property ACStrings: TStringList read GetACStrings write SetACStrings;
   end;
 
 implementation
@@ -274,10 +274,10 @@ begin
 end;
 
 
-function TAutoCompleteEdit.GetACStrings: TStringList;
-begin
-  //Result := FACList.FStrings;
-end;
+//function TAutoCompleteEdit.GetACStrings: TStringList;
+//begin
+//  //Result := FACList.FStrings;
+//end;
 
 
 procedure TAutoCompleteEdit.SetACEnabled(const Value: Boolean);
@@ -327,10 +327,10 @@ begin
 end;
 
 
-procedure TAutoCompleteEdit.SetACStrings(const Value: TStringList);
-begin
-//  if Value <> FACList.FStrings then
-//    FACList.FStrings.Assign(Value);
-end;
+//procedure TAutoCompleteEdit.SetACStrings(const Value: TStringList);
+//begin
+////  if Value <> FACList.FStrings then
+////    FACList.FStrings.Assign(Value);
+//end;
 
 end.

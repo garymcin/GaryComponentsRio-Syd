@@ -63,7 +63,7 @@ end;
 
 function TGEMDBGridEditForm.SetVersion: string;
 begin
-  Result := VersionGEMDBGridEdit;
+//  Result := VersionGEMDBGridEdit;
 end;
 
 procedure TGEMDBGridEditForm.CheckListBox1ClickCheck(Sender: TObject);

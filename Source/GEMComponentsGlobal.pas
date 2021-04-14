@@ -3,161 +3,103 @@ unit GEMComponentsGlobal;
 interface
 
 type
+  tGEMComponents = (com_GEMAppUpdater, com_GemMruList, com_StatusBarPro,
+                    com_gemResistor, com_GEMNxQuery, com_GEMNxTable,
+                    com_ColorButton, com_GEMProcessTimer, com_gemArrow,
+                    com_SelColVisGridBtn, com_ColorPanelSpecial, com_PrintPreview,
+                    com_ThumbnailPreview, com_PaperPreview, com_gemShapeBtn,
+                    com_adpMRU, com_GEMDBLabel, com_GEMUrlLabel,
+                    com_FindFile, com_GemDBGrid, com_adpDBEdit,
+                    com_gemDBComboBox, com_gemDBLookupComboBox, com_PJVersionInfo,
+                    com_GEMColorButton, com_GEMTrafficLight, com_GEMTrafficLight2,
+                    com_gemCapPanelBtn, com_AutoCompleteEdit, com_GEMShape);
 
-  tGEMComponents = (gemGEMDBGrid, gemGEMDBGridEdit, gemSelColVisGrid,
-                    gemColorButtonSpecial, gemColorPanelBtnSpecial, gemGEMColorBtnSpecial,
-                    gemGEMnxTable, gemGEMnxQuery, gemAdpMRU, gemGEMProcessTimer,
-                    gemGEMArrow, gemUpdater, gemCapPanelBtn);
 
-  TGEMComponentsVersion = record
-//    fGEMComponent: tGEMComponents;
-    fVersionNum: string;
-    FileName: string;
+
+type
+  TGEMVerStrRec = record
+    Version: String;
     ComponentName: string;
-//    function GetVersion(aComponent: TGEMComponents): string;
-  private
-    procedure SetVersionNum(const Value: string);// aGEMComponent: tGEMComponents);
-  public
-    property VersionNum: string read fVersionNum write SetVersionNum;
-//    property GEMComponent: tGEMComponents read fGEMComponent write fGEMComponent;
   end;
 
 
-//  TComponentVersioning = class
-//  private
-//    TheComponenetsVersion: array of TGEMComponentsVersion;
-//  public
-//
-//    //property ComponentVersion: TGEMComponentsVersion  read F write Set;
-//  end;
-const
-  Company = 'GEM Components: ';
-  VersionGEMDBGrid = Company + '1.1';        //yes
-  VersionGEMDBGridEdit = Company + '2.0';    //yes
-  VersionSelColVisGrid = Company + '1.0';
-  VersionColorButtonSpecial = Company + '1.0';
-  VersionColorPanelBtnSpecial = Company + '1.0';  // yes
-  VersionGEMColorBtnSpecial = Company + '1.1';   //yes
-  VersionGEMnxTable = Company + '1.0';
-  VersionGEMnxQuery = Company + '1.0';   //yes
-  VersionAdpMRU = Company + '1.2';
-  VersionGEMProcessTimer = Company + '1.0';
-  VersionGEMArrow = Company + '1.1';
-  VersionUpdater = 'Updater Ver: 1.0.1';
-  VersionCapPanelBtn = '1.0.0';
+  TGEMComponentsVersion = class
+    fGEMComponent: tGEMComponents;
+//    fVersionNum: string;
+//    FileName: string;
+//    fComponentName: string;
+  private
+    procedure SetVersionInfo(const Value: TGEMVerStrRec);
+    function GetVersionInfo: TGEMVerStrRec;
+    function GetComponentName: string;
+    function GetVersionNum: string;
+  public
+    property Version: string read GetVersionNum;
+    property Component: string read GetComponentName;
+    property VersionInfo: TGEMVerStrRec read GetVersionInfo write SetVersionInfo;
+  end;
 
-//  var
-//    fComponents: array[gemGEMDBGrid..gemUpdater] of TGEMComponentsVersion;
-
-//function GetComponentVersion(aComponent: tGEMComponents): fComponents;
-function ComponentVersion(aComponent: tGEMComponents): string;
+//function ComponentVersion(aComponent: tGEMComponents): string;
 
 implementation
 
-
-function ComponentVersion(aComponent: tGEMComponents): string;
-begin
-  case aComponent of
-    gemGEMDBGrid: begin
-      Result:=   VersionGEMDBGrid;        //yes
-;
-    end;
-
-    gemGEMDBGridEdit: begin
-      Result:= VersionGEMDBGridEdit;
-    end;
-
-    gemSelColVisGrid: begin
-       Result:= VersionSelColVisGrid;
-   end;
-
-    gemColorButtonSpecial: begin
-      Result:= VersionColorButtonSpecial;
-    end;
-
-    gemColorPanelBtnSpecial: begin
-      Result:= VersionColorPanelBtnSpecial;
-    end;
-
-    gemGEMColorBtnSpecial: begin
-      Result:= VersionGEMColorBtnSpecial;
-    end;
-
-    gemGEMnxTable: begin
-      Result:= VersionGEMnxTable;
-    end;
-
-    gemGEMnxQuery: begin
-      Result:= VersionGEMnxQuery;
-    end;
-
-    gemAdpMRU: begin
-      Result:= VersionAdpMRU;
-    end;
-
-    gemGEMProcessTimer: begin
-      Result:= VersionGEMProcessTimer;
-    end;
-
-    gemGEMArrow: begin
-      Result:= VersionGEMArrow;
-    end;
-
-    gemUpdater: begin
-      Result:= VersionUpdater;
-    end;
-
-    gemCapPanelBtn: begin
-      Result:= VersionCapPanelBtn;
-    end;
-  end;
-end;
-
-
-
-//const
-//  AboutFindFile in 'Source\AboutFindFile.pas',
-//  adpDBDateTimePicker in 'Source\adpDBDateTimePicker.pas',
-//  adpDBEdit in 'Source\adpDBEdit.pas',
-//  adpMRU in 'Source\adpMRU.pas',
-//  ColorButton in 'Source\ColorButton.pas',
-//  FindFile in 'Source\FindFile.pas',
-//  GEMadpDBCheckBox in 'Source\GEMadpDBCheckBox.pas',
-//  gemArrow in 'Source\gemArrow.pas',
-//  gemCustomButton in 'Source\gemCustomButton.pas',
-//  GEMDBLabel in 'Source\GEMDBLabel.pas',
-//  GEMDBMaskEdit in 'Source\GEMDBMaskEdit.pas',
-//  gemResistor in 'Source\gemResistor.pas',
-//  GwWebBrowserTamed in 'Source\GwWebBrowserTamed.pas',
-//  GwWebBrowserTamedReg in 'Source\GwWebBrowserTamedReg.pas',
-//  PJEnvVars in 'Source\PJEnvVars.pas',
-//  Preview in 'Source\Preview.pas',
-//  SBPro in 'Source\SBPro.pas',
-//  TGEMListBx in 'Source\TGEMListBx.pas',
-//  gemDBLookupComboBox in 'Source\gemDBLookupComboBox.pas',
-//  gemDBComboBox in 'Source\gemDBComboBox.pas',
-//  adpEdit in 'Source\adpEdit.pas',
-//  URLLabel in 'Source\URLLabel.pas',
-//  MemoBar in 'Source\MemoBar.pas',
-//  GarysComponentsReg in 'Source\GarysComponentsReg.pas',
-//  AutoCompletEditReg in 'Source\AutoCompletEditReg.pas',
-//  ExtentedDBGrid in 'Source\ExtentedDBGrid.pas',
-//  GEMProcessTimer in 'Source\GEMProcessTimer.pas',
-//  GemInputLabel in 'Source\GemInputLabel.pas',
-//  DBControlLists in 'Source\DBControlLists.pas',
-//  adpInstanceControl in 'Source\adpInstanceControl.pas',
-//  MouseDBGrid in 'Source\MouseDBGrid.pas',
-//  uAutoComplete in 'Source\uAutoComplete.pas',
-//  Mydbp in 'Source\Mydbp.pas',
-//  WindowMng in 'Source\WindowMng.pas' {/u_TEnhDBGrid in 'Source\u_TEnhDBGrid.pas';},
-//  GEMComponentsGlobal in 'GEMComponentsGlobal.pas';
+const
+  GEMVerInfo : array [tGEMComponents] of TGEMVerStrRec = (
+    (Version: '1.4.1'; ComponentName: 'GEMAppUpdater'),
+    (Version: '1.0.0'; ComponentName: 'GemMruList'),
+    (Version: '1.0.0'; ComponentName: 'StatusBarPro'),
+    (Version: '1.0.0'; ComponentName: 'gemResistor'),
+    (Version: '1.0.0'; ComponentName: 'GEMNxQuery'),
+    (Version: '1.0.0'; ComponentName: 'GEMNxTable'),
+    (Version: '1.0.0'; ComponentName: 'ColorButton'),
+    (Version: '1.0.0'; ComponentName: 'GEMProcessTimer'),
+    (Version: '1.0.0'; ComponentName: 'gemArrow'),
+    (Version: '1.0.0'; ComponentName: 'SelColVisGridBt'),
+    (Version: '1.0.0'; ComponentName: 'ColorPanelSpecia'),
+    (Version: '1.0.0'; ComponentName: 'PrintPreview'),
+    (Version: '1.0.0'; ComponentName: 'ThumbnailPreview'),
+    (Version: '1.0.0'; ComponentName: 'PaperPreview'),
+    (Version: '1.0.0'; ComponentName: 'gemShapeBt'),
+    (Version: '1.0.0'; ComponentName: 'adpMRU'),
+    (Version: '1.0.0'; ComponentName: 'GEMDBLabel'),
+    (Version: '1.0.0'; ComponentName: 'GEMUrlLabel'),
+    (Version: '1.0.0'; ComponentName: 'FindFile'),
+    (Version: '1.0.0'; ComponentName: 'GemDBGrid'),
+    (Version: '1.0.0'; ComponentName: 'adpDBEdit'),
+    (Version: '1.0.0'; ComponentName: 'gemDBComboBox'),
+    (Version: '1.0.0'; ComponentName: 'gemDBLookupComboBox'),
+    (Version: '1.0.0'; ComponentName: 'PJVersionInfo'),
+    (Version: '1.0.0'; ComponentName: 'GEMColorButton'),
+    (Version: '1.3.0'; ComponentName: 'GEMTrafficLight'),
+    (Version: '1.3.0'; ComponentName: 'GEMTrafficLight2'),
+    (Version: '1.0.0'; ComponentName: 'gemCapPanelBtn'),
+    (Version: '1.0.0'; ComponentName: 'AutoCompleteEdit'),
+    (Version: '1.0.0'; ComponentName: 'GEMShape')
+  );
 
 
 { TGEMComponentsVersion }
 
-procedure TGEMComponentsVersion.SetVersionNum(const Value: string);
+function TGEMComponentsVersion.GetComponentName: string;
 begin
-  fVersionNum := Value;
+  Result := GEMVerInfo[fGEMComponent].ComponentName
 end;
+
+function TGEMComponentsVersion.GetVersionInfo: TGEMVerStrRec;
+begin
+   Result := GEMVerInfo[fGEMComponent];
+end;
+
+
+function TGEMComponentsVersion.GetVersionNum: string;
+begin
+  Result := GEMVerInfo[fGEMComponent].Version;
+end;
+
+procedure TGEMComponentsVersion.SetVersionInfo(const Value: TGEMVerStrRec);
+begin
+//  fVersionNum := Value;
+end;
+
 
 end.

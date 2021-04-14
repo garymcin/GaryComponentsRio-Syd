@@ -612,7 +612,7 @@ function TGemDBGrid.SetVersion: string;
 begin
   {$IFDEF USE_CODESITE}CodeSite.TraceMethod( Self, 'SetVersion' );{$ENDIF}
 
-  Result := VersionGEMDBGrid;
+//  Result := VersionGEMDBGrid;
 end;
 
 
@@ -2111,7 +2111,7 @@ end;
 function TgemExDBGrid.HintShow(var HintInfo: Vcl.Controls.THintInfo): Boolean;
 begin
   {$IFDEF USE_CODESITE}CodeSite.TraceMethod( Self, 'HintShow' );{$ENDIF}
-
+  result := false;
 //  GetHintColor(HintInfo, Self, FHintColor);
 //  if FHintWindowClass <> nil then
 //    HintInfo.HintWindowClass := FHintWindowClass;

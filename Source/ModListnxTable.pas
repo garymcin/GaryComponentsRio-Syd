@@ -73,7 +73,7 @@ end;
 
 function TGEMNxTable.GetVersion: string;
 begin
-  Result := VersionGEMnxTable;
+ // Result := VersionGEMnxTable;
 end;
 
 

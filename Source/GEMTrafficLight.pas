@@ -9,50 +9,74 @@ uses
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls,
   Vcl.ExtCtrls,
 
-  JvExExtCtrls, JvExtComponent, JvShape;
+  GEMComponentsGlobal;
 
 type
   TTrafficLightState = (tlsRed, tlsYellow, tlsGreen, tlsNone);
 
 const
-  TrafficLightColors : array[tlsRed..tlsNone] of TColor = (clRed, clYellow, clGreen, clBlack);
+  TrafficLightColors : array[TTrafficLightState] of TColor = (clRed, clYellow, clGreen, clBlack);
 
 type
-  tGEMShape = class(TShape) // this adds OnClick
+  TGEMExShape = class(TShape)
   private
-  published
+    FHintColor: TColor;
+    FMouseOver: Boolean;
+    FHintWindowClass: THintWindowClass;
+    FOnMouseEnter: TNotifyEvent;
+    FOnMouseLeave: TNotifyEvent;
+    FOnParentColorChanged: TNotifyEvent;
+    function BaseWndProc(Msg: Cardinal; WParam: WPARAM = 0; LParam: LPARAM = 0): LRESULT; overload;
+  protected
+    procedure WndProc(var Msg: TMessage); override;
+    function HitTest(X, Y: Integer): Boolean; reintroduce; virtual;
   public
-    property Align;
+    constructor Create(AOwner: TComponent); override;
+    property HintWindowClass: THintWindowClass read FHintWindowClass write FHintWindowClass;
+  published
+  end;
+
+  TGEMShape = class(TGEMExShape)
+  published
     property Anchors;
+    property Constraints;
+    property Align;
     property Brush;
     property DragCursor;
     property DragKind;
     property DragMode;
     property Enabled;
-    property Constraints;
     property ParentShowHint;
     property Pen;
     property Shape;
     property ShowHint;
     property Touch;
     property Visible;
-    property OnClick;
-    property OnContextPopup;
-    property OnDragDrop;
-    property OnDragOver;
-    property OnEndDock;
-    property OnEndDrag;
-    property OnMouseActivate;
-    property OnMouseDown;
+
     property OnMouseEnter;
     property OnMouseLeave;
+    property OnEndDock;
+    property OnStartDock;
+    property OnMouseActivate;
+    property OnGesture;
+
+    property OnClick;
+    property OnConstrainedResize;
+    property OnContextPopup;
+    property OnDblClick;
+    property OnDragDrop;
+    property OnDragOver;
+    property OnEndDrag;
+    property OnMouseDown;
     property OnMouseMove;
     property OnMouseUp;
-    property OnGesture;
-    property OnStartDock;
+    property OnMouseWheel;
+    property OnMouseWheelDown;
+    property OnMouseWheelUp;
+    property OnResize;
     property OnStartDrag;
-  end;
-
+  end;
+
 
   TGEMTrafficLight = class(TCustomGridPanel)
     RedLight   : tGEMShape;
@@ -139,6 +163,43 @@ type
 implementation
 
 
+function SmallPointToLong(const Pt: TSmallPoint): Longint;
+begin
+  Result := Longint(Pt);
+end;
+
+
+procedure CreateWMMessage(var Mesg: TMessage; Msg: Cardinal; WParam: WPARAM; LParam: LPARAM);
+begin
+  Mesg.Msg := Msg;
+  Mesg.WParam := WParam;
+  Mesg.LParam := LParam;
+  Mesg.Result := 0;
+end;
+
+function DispatchIsDesignMsg(Control: TControl; var Msg: TMessage): Boolean;
+var
+  Form: TCustomForm;
+begin
+  Result := False;
+  case Msg.Msg of
+    WM_SETFOCUS, WM_KILLFOCUS, WM_NCHITTEST,
+    WM_MOUSEFIRST..WM_MOUSELAST,
+    WM_KEYFIRST..WM_KEYLAST,
+    WM_CANCELMODE:
+      Exit; // These messages are handled in TWinControl.WndProc before IsDesignMsg() is called
+  end;
+  if (Control <> nil) and (csDesigning in Control.ComponentState) then
+  begin
+    Form := GetParentForm(Control);
+    if (Form <> nil) and (Form.Designer <> nil) and Form.Designer.IsDesignMsg(Control, Msg) then
+      Result := True;
+  end;
+end;
+
+//==============================
+
+
 constructor TGEMTrafficLight.Create(AOwner: TComponent);
 begin
   inherited Create(AOwner);
@@ -166,21 +227,22 @@ end;
 procedure TGEMTrafficLight.CreateWindowHandle(const Params: TCreateParams);
 { Calls inherited CreateWindowHandle and initializes subcomponents. }
 begin
-inherited CreateWindowHandle(Params);
+  inherited CreateWindowHandle(Params);
 
   with RedLight do
   begin
-    Left := 17;
-    Top := 2;
-    Width := 41;
-    Height := 41;
+    AlignWithMargins := True;
+    Left := 4;
+    Top := 4;
+    Width := 57;
+    Height := 40;
     Align := alClient;
+    Shape := stCircle;
     if fState = tlsRed then
       Brush.Color := TrafficLightColors[tlsRed]
     else
       Brush.Color := TrafficLightColors[tlsNone];
     Pen.Color := fLightsOutLineColor;
-    Shape := stCircle;
     TabOrder := 0;
     Brush.OnChange := StyleChanged;
     Pen.Onchange := StyleChanged;
@@ -189,17 +251,18 @@ inherited CreateWindowHandle(Params);
 
   with YellowLight do
   begin
-    Left := 17;
-    Top := 49;
-    Width := 41;
-    Height := 41;
+    AlignWithMargins := True;
+    Left := 4;
+    Top := 50;
+    Width := 57;
+    Height := 40;
     Align := alClient;
+    Shape := stCircle;
     if fState = tlsYellow then
       Brush.Color := TrafficLightColors[tlsYellow]
     else
       Brush.Color := TrafficLightColors[tlsNone];
     Pen.Color := fLightsOutLineColor;
-    Shape := stCircle;
     TabOrder := 1;
     Brush.OnChange := StyleChanged;
     Pen.Onchange := StyleChanged;
@@ -208,16 +271,17 @@ inherited CreateWindowHandle(Params);
 
   with GreenLight do
   begin
-    Left := 17;
+    AlignWithMargins := True;
+    Left := 4;
     Top := 96;
-    Width := 41;
-    Height := 41;
+    Width := 57;
+    Height := 39;
     Align := alClient;
+    Shape := stCircle;
     if fState = tlsGreen then
       Brush.Color := TrafficLightColors[tlsGreen]
     else
       Brush.Color := TrafficLightColors[tlsNone];
-    Shape := stCircle;
     Pen.Color := fLightsOutLineColor;
     TabOrder := 2;
     Brush.OnChange := StyleChanged;
@@ -308,5 +372,44 @@ begin
   if assigned(fOnClick_GreenLight) then
     fOnClick_GreenLight(Self); { Substitute Self for subcomponent's Sender. }
 end;
+
+{ TGEMExShape }
+
+function TGEMExShape.BaseWndProc(Msg: Cardinal; WParam: WPARAM = 0; LParam: LPARAM = 0): LRESULT;
+var
+  Mesg: TMessage;
+begin
+  CreateWMMessage(Mesg, Msg, WParam, LParam);
+  inherited WndProc(Mesg);
+  Result := Mesg.Result;
+end;
+
+
+constructor TGEMExShape.Create(AOwner: TComponent);
+begin
+  inherited Create(AOwner);
+//  FHintColor := clDefault;
+end;
+
+
+function TGEMExShape.HitTest(X, Y: Integer): Boolean;
+begin
+  Result := BaseWndProc(CM_HITTEST, 0, SmallPointToLong(PointToSmallPoint(Point(X, Y)))) <> 0;
+end;
+
+
+procedure TGEMExShape.WndProc(var Msg: TMessage);
+begin
+  if not DispatchIsDesignMsg(Self, Msg) then
+    case Msg.Msg of
+      CM_HITTEST:
+        with TCMHitTest(Msg) do
+          Result := LRESULT(HitTest(XPos, YPos));
+      else
+        inherited WndProc(Msg);
+    end;
+end;
+
+
 
 end.

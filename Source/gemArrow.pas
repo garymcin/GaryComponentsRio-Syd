@@ -708,7 +708,7 @@ end;
 
 function TgemArrow.GetVersion: string;
 begin
-  fVersion := VersionGEMArrow;
+//  fVersion := VersionGEMArrow;
 end;
 
 end.
