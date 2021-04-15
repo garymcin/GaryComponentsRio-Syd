@@ -158,7 +158,6 @@
         <DCCReference Include="rtl.dcp"/>
         <DCCReference Include="DesignIDE.dcp"/>
         <DCCReference Include="GEMComponentsR.dcp"/>
-        <DCCReference Include="CnPack_D103R.dcp"/>
         <DCCReference Include="ComponentRegistration\PSReg.pas"/>
         <DCCReference Include="ComponentRegistration\GarysComponentsReg.pas"/>
         <DCCReference Include="ComponentRegistration\PJDropFilesDsgn.pas">
