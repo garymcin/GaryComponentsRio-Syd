@@ -1,6 +1,7 @@
 package GEMComponentsR;
 
 {$R *.res}
+{$R *.dres}
 {$IFDEF IMPLICITBUILDING This IFDEF should not be used by users}
 {$ALIGN 8}
 {$ASSERTIONS ON}
@@ -44,28 +45,9 @@ requires
   JvCore,
   CodeSiteLoggingPkg,
   JvControls,
-{$IFDEF VER340}
   NexusDB450ll270,
   NexusDB450sd270,
   NexusDB450db270;
-{$ENDIF}
-{$IFDEF VER330}
-  NexusDB450ll260,
-  NexusDB450sd260,
-  NexusDB450db260;
-{$ENDIF}
-(*
-{$IFDEF VER340}
-  NexusDB450ll270,
-  NexusDB450sd270,
-  NexusDB450db270;
-{$ENDIF}
-{$IFDEF VER330}
-  NexusDB450ll260,
-  NexusDB450sd260,
-  NexusDB450db260;
-{$ENDIF}
-*)
 
 contains
   GEMUpdaterPanel in 'Source\GEMUpdaterPanel.pas',

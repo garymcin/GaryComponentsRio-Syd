@@ -75,8 +75,10 @@ type
     property OnMouseWheelUp;
     property OnResize;
     property OnStartDrag;
-  end;
-
+
+  end;
+
+
 
   TGEMTrafficLight = class(TCustomGridPanel)
     RedLight   : tGEMShape;
@@ -87,7 +89,7 @@ type
     fState: TTrafficLightState;
     fLightsOutLineColor: tColor;
     fPenWidthLightOutLine: integer;
-    fVisibleRedLight     : Boolean;
+//    fVisibleRedLight     : Boolean;
 
     fOnClick_RedLight   : TNotifyEvent;
     fOnClick_YellowLight: TNotifyEvent;
@@ -108,7 +110,7 @@ type
   published
    { Published properties and events }
     property LightsOutLineColor: tColor read fLightsOutLineColor write SetPenShapeColor default clWhite;
-    property PenWidthLightOutLine: Integer read fPenWidthLightOutLine write SetPenWidthLightOutLine  default 1;
+    property PenWidthLightOutLine: Integer read fPenWidthLightOutLine write SetPenWidthLightOutLine;//  default 1;
     property State: TTrafficLightState read fState write SetState default tlsNone;
 
     property OnClick_RedLight   : TNotifyEvent read fOnClick_RedLight write fOnClick_RedLight;
@@ -198,6 +200,28 @@ begin
 end;
 
 //==============================
+procedure GetHintColor(var HintInfo: Vcl.Controls.THintInfo; AControl: TControl; HintColor: TColor);
+var
+  AHintInfo: Vcl.Controls.THintInfo;
+begin
+  case HintColor of
+    clNone:
+      HintInfo.HintColor := Application.HintColor;
+    clDefault:
+      begin
+        if Assigned(AControl) and Assigned(AControl.Parent) then
+        begin
+          AHintInfo := HintInfo;
+          AControl.Parent.Perform(CM_HINTSHOW, 0, LPARAM(@AHintInfo));
+          HintInfo.HintColor := AHintInfo.HintColor;
+        end;
+      end;
+  else
+    HintInfo.HintColor := HintColor;
+  end;
+end;
+
+
 
 
 constructor TGEMTrafficLight.Create(AOwner: TComponent);
@@ -310,6 +334,7 @@ begin
   Padding.Top    := 1;
   Padding.Right  := 1;
   Padding.Bottom := 2;
+
   SetState(fState);
 end; { CreateWindowHandle }
 
@@ -409,7 +434,5 @@ begin
         inherited WndProc(Msg);
     end;
 end;
-
-
 
 end.

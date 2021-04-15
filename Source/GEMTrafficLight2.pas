@@ -96,8 +96,10 @@ type
     property OnMouseWheelUp;
     property OnResize;
     property OnStartDrag;
-  end;
-
+
+  end;
+
+
 
   TGEMTrafficLight2 = class(TCustomGridPanel)
     RedLight   : TGEMShape2;
