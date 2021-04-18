@@ -4,7 +4,7 @@ interface
 uses
   Winapi.Windows, Winapi.Messages,
 
-  System.SysUtils, System.Variants, System.Classes,
+  System.SysUtils, System.Variants, System.Classes, System.Types,
 
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls,
   Vcl.ExtCtrls,
@@ -20,19 +20,19 @@ const
 type
   TGEMExShape = class(TShape)
   private
-    FHintColor: TColor;
-    FMouseOver: Boolean;
-    FHintWindowClass: THintWindowClass;
-    FOnMouseEnter: TNotifyEvent;
-    FOnMouseLeave: TNotifyEvent;
-    FOnParentColorChanged: TNotifyEvent;
+//    FHintColor: TColor;
+//    FMouseOver: Boolean;
+//    FHintWindowClass: THintWindowClass;
+//    FOnMouseEnter: TNotifyEvent;
+//    FOnMouseLeave: TNotifyEvent;
+//    FOnParentColorChanged: TNotifyEvent;
     function BaseWndProc(Msg: Cardinal; WParam: WPARAM = 0; LParam: LPARAM = 0): LRESULT; overload;
   protected
     procedure WndProc(var Msg: TMessage); override;
     function HitTest(X, Y: Integer): Boolean; reintroduce; virtual;
   public
     constructor Create(AOwner: TComponent); override;
-    property HintWindowClass: THintWindowClass read FHintWindowClass write FHintWindowClass;
+//    property HintWindowClass: THintWindowClass read FHintWindowClass write FHintWindowClass;
   published
   end;
 
@@ -86,14 +86,15 @@ type
     GreenLight : tGEMShape;
   private
   { Private declarations }
-    fState: TTrafficLightState;
-    fLightsOutLineColor: tColor;
-    fPenWidthLightOutLine: integer;
-//    fVisibleRedLight     : Boolean;
+    fState                : TTrafficLightState;
+    fLightsOutLineColor   : tColor;
+    fPenWidthLightOutLine : integer;
+    fLightOffColor        : TColor;
+//    fVisibleRedLight    : Boolean;
 
-    fOnClick_RedLight   : TNotifyEvent;
-    fOnClick_YellowLight: TNotifyEvent;
-    fOnClick_GreenLight : TNotifyEvent;
+    fOnClick_RedLight     : TNotifyEvent;
+    fOnClick_YellowLight  : TNotifyEvent;
+    fOnClick_GreenLight   : TNotifyEvent;
 
     procedure Click_OkRedLightTransfer(Sender: TObject);    { TNotifyEvent }
     procedure Click_OkYellowLightTransfer(Sender: TObject); { TNotifyEvent }
@@ -110,7 +111,9 @@ type
   published
    { Published properties and events }
     property LightsOutLineColor: tColor read fLightsOutLineColor write SetPenShapeColor default clWhite;
-    property PenWidthLightOutLine: Integer read fPenWidthLightOutLine write SetPenWidthLightOutLine;//  default 1;
+    property PenWidthLightOutLine: Integer read fPenWidthLightOutLine write SetPenWidthLightOutLine  default 1;
+    property LightOffColor: TColor read fLightOffColor write fLightOffColor default clBlack;
+
     property State: TTrafficLightState read fState write SetState default tlsNone;
 
     property OnClick_RedLight   : TNotifyEvent read fOnClick_RedLight write fOnClick_RedLight;
@@ -128,7 +131,7 @@ type
     property BiDiMode;
     property BorderWidth;
     property BorderStyle;
-    property Caption;
+//    property Caption;
     property Color;
     property Constraints;
     property DoubleBuffered;
@@ -222,7 +225,7 @@ begin
 end;
 
 
-
+//===============================
 
 constructor TGEMTrafficLight.Create(AOwner: TComponent);
 begin
@@ -230,8 +233,8 @@ begin
   RowCollection.Add;     //Default is 2 rows.  Need 3.
   ColumnCollection[1].Destroy; // default is 2 columns.  only need one.
 
-  Width := 74;
-  Height := 140;
+  Width := 65;
+  Height := 139;
   Color := clBlack;
   ParentBackground := False;
 
@@ -245,6 +248,10 @@ begin
   GreenLight.parent := self;
 
   fLightsOutLineColor := clWhite;
+  fPenWidthLightOutLine := 1;
+  fLightOffColor := clBlack;
+
+  ShowCaption := False;
 end;
 
 
@@ -265,9 +272,10 @@ begin
     if fState = tlsRed then
       Brush.Color := TrafficLightColors[tlsRed]
     else
-      Brush.Color := TrafficLightColors[tlsNone];
+      Brush.Color := fLightOffColor;//TrafficLightColors[tlsNone];
     Pen.Color := fLightsOutLineColor;
-    TabOrder := 0;
+    Pen.Width := fPenWidthLightOutLine;
+    TabOrder  := 0;
     Brush.OnChange := StyleChanged;
     Pen.Onchange := StyleChanged;
     OnClick := Click_OkRedLightTransfer;
@@ -285,7 +293,7 @@ begin
     if fState = tlsYellow then
       Brush.Color := TrafficLightColors[tlsYellow]
     else
-      Brush.Color := TrafficLightColors[tlsNone];
+      Brush.Color := fLightOffColor;//TrafficLightColors[tlsNone];
     Pen.Color := fLightsOutLineColor;
     TabOrder := 1;
     Brush.OnChange := StyleChanged;
@@ -305,7 +313,7 @@ begin
     if fState = tlsGreen then
       Brush.Color := TrafficLightColors[tlsGreen]
     else
-      Brush.Color := TrafficLightColors[tlsNone];
+      Brush.Color := fLightOffColor;//TrafficLightColors[tlsNone];
     Pen.Color := fLightsOutLineColor;
     TabOrder := 2;
     Brush.OnChange := StyleChanged;
@@ -352,18 +360,17 @@ end;
 procedure TGEMTrafficLight.SetPenWidthLightOutLine(const Value: Integer);
 begin
   fPenWidthLightOutLine := Value;
-  RedLight.Pen.Width    := fLightsOutLineColor;
-  YellowLight.Pen.Width := fLightsOutLineColor;
-  GreenLight.Pen.Width  := fLightsOutLineColor;
+  RedLight.Pen.Width    := fPenWidthLightOutLine;
+  YellowLight.Pen.Width := fPenWidthLightOutLine;
+  GreenLight.Pen.Width  := fPenWidthLightOutLine;
 end;
-
+//
 
 procedure TGEMTrafficLight.SetState(const Value: TTrafficLightState);
 begin
-  RedLight.Brush.color    := clBlack;
-  YellowLight.Brush.color := clBlack;
-  GreenLight.Brush.color  := clBlack;
-//  SetPenShapeColor(fLightsOutLineColor);
+  RedLight.Brush.color    := fLightOffColor;//clBlack;
+  YellowLight.Brush.color := fLightOffColor;//clBlack;
+  GreenLight.Brush.color  := fLightOffColor;//clBlack;
   case Value of
     tlsRed   : RedLight.Brush.color := clRed;
     tlsYellow: YellowLight.Brush.color := clYellow;
@@ -413,7 +420,6 @@ end;
 constructor TGEMExShape.Create(AOwner: TComponent);
 begin
   inherited Create(AOwner);
-//  FHintColor := clDefault;
 end;
 
 

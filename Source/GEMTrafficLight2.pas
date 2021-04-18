@@ -4,11 +4,12 @@ interface
 uses
   Winapi.Windows, Winapi.Messages,
 
-  System.SysUtils, System.Variants, System.Classes,
+  System.SysUtils, System.Variants, System.Classes, System.Types,
 
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls,
-  Vcl.ExtCtrls;
+  Vcl.ExtCtrls,
 
+  GEMComponentsGlobal;
 
 type
   TTrafficLightState = (tlsRed, tlsYellow, tlsGreen, tlsNone);
@@ -19,12 +20,12 @@ const
 type
   TGEMExShape2 = class(TShape)
   private
-    FHintColor: TColor;
-    FMouseOver: Boolean;
-    FHintWindowClass: THintWindowClass;
-    FOnMouseEnter: TNotifyEvent;
-    FOnMouseLeave: TNotifyEvent;
-    FOnParentColorChanged: TNotifyEvent;
+//    FHintColor: TColor;
+//    FMouseOver: Boolean;
+//    FHintWindowClass: THintWindowClass;
+//    FOnMouseEnter: TNotifyEvent;
+//    FOnMouseLeave: TNotifyEvent;
+//    FOnParentColorChanged: TNotifyEvent;
     function BaseWndProc(Msg: Cardinal; WParam: WPARAM = 0; LParam: LPARAM = 0): LRESULT; overload;
 //    function BaseWndProc(Msg: Cardinal; WParam: WPARAM; LParam: TObject): LRESULT; overload;
 //    function BaseWndProcEx(Msg: Cardinal; WParam: WPARAM; var StructLParam): LRESULT;
@@ -51,7 +52,7 @@ type
 //    property OnParentColorChange: TNotifyEvent read FOnParentColorChanged write FOnParentColorChanged;
   public
     constructor Create(AOwner: TComponent); override;
-    property HintWindowClass: THintWindowClass read FHintWindowClass write FHintWindowClass;
+//    property HintWindowClass: THintWindowClass read FHintWindowClass write FHintWindowClass;
   published
   end;
 
@@ -148,7 +149,7 @@ type
     property BiDiMode;
     property BorderWidth;
     property BorderStyle;
-    property Caption;
+//    property Caption;
     property Color;
     property Constraints;
     property DoubleBuffered;
@@ -184,26 +185,33 @@ type
 
 implementation
 
-function ShiftStateToKeyData(Shift: TShiftState): Longint;
-const
-  AltMask = $20000000;
-  CtrlMask = $10000000;
-  ShiftMask = $08000000;
-begin
-  Result := 0;
-  if ssAlt in Shift then
-    Result := Result or AltMask;
-  if ssCtrl in Shift then
-    Result := Result or CtrlMask;
-  if ssShift in Shift then
-    Result := Result or ShiftMask;
-end;
-
-
+//function ShiftStateToKeyData(Shift: TShiftState): Longint;
+//const
+//  AltMask = $20000000;
+//  CtrlMask = $10000000;
+//  ShiftMask = $08000000;
+//begin
+//  Result := 0;
+//  if ssAlt in Shift then
+//    Result := Result or AltMask;
+//  if ssCtrl in Shift then
+//    Result := Result or CtrlMask;
+//  if ssShift in Shift then
+//    Result := Result or ShiftMask;
+//end;
 
 function SmallPointToLong(const Pt: TSmallPoint): Longint;
 begin
   Result := Longint(Pt);
+end;
+
+
+procedure CreateWMMessage(var Mesg: TMessage; Msg: Cardinal; WParam: WPARAM; LParam: LPARAM);
+begin
+  Mesg.Msg := Msg;
+  Mesg.WParam := WParam;
+  Mesg.LParam := LParam;
+  Mesg.Result := 0;
 end;
 
 
@@ -250,15 +258,7 @@ begin
 end;
 
 
-procedure CreateWMMessage(var Mesg: TMessage; Msg: Cardinal; WParam: WPARAM; LParam: LPARAM);
-begin
-  Mesg.Msg := Msg;
-  Mesg.WParam := WParam;
-  Mesg.LParam := LParam;
-  Mesg.Result := 0;
-end;
-
-
+//===============================
 
 constructor TGEMTrafficLight2.Create(AOwner: TComponent);
 begin
@@ -281,6 +281,8 @@ begin
   GreenLight.parent := self;
 
   fLightsOutLineColor := clWhite;
+
+  ShowCaption := false;
 end;
 
 
@@ -459,7 +461,7 @@ end;
 constructor TGEMExShape2.Create(AOwner: TComponent);
 begin
   inherited Create(AOwner);
-  FHintColor := clDefault;
+//  FHintColor := clDefault;
 end;
 
 //procedure TGEMExShape.ColorChanged;
