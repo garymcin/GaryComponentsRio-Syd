@@ -85,6 +85,8 @@ contains
   gemCapPanelBtn in 'Source\gemCapPanelBtn.pas',
   GemINI in '..\GEMLibary-rio\GemINI.pas',
   GEMTrafficLight in 'Source\GEMTrafficLight.pas',
-  GEMTrafficLight2 in 'Source\GEMTrafficLight2.pas';
+  GEMTrafficLight2 in 'Source\GEMTrafficLight2.pas',
+  GEMCustomColorsDialog in 'Source\GEMCustomColorsDialog.pas',
+  CnColorGrid in 'Source\CnColorGrid.pas';
 
 end.
