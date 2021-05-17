@@ -322,7 +322,7 @@ end;
 
 function TColorButtonSpecial.SetVersion: string;
 begin
-  Result := VersionColorButtonSpecial;
+//  Result := VersionColorButtonSpecial;
 end;
 
 (*SetHoverColor*)

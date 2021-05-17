@@ -27,7 +27,7 @@ package GEMComponentsR;
 {$DEFINE RELEASE}
 {$DEFINE EUREKALOG}
 {$ENDIF IMPLICITBUILDING}
-{$DESCRIPTION 'Gary''s compnonets'}
+{$DESCRIPTION 'Gary''s component library'}
 {$LIBSUFFIX '260'}
 {$RUNONLY}
 {$IMPLICITBUILD OFF}
@@ -85,6 +85,8 @@ contains
   gemCapPanelBtn in 'Source\gemCapPanelBtn.pas',
   GemINI in '..\GEMLibary-rio\GemINI.pas',
   GEMTrafficLight in 'Source\GEMTrafficLight.pas',
-  GEMTrafficLight2 in 'Source\GEMTrafficLight2.pas';
+  GEMTrafficLight2 in 'Source\GEMTrafficLight2.pas',
+  CnColorGrid in 'Source\CnColorGrid.pas',
+  gemColorDialog in 'Source\gemColorDialog.pas';
 
 end.

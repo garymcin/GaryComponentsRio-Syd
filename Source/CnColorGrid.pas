@@ -384,7 +384,7 @@ end;
 
 destructor TCnColorGrid.Destroy;
 begin
-  FCustomColors.Free;
+  FreeAndNil(FCustomColors);
   inherited;
 end;
 
