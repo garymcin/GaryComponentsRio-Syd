@@ -12,9 +12,8 @@ uses
  GEMProcessTimer, gemArrow, SelColVisGrid, ColorPanelBtn, Preview, ColorButton,
  gemCustomButton, adpMRU, GEMDBLabel, URLLabel, FindFile, adpDBEdit, GemDBGrid,
  gemDBComboBox, gemDBLookupComboBox, PJVersionInfo, GEMColorButton, GEMTrafficLight,
- GEMTrafficLight2, uAutoComplete,  gemCapPanelBtn, gemColorDialog
- {$IF CompilerVersion = 34.0}, CnColorGrid {$EndIF};
 
+ GEMTrafficLight2, uAutoComplete,  gemCapPanelBtn, GEMCustomColorsDialog, CnColorGrid;
 
 procedure Register;
 begin
@@ -32,10 +31,8 @@ begin
                                      TGEMUrlLabel, TFindFile, TGemDBGrid, TadpDBEdit,
                                      TgemDBComboBox, TgemDBLookupComboBox, TPJVersionInfo,
                                      TGEMColorButton, TGEMTrafficLight, TGEMTrafficLight2,
-                                     TgemCapPanelBtn, TAutoCompleteEdit,
-                                     TGEMShape, TGEMShape2, TgemColorDialog
-                                     {$IF CompilerVersion = 34.0}, TCnColorGrid,
-                                     TCnColorGridPanel {$EndIF}]);
+                                     TgemCapPanelBtn, TAutoCompleteEdit, TClorGrid,
+                                     TGEMShape, TGEMShape2, TGEMColorDialog]);
 end;
 
 end.

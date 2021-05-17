@@ -228,8 +228,8 @@
         <DCCReference Include="..\GEMLibary-rio\GemINI.pas"/>
         <DCCReference Include="Source\GEMTrafficLight.pas"/>
         <DCCReference Include="Source\GEMTrafficLight2.pas"/>
+        <DCCReference Include="Source\GEMCustomColorsDialog.pas"/>
         <DCCReference Include="Source\CnColorGrid.pas"/>
-        <DCCReference Include="Source\gemColorDialog.pas"/>
         <RcItem Include="Icons\Arrow64px.bmp">
             <ResourceType>BITMAP</ResourceType>
             <ResourceId>TgemArrow</ResourceId>
@@ -279,14 +279,15 @@
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
-                <DeployFile LocalName="C:\Users\Public\Documents\Embarcadero\Studio\21.0\Bpl\GEMComponentsR260.bpl" Configuration="Release" Class="ProjectOutput">
-                    <Platform Name="Win32">
+                <DeployFile LocalName="C:\Users\Public\Documents\Embarcadero\Studio\20.0\Bpl\Win64\GEMComponentsR260.bpl" Configuration="Release" Class="ProjectOutput">
+                    <Platform Name="Win64">
                         <RemoteName>GEMComponentsR.bpl</RemoteName>
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
                 <DeployFile LocalName="C:\Users\Public\Documents\Embarcadero\Studio\21.0\Bpl\Win64\GEMComponentsR260.bpl" Configuration="Release" Class="ProjectOutput">
                     <Platform Name="Win64">
+
                         <RemoteName>GEMComponentsR.bpl</RemoteName>
                         <Overwrite>true</Overwrite>
                     </Platform>
