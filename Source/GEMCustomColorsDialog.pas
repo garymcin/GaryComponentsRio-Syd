@@ -3,7 +3,7 @@ unit GEMCustomColorsDialog;
 interface
 
 uses
-  Winapi.Windows, Winapi.Messages,
+  WinApi.Windows, WinApi.Messages,
 
   System.SysUtils, System.Variants, System.Classes,
 
@@ -15,15 +15,22 @@ uses
   GEMColorsUnit, CnColorGrid;
 
 type
-  TGEMColorDialog = class(TComponent)
+  TgemColorDialog = class (TComponent)
   private
+  { Private declarations }
+    fColorName: string;
     fSelectedColor: tColor;
-  published
+  protected
+  { Protected declarations }
+  public
+  { Public declarations }
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
     function Execute: Boolean;
-  public
-    property SelectedColor: tcolor read fSelectedColor;
+  published
+  { Published declarations }
+    property SelectedColor: tColor read fSelectedColor write fSelectedColor;
+    property ColorName: string read fColorName write fColorName;
   end;
 
 
@@ -43,11 +50,13 @@ type
     procedure FormActivate(Sender: TObject);
   private
     { Private declarations }
-    fSelectedColor: tcolor;
+    fColor: tcolor;
+    fColorName: string;
     procedure CellCoordinatesFromMouse(X,Y: Integer; out gX,gY: Integer);
   public
     { Public declarations }
-    property SelectedColor: tcolor read fSelectedColor;
+    property SelectedColor: tcolor read fColor;
+    property ColorName: string read fColorName write fColorName;
   end;
 
 var
@@ -85,11 +94,12 @@ procedure TGEMColorsDialog.cncolorgrid_ColorSelectionSelectCell(
 begin
   cncolorgrid_ColorSelection.OnMouseMove := nil;
   Caption := string(GetGEMColorName(panel_Bottom.Color));
-  fSelectedColor := GemColors[TGemColorNames((10 * ARow) + ACol)].Color;
-  panel_Bottom.Color := fSelectedColor;
+  fColor := GemColors[TGemColorNames((10 * ARow) + ACol)].Color;
+  panel_Bottom.Color := fColor;
   BitBtn1.Enabled := true;
-  jvlbl_ColorLabel.Caption := string(GetGEMColorName(fSelectedColor));
-  jvlbl_ColorLabel.Font.Color := GetContrastColor(fSelectedColor);
+  jvlbl_ColorLabel.Caption := string(GetGEMColorName(fColor));
+  jvlbl_ColorLabel.Font.Color := GetContrastColor(fColor);
+  fColorName := jvlbl_ColorLabel.Caption;
   jvlbl_ColorLabel.Repaint;
 end;
 
@@ -133,6 +143,7 @@ begin
     begin
       result := True;
       fSelectedColor := GEMColorsDialog.SelectedColor;
+      fColorName     := GEMColorsDialog.ColorName;
     end
     else
       result := False;
