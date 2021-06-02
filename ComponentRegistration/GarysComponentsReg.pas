@@ -31,7 +31,7 @@ begin
                                      TGEMUrlLabel, TFindFile, TGemDBGrid, TadpDBEdit,
                                      TgemDBComboBox, TgemDBLookupComboBox, TPJVersionInfo,
                                      TGEMColorButton, TGEMTrafficLight, TGEMTrafficLight2,
-                                     TgemCapPanelBtn, TAutoCompleteEdit, TClorGrid,
+                                     TgemCapPanelBtn, TAutoCompleteEdit, TCnColorGrid,
                                      TGEMShape, TGEMShape2, TGEMColorDialog]);
 end;
 
