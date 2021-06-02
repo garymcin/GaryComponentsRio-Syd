@@ -115,8 +115,6 @@ var
   i: TGemColorNames;
 begin
   cncolorgrid_ColorSelection.ColorSet := csGEMColors;
-//  for i := Low(GemColors) to High(GemColors) do
-//    cncolorgrid_ColorSelection.CustomColors.Add(IntToStr(GemColors[i].Color));
 end;
 
 

@@ -3,8 +3,8 @@ object GEMColorsDialog: TGEMColorsDialog
   Top = 0
   BorderStyle = bsDialog
   Caption = 'Select Color'
-  ClientHeight = 294
-  ClientWidth = 183
+  ClientHeight = 308
+  ClientWidth = 180
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -19,11 +19,13 @@ object GEMColorsDialog: TGEMColorsDialog
   TextHeight = 13
   object panel_Bottom: TJvPanel
     Left = 0
-    Top = 237
-    Width = 183
+    Top = 251
+    Width = 180
     Height = 57
     Align = alBottom
     TabOrder = 0
+    ExplicitTop = 449
+    ExplicitWidth = 472
     object jvlbl_ColorLabel: TJvLabel
       Left = 12
       Top = 8
@@ -55,23 +57,25 @@ object GEMColorsDialog: TGEMColorsDialog
   object panel_BackPanel: TJvPanel
     Left = 0
     Top = 0
-    Width = 183
-    Height = 237
+    Width = 180
+    Height = 251
     Align = alClient
     TabOrder = 1
+    ExplicitWidth = 472
+    ExplicitHeight = 449
     object cncolorgrid_ColorSelection: TCnColorGrid
       AlignWithMargins = True
       Left = 4
       Top = 4
-      Width = 131
-      Height = 35
+      Width = 163
+      Height = 227
       Align = alClient
-      ColCount = 8
+      ColCount = 10
       DefaultColWidth = 15
       DefaultRowHeight = 15
       DoubleBuffered = True
       FixedCols = 0
-      RowCount = 2
+      RowCount = 14
       FixedRows = 0
       Options = [goFixedVertLine, goFixedHorzLine]
       ParentDoubleBuffered = False
@@ -79,7 +83,7 @@ object GEMColorsDialog: TGEMColorsDialog
       TabOrder = 0
       OnMouseMove = cncolorgrid_ColorSelectionMouseMove
       OnSelectCell = cncolorgrid_ColorSelectionSelectCell
-      ColorSet = cs16Colors
+      ColorSet = csGEMColors
       CustomColors.Strings = (
         '12695295'
         '3353215'
