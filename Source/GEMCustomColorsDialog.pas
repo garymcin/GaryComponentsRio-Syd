@@ -20,7 +20,6 @@ type
   { Private declarations }
     fColorName: string;
     fSelectedColor: tColor;
-    fColorSet: TColorSet;
   protected
   { Protected declarations }
   public
@@ -30,7 +29,6 @@ type
     function Execute: Boolean;
   published
   { Published declarations }
-    property ColorSet: TColorSet read fColorSet write fColorSet default csCustomColors;
     property SelectedColor: tColor read fSelectedColor write fSelectedColor;
     property ColorName: string read fColorName;
   end;
@@ -49,20 +47,15 @@ type
     procedure cncolorgrid_ColorSelectionMouseMove(Sender: TObject;
       Shift: TShiftState; X, Y: Integer);
     procedure FormActivate(Sender: TObject);
-    procedure FormShow(Sender: TObject);
   private
     { Private declarations }
     fColor: tcolor;
     fColorName: string;
-    fColorSet:  TColorSet;
     procedure CellCoordinatesFromMouse(X,Y: Integer; out gX,gY: Integer);
-    procedure setColorSet(const Value: TColorSet);
-  published
-    property ColorSet: TColorSet read fColorSet write setColorSet;
-    property SelectedColor: tcolor read fColor;
-    property ColorName: string read fColorName;
   public
     { Public declarations }
+    property SelectedColor: tcolor read fColor;
+    property ColorName: string read fColorName write fColorName;
   end;
 
 var
@@ -89,36 +82,25 @@ var
   CellX, CellY: Integer;
 begin
   CellCoordinatesFromMouse(X ,Y ,CellX, CellY);
-  if ColorSet = csCustomColors then begin
-    bColor := GemColors[TGemColorNames((10 * CellY) + CellX)].Color;
-    Caption := string(GetGEMColorName(bColor));
-  end
-  else
-    Caption := '';
+  bColor := GemColors[TGemColorNames((10 * CellY) + CellX)].Color;
+
+  Caption := string(GetGEMColorName(bColor));
 end;
 
 
 procedure TGEMColorsDialog.cncolorgrid_ColorSelectionSelectCell(
                   Sender: TObject; ACol, ARow: Integer; var CanSelect: Boolean);
 begin
-  if ColorSet = csCustomColors then begin
-    cncolorgrid_ColorSelection.OnMouseMove := nil;
-    Caption := string(GetGEMColorName(panel_Bottom.Color));
-    fColor := GemColors[TGemColorNames((10 * ARow) + ACol)].Color;
-    panel_Bottom.Color := fColor;
-    jvlbl_ColorLabel.Caption := string(GetGEMColorName(fColor));
-    jvlbl_ColorLabel.Font.Color := GetContrastColor(fColor);
-    fColorName := jvlbl_ColorLabel.Caption;
-  end
-  else begin
-    CanSelect := True;
-    fColor := cncolorgrid_ColorSelection.SelectedColor;
-    panel_Bottom.Color := fColor;
-    fColorName := '';
-  end;
+  cncolorgrid_ColorSelection.OnMouseMove := nil;
+  fColor := GemColors[TGemColorNames((10 * ARow) + ACol)].Color;
+  panel_Bottom.Color := fColor;
+  Caption := string(GetGEMColorName(fColor));
   BitBtn1.Enabled := true;
-
+  jvlbl_ColorLabel.Caption := string(GetGEMColorName(fColor));
+  jvlbl_ColorLabel.Font.Color := GetContrastColor(fColor);
+  fColorName := jvlbl_ColorLabel.Caption;
   jvlbl_ColorLabel.Repaint;
+  cncolorgrid_ColorSelection.OnMouseMove := cncolorgrid_ColorSelectionMouseMove;
 end;
 
 
@@ -132,27 +114,11 @@ procedure TGEMColorsDialog.FormCreate(Sender: TObject);
 var
   i: TGemColorNames;
 begin
-//  cncolorgrid_ColorSelection.ColorSet := csCustomColors;
+  cncolorgrid_ColorSelection.ColorSet := csGEMColors;
 //  for i := Low(GemColors) to High(GemColors) do
 //    cncolorgrid_ColorSelection.CustomColors.Add(IntToStr(GemColors[i].Color));
 end;
 
-
-procedure TGEMColorsDialog.FormShow(Sender: TObject);
-begin
-//  cncolorgrid_ColorSelection.ColorSet := csCustomColors;
-//  if fColorSet = csCustomColors then begin
-//    cncolorgrid_ColorSelection.CustomColors.clear;
-//    for var i := Low(GemColors) to High(GemColors) do
-//      cncolorgrid_ColorSelection.CustomColors.Add(IntToStr(GemColors[i].Color));
-//  end;
-end;
-
-procedure TGEMColorsDialog.setColorSet(const Value: TColorSet);
-begin
-  fColorSet := Value;
-  cncolorgrid_ColorSelection.ColorSet := Value;
-end;
 
 { TGEMColorDialog }
 
@@ -174,7 +140,6 @@ function TGEMColorDialog.Execute: Boolean;
 begin
   GEMColorsDialog := TGEMColorsDialog.Create(Self);
   try
-    GEMColorsDialog.ColorSet := fColorSet;
     if GEMColorsDialog.ShowModal = mrOK then
     begin
       result := True;

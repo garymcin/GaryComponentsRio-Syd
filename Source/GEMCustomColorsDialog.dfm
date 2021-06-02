@@ -15,7 +15,6 @@ object GEMColorsDialog: TGEMColorsDialog
   Position = poOwnerFormCenter
   OnActivate = FormActivate
   OnCreate = FormCreate
-  OnShow = FormShow
   PixelsPerInch = 96
   TextHeight = 13
   object panel_Bottom: TJvPanel
@@ -78,6 +77,7 @@ object GEMColorsDialog: TGEMColorsDialog
       ParentDoubleBuffered = False
       ScrollBars = ssNone
       TabOrder = 0
+      OnMouseMove = cncolorgrid_ColorSelectionMouseMove
       OnSelectCell = cncolorgrid_ColorSelectionSelectCell
       ColorSet = cs16Colors
       CustomColors.Strings = (

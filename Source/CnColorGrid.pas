@@ -39,7 +39,7 @@ interface
 
 uses
   Windows, Classes, Graphics, Messages, Dialogs, SysUtils,
-  Controls, StdCtrls, ComCtrls, ExtCtrls, Grids, ImgList;
+  Controls, StdCtrls, ComCtrls, ExtCtrls, Grids, ImgList, GEMColorsUnit;
 
 type
   TColorSetInfoItem = record
@@ -48,7 +48,7 @@ type
   end;
 
   TColorSet = (csSafeColors, cs16Colors, csGrayColors, csRedGreenColors,
-    csHSBColors, csCustomColors);
+    csHSBColors, csGEMColors, csCustomColors);
 
   TCustomColorType = (ccDec, ccHex, ccHtml);
 
@@ -279,14 +279,34 @@ const
     $FF4000, $FF3C00, $FF3700, $FF3300, $FF2F00, $FF2A00, $FF2600, $FF2200,
     $FF1E00, $FF1A00, $FF1500, $FF1100, $FF0D00, $FF0800, $FF0400
     );
+{
+  SgemColors: array[0..139] of Integer = (
+    $C1B6FF,$CBC0FF,$3C14DC,$F5F0FF,$9370DB,$B469FF,$9314FF,$8515C7,$D670DA,$D8BFD8,
+    $DDA0DD,$EE82EE,$FF00FF,$8B008B,$800080,$D355BA,$D30094,$CC3299,$82004B,$E22B8A,
+    $DB7093,$EE687B,$CD5A6A,$8B3D48,$FFF8F8,$FAE6E6,$FF0000,$CD0000,$8B0000,$800000,
+    $701919,$E16941,$ED9564,$DEC4B0,$998877,$908070,$FF901E,$FFF8F0,$B48246,$FACE87,
+    $EBCE87,$FFBF00,$E6D8AD,$E6E0B0,$A09E5F,$D1CE00,$FFFFF0,$FFFFE0,$EEEEAF,$FFFF00,
+    $8B8B00,$808000,$4F4F2F,$CCD148,$AAB220,$D0E040,$D4FF7F,$AACD66,$9AFA00,$FAFFF5,
+    $7FFF00,$71B33C,$578B2E,$F0FFF0,$8FBC8F,$98FB98,$90EE90,$32CD32,$00FF00,$228B22,
+    $008000,$006400,$00FC7C,$00FF7F,$2FFFAD,$2F6B55,$32CD9A,$238E6B,$F0FFFF,$DCF5F5,
+    $E0FFFF,$D2FAFA,$00FFFF,$008080,$6BB7BD,$AAE8EE,$CDFAFF,$8CE6F0,$00D7FF,$DCF8FF,
+    $20A5DA,$0B86B8,$F0FAFF,$E6F5FD,$B3DEF5,$00A5FF,$B5E4FF,$D5EFFF,$CDEBFF,$ADDEFF,
+    $D7EBFA,$8CB4D2,$87B8DE,$008CFF,$C4E4FF,$E6F0FA,$3F85CD,$B9DAFF,$60A4F4,$1E69D2,
+    $13458B,$EEF5FF,$2D52A0,$7AA0FF,$507FFF,$0045FF,$7A96E9,$4763FF,$7280FA,$E1E4FF,
+    $8080F0,$FAFAFF,$8F8FBC,$5C5CCD,$0000FF,$2A2AA5,$2222B2,$00008B,$000080,$FFFFFF,
+    $F5F5F5,$DCDCDC,$D3D3D3,$C0C0C0,$A9A9A9,$808080,$696969,$000000,$000000,$000000
+    );
+}
+
 
   ColorsetInfo: array[TColorSet] of TColorSetInfoItem = (
     (defaultRowCount: 18; defaultColCount: 12),
-    (defaultRowCount: 2; defaultColCount: 8),
+    (defaultRowCount: 2;  defaultColCount: 8),
     (defaultRowCount: 16; defaultColCount: 16),
     (defaultRowCount: 10; defaultColCount: 14),
     (defaultRowCount: 18; defaultColCount: 13),
-    (defaultRowCount: 0; defaultColCount: 0)
+    (defaultRowCount: 14; defaultColCount: 10),
+    (defaultRowCount: 0;  defaultColCount: 0)
     );
 
 var
@@ -310,7 +330,7 @@ var
   ARow, ACol: Integer;
 begin
   case ColorSet of
-    csSafeColors..csHSBColors:
+    csSafeColors..csGEMColors:
       begin
         ARow := ColorsetInfo[ColorSet].defaultRowCount;
         ACol := ColorsetInfo[ColorSet].defaultColCount;
@@ -498,10 +518,20 @@ var
 begin
   case FColorSet of
     csSafeColors: Result := TColor(SSafeColors[Index]);
+
     cs16Colors: Result := TColor(S16Colors[Index]);
+
     csGrayColors: Result := TColor(SGrayColors[Index]);
+
     csRedGreenColors: Result := TColor(SRedGreenColors[Index]);
+
     csHSBColors: Result := TColor(SHSBColors[Index]);
+
+    csGEMColors: begin
+      Result :=  tColor(GemColors[TGemColorNames(index)].Color);
+
+    end;
+
     csCustomColors:
       begin
         Result := clWindow;
