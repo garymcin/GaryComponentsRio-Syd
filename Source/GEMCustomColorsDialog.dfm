@@ -3,8 +3,8 @@ object GEMColorsDialog: TGEMColorsDialog
   Top = 0
   BorderStyle = bsDialog
   Caption = 'Select Color'
-  ClientHeight = 308
-  ClientWidth = 180
+  ClientHeight = 295
+  ClientWidth = 183
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -19,13 +19,12 @@ object GEMColorsDialog: TGEMColorsDialog
   TextHeight = 13
   object panel_Bottom: TJvPanel
     Left = 0
-    Top = 251
-    Width = 180
+    Top = 238
+    Width = 183
     Height = 57
     Align = alBottom
     TabOrder = 0
-    ExplicitTop = 449
-    ExplicitWidth = 472
+    ExplicitWidth = 1373
     object jvlbl_ColorLabel: TJvLabel
       Left = 12
       Top = 8
@@ -57,12 +56,11 @@ object GEMColorsDialog: TGEMColorsDialog
   object panel_BackPanel: TJvPanel
     Left = 0
     Top = 0
-    Width = 180
-    Height = 251
+    Width = 183
+    Height = 238
     Align = alClient
     TabOrder = 1
-    ExplicitWidth = 472
-    ExplicitHeight = 449
+    ExplicitWidth = 1373
     object cncolorgrid_ColorSelection: TCnColorGrid
       AlignWithMargins = True
       Left = 4
@@ -72,6 +70,7 @@ object GEMColorsDialog: TGEMColorsDialog
       Align = alClient
       ColCount = 10
       DefaultColWidth = 15
+      DefaultColAlignment = taCenter
       DefaultRowHeight = 15
       DoubleBuffered = True
       FixedCols = 0

@@ -12,7 +12,6 @@ uses
  GEMProcessTimer, gemArrow, SelColVisGrid, ColorPanelBtn, Preview, ColorButton,
  gemCustomButton, adpMRU, GEMDBLabel, URLLabel, FindFile, adpDBEdit, GemDBGrid,
  gemDBComboBox, gemDBLookupComboBox, PJVersionInfo, GEMColorButton, GEMTrafficLight,
-
  GEMTrafficLight2, uAutoComplete,  gemCapPanelBtn, GEMCustomColorsDialog, CnColorGrid;
 
 procedure Register;

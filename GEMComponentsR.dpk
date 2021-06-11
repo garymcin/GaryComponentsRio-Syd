@@ -27,7 +27,7 @@ package GEMComponentsR;
 {$DEFINE RELEASE}
 {$DEFINE EUREKALOG}
 {$ENDIF IMPLICITBUILDING}
-{$DESCRIPTION 'Gary''s component library'}
+{$DESCRIPTION 'Gary''s compnonets'}
 {$LIBSUFFIX '260'}
 {$RUNONLY}
 {$IMPLICITBUILD OFF}

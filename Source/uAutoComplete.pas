@@ -3,12 +3,8 @@ unit uAutoComplete;
 interface
 
 uses
-  WinApi.Windows, WinApi.ActiveX, WinApi.Messages,
-
-  System.SysUtils, System.Classes, System.Win.ComObj, System.StrUtils,
-
-  VCL.Controls, VCL.stdctrls, VCL.Forms, Vcl.Dialogs;
-
+  Windows, SysUtils, Controls, Classes, ActiveX, ComObj, stdctrls, Forms,
+  Messages;
 
 const
   IID_IAutoComplete: TGUID = '{00bb2762-6a77-11d0-a535-00c04fd7d062}';
@@ -76,18 +72,14 @@ type
     FCurrIndex: integer;
   public
     //IEnumString
-    function Next(celt: Longint; out elt; pceltFetched: PLongint): HResult; stdcall;
+    function Next(celt: Longint; out elt;
+        pceltFetched: PLongint): HResult; stdcall;
     function Skip(celt: Longint): HResult; stdcall;
     function Reset: HResult; stdcall;
     function Clone(out enm: IEnumString): HResult; stdcall;
     //VCL
     constructor Create;
     destructor Destroy;override;
-  end;
-
-  TAutoCompleteStrings = class(TStringList)
-  private
-  public
   end;
 
   TACOption = (acAutoAppend, acAutoSuggest, acUseArrowKey);
@@ -97,29 +89,27 @@ type
 
   TAutoCompleteEdit = class(TEdit)
   private
-    FACList: TStringList;
-    //FEnumString: IEnumString;
+    FACList: TEnumString;
+    FEnumString: IEnumString;
     FAutoComplete: IAutoComplete;
     FACEnabled: boolean;
     FACOptions: TACOptions;
     FACSource: TACSource;
-    //fListBox: TListBox;
-//    function  GetACStrings: TStringList;
+    function GetACStrings: TStringList;
     procedure SetACEnabled(const Value: boolean);
     procedure SetACOptions(const Value: TACOptions);
     procedure SetACSource(const Value: TACSource);
-//    procedure SetACStrings(const Value: TStringList);
+    procedure SetACStrings(const Value: TStringList);
   protected
     procedure CreateWnd; override;
     procedure DestroyWnd; override;
-    procedure KeyPress(var Key: Char); override;
   public
     constructor Create(AOwner: TComponent); override;
   published
     property ACEnabled: boolean read FACEnabled write SetACEnabled;
     property ACOptions: TACOptions read FACOptions write SetACOptions;
     property ACSource: TACSource read FACSource write SetACSource;
-//    property ACStrings: TStringList read GetACStrings write SetACStrings;
+    property ACStrings: TStringList read GetACStrings write SetACStrings;
   end;
 
 implementation
@@ -145,18 +135,18 @@ begin
   inherited;
 end;
 
-function TEnumString.Next(celt: Integer; out elt; pceltFetched: PLongint): HResult;
+function TEnumString.Next(celt: Integer; out elt;
+  pceltFetched: PLongint): HResult;
 var
   I: Integer;
-  //wStr: WideString;
-  wStr: String;
+  wStr: WideString;
 begin
   I := 0;
   while (I < celt) and (FCurrIndex < FStrings.Count) do
   begin
     wStr := FStrings[FCurrIndex];
-    TPointerList(elt)[I] := CoTaskMemAlloc(2 * (Length(wStr) + 1));
-    StringToWideChar(wStr, TPointerList(elt)[I], 2 * (Length(wStr) + 1));
+    TPointerList(elt)[I] := Pointer(wStr);
+    Pointer(wStr) := nil;
     Inc(I);
     Inc(FCurrIndex);
   end;
@@ -193,39 +183,11 @@ end;
 constructor TAutoCompleteEdit.Create(AOwner: TComponent);
 begin
   inherited;
-  FACList := TStringList.Create;
-  FACList.Sort;
-  //FEnumString := FACList;
+  FACList := TEnumString.Create;
+  FEnumString := FACList;
   FACEnabled := True;
   FACOptions := [acAutoAppend, acAutoSuggest, acUseArrowKey];
 end;
-
-
-procedure TAutoCompleteEdit.KeyPress(var Key: Char);
-begin
-  inherited KeyPress(Key);
-
-  if Key <> Char(VK_SPACE) then begin
-    // create the listbox and fill it
-    // Search the sting list for a match
-    if PosEx('j', Text,1) > 0 then  begin
-
-    end;
-
-  end;
-
-//  if TabOnEnter AND (Owner is TWinControl) then
-//  begin
-//    if Key = Char(VK_RETURN) then
-//    begin
-//     if HiWord(GetKeyState(VK_SHIFT)) <> 0 then
-//        PostMessage((Owner as TWinControl).Handle, WM_NEXTDLGCTL, 1, 0)
-//     else
-//        PostMessage((Owner as TWinControl).Handle, WM_NEXTDLGCTL, 0, 0);
-//    end;
-//  end;
-end; (*KeyPress*)
-
 
 procedure TAutoCompleteEdit.CreateWnd;
 var
@@ -248,7 +210,7 @@ begin
           acsShell: Strings := CreateComObject(CLSID_ACListISF) as
             IEnumString;
         else
-          //Strings := FACList as IEnumString;
+          Strings := FACList as IEnumString;
         end;
         if S_OK = FAutoComplete.Init(Handle, Strings, nil, nil) then
         begin
@@ -262,7 +224,6 @@ begin
   end;
 end;
 
-
 procedure TAutoCompleteEdit.DestroyWnd;
 begin
   if (FAutoComplete <> nil) then
@@ -273,12 +234,10 @@ begin
   inherited;
 end;
 
-
-//function TAutoCompleteEdit.GetACStrings: TStringList;
-//begin
-//  //Result := FACList.FStrings;
-//end;
-
+function TAutoCompleteEdit.GetACStrings: TStringList;
+begin
+  Result := FACList.FStrings;
+end;
 
 procedure TAutoCompleteEdit.SetACEnabled(const Value: Boolean);
 begin
@@ -288,7 +247,6 @@ begin
   end;
   FACEnabled := Value;
 end;
-
 
 procedure TAutoCompleteEdit.SetACOptions(const Value: TACOptions);
 const
@@ -316,7 +274,6 @@ begin
   FACOptions := Value;
 end;
 
-
 procedure TAutoCompleteEdit.SetACSource(const Value: TACSource);
 begin
   if FACSource <> Value then
@@ -326,11 +283,10 @@ begin
   end;
 end;
 
-
-//procedure TAutoCompleteEdit.SetACStrings(const Value: TStringList);
-//begin
-////  if Value <> FACList.FStrings then
-////    FACList.FStrings.Assign(Value);
-//end;
+procedure TAutoCompleteEdit.SetACStrings(const Value: TStringList);
+begin
+  if Value <> FACList.FStrings then
+    FACList.FStrings.Assign(Value);
+end;
 
 end.
