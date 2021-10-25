@@ -230,6 +230,7 @@
         <DCCReference Include="Source\GEMTrafficLight2.pas"/>
         <DCCReference Include="Source\GEMCustomColorsDialog.pas"/>
         <DCCReference Include="Source\CnColorGrid.pas"/>
+        <DCCReference Include="Source\Graphics\SimpleGraph.pas"/>
         <RcItem Include="Icons\Arrow64px.bmp">
             <ResourceType>BITMAP</ResourceType>
             <ResourceId>TgemArrow</ResourceId>

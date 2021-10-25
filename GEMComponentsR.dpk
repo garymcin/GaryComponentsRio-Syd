@@ -87,6 +87,7 @@ contains
   GEMTrafficLight in 'Source\GEMTrafficLight.pas',
   GEMTrafficLight2 in 'Source\GEMTrafficLight2.pas',
   GEMCustomColorsDialog in 'Source\GEMCustomColorsDialog.pas',
-  CnColorGrid in 'Source\CnColorGrid.pas';
+  CnColorGrid in 'Source\CnColorGrid.pas',
+  SimpleGraph in 'Source\Graphics\SimpleGraph.pas';
 
 end.
