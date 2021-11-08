@@ -7,7 +7,8 @@ uses
 
   System.SysUtils, System.Classes,
 
-  Vcl.Graphics, VCL.Controls, VCL.Forms, VCL.Dialogs, VCL.ExtCtrls, {VCL.Buttons,}
+  Vcl.Graphics, VCL.Controls, VCL.Forms, VCL.Dialogs, VCL.ExtCtrls, Vcl.ActnList,
+  Vcl.Themes,
 
   GEMComponentsGlobal;
 
@@ -49,7 +50,45 @@ type
     Zip: string;
   end;
 
-  TGEMColorButton = class(TCustomControl)
+  TGEMButtonControl = class;
+
+  TButtonActionLink = class(TWinControlActionLink)
+  protected
+    FClient: TGEMButtonControl;
+    procedure AssignClient(AClient: TObject); override;
+    function IsCheckedLinked: Boolean; override;
+    procedure SetChecked(Value: Boolean); override;
+  end;
+
+  TButtonActionLinkClass = class of TButtonActionLink;
+
+
+  TGEMButtonControl = class(TCustomControl)
+  private
+    FClicksDisabled: Boolean;
+    FWordWrap: Boolean;
+    function IsCheckedStored: Boolean;
+    procedure CNCtlColorStatic(var Message: TWMCtlColorStatic); message CN_CTLCOLORSTATIC;
+    procedure WMEraseBkGnd(var Message: TWMEraseBkGnd); message WM_ERASEBKGND;
+    procedure SetWordWrap(const Value: Boolean);
+  protected
+    procedure ActionChange(Sender: TObject; CheckDefaults: Boolean); override;
+    function GetActionLinkClass: TControlActionLinkClass; override;
+    function GetChecked: Boolean; virtual;
+    procedure SetChecked(Value: Boolean); virtual;
+    procedure WndProc(var Message: TMessage); override;
+    procedure CreateParams(var Params: TCreateParams); override;
+    property Checked: Boolean read GetChecked write SetChecked stored IsCheckedStored default False;
+    property ClicksDisabled: Boolean read FClicksDisabled write FClicksDisabled;
+    property WordWrap: Boolean read FWordWrap write SetWordWrap default False;
+  public
+    constructor Create(AOwner: TComponent); override;
+  end;
+
+
+
+  TGEMColorButton = class(TGEMButtonControl)
+//  TGEMColorButton = class(TCustomControl)
   private
     fClientAddressLoc : TClientAddressLoc;
 
@@ -79,6 +118,10 @@ type
     fRouteColor           : TColor;   // the color for the delivery or default route
 
     fSelected             : Boolean;
+    FModalResult          : TModalResult;
+
+//    fFontColor             : TColor;
+
 
     procedure SetCaption(var Message: TMessage); message CM_TEXTCHANGED;
     procedure SetFocusOff(var Message: TMessage); message CM_LOSTFOCUS;
@@ -99,6 +142,8 @@ type
     procedure SetHoverColor(const Value: TColor);
 
     procedure KeyAccel(var Message: TCMDialogChar); message CM_DIALOGCHAR;
+    procedure SetFontColor(const Value: tColor);
+    function GetFontColor: tColor;
     //property BackBeforeHoverColor : TColor read FBackBeforeHoverColor write FBackBeforeHoverColor;
 
   protected
@@ -128,6 +173,8 @@ type
     property ClientAddressState: String read fClientAddressLoc.State write fClientAddressLoc.State;
     property ClientAdressZip: String read fClientAddressLoc.Zip write fClientAddressLoc.Zip;
 
+    property FontColor: tColor read GetFontColor write SetFontColor;
+
     property ArrayIndex: integer read fArrayIndex write fArrayIndex;
     property AccountID: integer read fAccountID write fAccountID;
     property RouteID: integer read fRouteID write fRouteID;
@@ -140,6 +187,7 @@ type
     property GeoCodeType: Integer read fGeoCodeType write fGeoCodeType;
 
     property Version: string read GetVersion;
+    property ModalResult: TModalResult read FModalResult write FModalResult default 0;
 
     property Action;
     property Anchors;
@@ -188,7 +236,9 @@ type
     property OnMouseMove;
     property OnMouseUp;
     property OnStartDrag;
-
+    property WordWrap;
+    property Checked;
+    property ClicksDisabled;
     property Selected: Boolean read fSelected write SetSelected default False;
     property SelectedColor: TColor read fSelectedColor write SetSelectedColor;
     property HoverColor: TColor read FHoverColor write SetHoverColor;
@@ -257,6 +307,11 @@ end;
 
 // ColorButton procedures and functions
 //////////////////////////////////////////////////////////////////
+function TGEMColorButton.GetFontColor: tColor;
+begin
+  result := Font.Color;
+end;
+
 function TGEMColorButton.GetVersion: string;
 begin
   Result := '1.1';
@@ -651,6 +706,12 @@ begin
 end;
 
 
+procedure TGEMColorButton.SetFontColor(const Value: tColor);
+begin
+  if Font.Color <> Value then
+    Font.Color := Value;
+end;
+
 procedure TGEMColorButton.SetPicture(Value: TPicture);
 begin
   if FPicture <> Value then
@@ -746,5 +807,140 @@ begin
 
   inherited;
 end; (*WndProc*)
+
+{ TButtonActionLink }
+
+procedure TButtonActionLink.AssignClient(AClient: TObject);
+begin
+  inherited AssignClient(AClient);
+  FClient := AClient as TGEMButtonControl;
+end;
+
+function TButtonActionLink.IsCheckedLinked: Boolean;
+begin
+  Result := inherited IsCheckedLinked and
+    (FClient.Checked = TCustomAction(Action).Checked);
+end;
+
+procedure TButtonActionLink.SetChecked(Value: Boolean);
+begin
+  if IsCheckedLinked then
+  begin
+    FClient.ClicksDisabled := True;
+    try
+      FClient.Checked := Value;
+    finally
+      FClient.ClicksDisabled := False;
+    end;
+  end;
+end;
+
+{ TGEMButtonControl }
+
+procedure TGEMButtonControl.ActionChange(Sender: TObject;
+  CheckDefaults: Boolean);
+var
+  OldClicksDisabled: Boolean;
+begin
+  inherited ActionChange(Sender, CheckDefaults);
+  if Sender is TCustomAction then
+    with TCustomAction(Sender) do
+      if not CheckDefaults or (Self.Checked = False) then
+      begin
+        // prevent generating Action.OnExecute when the control gets checked
+        OldClicksDisabled := ClicksDisabled;
+        ClicksDisabled := True;
+
+        Self.Checked := Checked;
+
+        ClicksDisabled := OldClicksDisabled;
+      end;
+end;
+
+procedure TGEMButtonControl.CNCtlColorStatic(var Message: TWMCtlColorStatic);
+begin
+  with StyleServices do
+    if ThemeControl(Self) then
+    begin
+      if (Parent <> nil) and Parent.DoubleBuffered then
+        PerformEraseBackground(Self, Message.ChildDC)
+      else
+        DrawParentBackground(Handle, Message.ChildDC, nil, False);
+      { Return an empty brush to prevent Windows from overpainting we just have created. }
+      Message.Result := GetStockObject(NULL_BRUSH);
+    end
+    else
+      inherited;
+end;
+
+constructor TGEMButtonControl.Create(AOwner: TComponent);
+begin
+  inherited Create(AOwner);
+  if SysLocale.FarEast and (Win32Platform = VER_PLATFORM_WIN32_NT) then
+    ImeMode := imDisable;
+  TipMode := tipClose;
+end;
+
+procedure TGEMButtonControl.CreateParams(var Params: TCreateParams);
+begin
+  inherited;
+  if FWordWrap then
+    Params.Style := Params.Style or BS_MULTILINE;
+end;
+
+function TGEMButtonControl.GetActionLinkClass: TControlActionLinkClass;
+begin
+  Result := TButtonActionLink;
+end;
+
+function TGEMButtonControl.GetChecked: Boolean;
+begin
+  Result := False;
+end;
+
+function TGEMButtonControl.IsCheckedStored: Boolean;
+begin
+ Result := (ActionLink = nil) or not TButtonActionLink(ActionLink).IsCheckedLinked;
+end;
+
+procedure TGEMButtonControl.SetChecked(Value: Boolean);
+begin
+//
+end;
+
+procedure TGEMButtonControl.SetWordWrap(const Value: Boolean);
+begin
+  if FWordWrap <> Value then
+  begin
+    FWordWrap := Value;
+    RecreateWnd;
+  end;
+end;
+
+procedure TGEMButtonControl.WMEraseBkGnd(var Message: TWMEraseBkGnd);
+begin
+  { Under theme services the background is drawn in CN_CTLCOLORSTATIC. }
+  if StyleServices(Self).Enabled then
+    Message.Result := 1
+  else
+    inherited;
+end;
+
+procedure TGEMButtonControl.WndProc(var Message: TMessage);
+begin
+  case Message.Msg of
+    WM_LBUTTONDOWN, WM_LBUTTONDBLCLK:
+      if not (csDesigning in ComponentState) and not Focused then
+      begin
+        FClicksDisabled := True;
+        Winapi.Windows.SetFocus(Handle);
+        FClicksDisabled := False;
+        if not Focused then Exit;
+      end;
+    CN_COMMAND:
+      if FClicksDisabled then Exit;
+  end;
+  inherited WndProc(Message);
+end;
 
 end.
