@@ -1,4 +1,4 @@
- unit GarysComponentsReg;
+th unit GarysComponentsReg;
 
 interface
 
@@ -13,6 +13,7 @@ uses
  gemCustomButton, adpMRU, GEMDBLabel, URLLabel, FindFile, adpDBEdit, GemDBGrid,
  gemDBComboBox, gemDBLookupComboBox, PJVersionInfo, GEMTrafficLight,
  GEMTrafficLight2, uAutoComplete,  gemCapPanelBtn, GEMCustomColorsDialog, GEMCustomBtns;
+
 
 procedure Register;
 begin
