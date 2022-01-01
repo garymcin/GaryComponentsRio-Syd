@@ -12,7 +12,7 @@ uses
 
   JvExExtCtrls, JvExtComponent, JvPanel, JvExControls, JvLabel,
 
-  GEMColorsUnit, CnColorGrid;
+  GEMCnColorGrid;
 
 type
   TgemColorDialog = class (TComponent)
@@ -63,7 +63,7 @@ var
 
 implementation
 uses
-  {Global,} GEMUseFullRoutines;
+  {Global,} GEMUseFullRoutines, GEMColorsUnit;
 {$R *.dfm}
 const
   theBevelWidth = 2;
@@ -111,10 +111,10 @@ end;
 
 
 procedure TGEMColorsDialog.FormCreate(Sender: TObject);
-var
-  i: TGemColorNames;
+//var
+//  i: TGemColorNames;
 begin
-  cncolorgrid_ColorSelection.ColorSet := csGEMColors;
+  cncolorgrid_ColorSelection.ColorSet := TColorSet(5);//csGEMColors;
 end;
 
 

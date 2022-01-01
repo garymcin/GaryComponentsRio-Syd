@@ -62,7 +62,7 @@ type
     FUseIniReg: TMRUStoreType;
     fGroupIndex: byte;
     fRadioItem: boolean;
-    FVersion: string;
+//    FVersion: string;
     fSectionIniNameReg: string;
     fIniFilePathExists: boolean;
     fStatusMsg: string;

@@ -65,7 +65,7 @@ type
     FHoverColor           : TColor;
     FBackBeforeHoverColor : TColor;
     fNotEnabledColor      : TColor;
-    fVersion              : string;
+//    fVersion              : string;
 
     procedure SetColor(const Value: TColor);
     procedure SetArrowSize(const Value: Integer);

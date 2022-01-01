@@ -1,7 +1,6 @@
 package GEMComponentsR;
 
 {$R *.res}
-{$R *.dres}
 {$IFDEF IMPLICITBUILDING This IFDEF should not be used by users}
 {$ALIGN 8}
 {$ASSERTIONS ON}
@@ -10,7 +9,7 @@ package GEMComponentsR;
 {$EXTENDEDSYNTAX ON}
 {$IMPORTEDDATA ON}
 {$IOCHECKS ON}
-{$LOCALSYMBOLS OFF}
+{$LOCALSYMBOLS ON}
 {$LONGSTRINGS ON}
 {$OPENSTRINGS ON}
 {$OPTIMIZATION ON}
@@ -28,12 +27,11 @@ package GEMComponentsR;
 {$DEFINE EUREKALOG}
 {$ENDIF IMPLICITBUILDING}
 {$DESCRIPTION 'Gary''s compnonets'}
-{$LIBSUFFIX '260'}
+{$LIBSUFFIX '270'}
 {$RUNONLY}
 {$IMPLICITBUILD OFF}
 
 requires
-  rtl,
   vclimg,
   vcl,
   IndySystem,
@@ -45,9 +43,9 @@ requires
   JvCore,
   CodeSiteLoggingPkg,
   JvControls,
-  NexusDB450ll270,
-  NexusDB450sd270,
-  NexusDB450db270;
+  NexusDB450ll280,
+  NexusDB450sd280,
+  NexusDB450db280;
 
 contains
   GEMUpdaterPanel in 'Source\GEMUpdaterPanel.pas',
@@ -75,7 +73,6 @@ contains
   gemDBComboBox in 'Source\gemDBComboBox.pas',
   gemDBLookupComboBox in 'Source\gemDBLookupComboBox.pas',
   PJVersionInfo in 'Source\PJVersionInfo.pas',
-  GEMColorButton in 'Source\GEMColorButton.pas',
   GEMCalendar in 'Source\GEMCalendar.pas',
   uAutoComplete in 'Source\uAutoComplete.pas',
   PJDropFiles in 'Source\DropComponents\PJDropFiles.pas',
@@ -83,10 +80,15 @@ contains
   adpEdit in 'Source\adpEdit.pas',
   SBPro in 'Source\SBPro.pas',
   gemCapPanelBtn in 'Source\gemCapPanelBtn.pas',
-  GemINI in '..\GEMLibary-rio\GemINI.pas',
   GEMTrafficLight in 'Source\GEMTrafficLight.pas',
   GEMTrafficLight2 in 'Source\GEMTrafficLight2.pas',
   GEMCustomColorsDialog in 'Source\GEMCustomColorsDialog.pas',
-  CnColorGrid in 'Source\CnColorGrid.pas';
+  GEMColorsUnit in '..\GEMLibrary_RioSyd\GEMColorsUnit.pas',
+  GemCnColorGrid in 'Source\GemCnColorGrid.pas',
+  GemINI in '..\GEMLibrary_RioSyd\GemINI.pas',
+  GEMUsefullRoutines in '..\GEMLibrary_RioSyd\GEMUsefullRoutines.pas',
+  GEMCnGraphUtils in 'Source\GEMCnGraphUtils.pas',
+  GEMCustomBtns in 'Source\GEMCustomBtns.pas';
 
 end.
+

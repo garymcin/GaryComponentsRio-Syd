@@ -124,7 +124,7 @@ type
     {$ELSE}
     procedure AdjustSize;
     {$ENDIF}
-    procedure SetStyleName(const Value: String); //override;
+    procedure SetStyleName(const Value: String); override;
     procedure Paint; override;
     procedure Prepare;
     procedure Unprepare;

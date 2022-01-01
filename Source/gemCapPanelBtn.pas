@@ -27,7 +27,7 @@ type
   TgemCapPanelBtn = class(TCustomPanel)
     fImage              : TImage;
   private
-    fComponentVersion   : tGEMComponents;
+//    fComponentVersion   : tGEMComponents;
 
     fOnPnlMouseEnter    : TCapPnlEventMouseEnter;
     fOnPnlMouseLeave    : TCapPnlEventMouseLeave;

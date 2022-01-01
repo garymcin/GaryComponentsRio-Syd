@@ -70,7 +70,6 @@ object GEMColorsDialog: TGEMColorsDialog
       Align = alClient
       ColCount = 10
       DefaultColWidth = 15
-      DefaultColAlignment = taCenter
       DefaultRowHeight = 15
       DoubleBuffered = True
       FixedCols = 0
@@ -82,7 +81,6 @@ object GEMColorsDialog: TGEMColorsDialog
       TabOrder = 0
       OnMouseMove = cncolorgrid_ColorSelectionMouseMove
       OnSelectCell = cncolorgrid_ColorSelectionSelectCell
-      ColorSet = csGEMColors
       CustomColors.Strings = (
         '12695295'
         '3353215'
